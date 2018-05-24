@@ -11,10 +11,11 @@ https://docs.djangoproject.com/en/1.11/ref/settings/
 """
 
 import os
+import dj_database_url
+
 
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-
 
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/1.11/howto/deployment/checklist/
@@ -23,10 +24,9 @@ BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 SECRET_KEY = '5am=k_v$m7)96eare^ul3c8zdl$6sb&yxljidhhyfam+ul$(c!'
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = (os.environ.get('RUNNING_PROD') is None)
 
-ALLOWED_HOSTS = ['0.0.0.0', 'localhost']
-
+ALLOWED_HOSTS = ['localhost', '.herokuapp.com']
 
 # Application definition
 
@@ -71,24 +71,26 @@ TEMPLATES = [
 
 WSGI_APPLICATION = 'nomad.wsgi.application'
 
-
 # Database
 # https://docs.djangoproject.com/en/1.11/ref/settings/#databases
 STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
 STATIC_URL = '/static/'
 
-
-DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.postgresql',
-        'NAME': 'nomad',
-        'USER': 'nomad',
-        'PASSWORD': 'pass',
-        'HOST': 'localhost',
-        'PORT': '5432',
+if DEBUG:
+    DATABASES = {
+        'default': {
+            'ENGINE': 'django.db.backends.postgresql',
+            'NAME': 'nomad' if DEBUG else os.environ.get("DATABASE_NAME"),
+            'USER': 'nomad' if DEBUG else os.environ.get("DATABASE_USER"),
+            'PASSWORD': 'pass' if DEBUG else os.environ.get("DATABASE_PASS"),
+            'HOST': 'localhost' if DEBUG else os.environ.get("DATABASE_HOST"),
+            'PORT': '5432',
+        }
     }
-}
-
+else:
+    DATABASES = {
+        'default': dj_database_url.config(default=os.environ.get("DATABASE_URL"))
+    }
 
 # Password validation
 # https://docs.djangoproject.com/en/1.11/ref/settings/#auth-password-validators
@@ -108,7 +110,6 @@ AUTH_PASSWORD_VALIDATORS = [
     },
 ]
 
-
 # Internationalization
 # https://docs.djangoproject.com/en/1.11/topics/i18n/
 
@@ -122,11 +123,26 @@ USE_L10N = True
 
 USE_TZ = True
 
-
 REST_FRAMEWORK = {
     # Use Django's standard `django.contrib.auth` permissions,
     # or allow read-only access for unauthenticated users.
     'DEFAULT_PERMISSION_CLASSES': [
         'rest_framework.permissions.DjangoModelPermissions'
     ]
+}
+
+LOGGING = {
+    'version': 1,
+    'disable_existing_loggers': False,
+    'handlers': {
+        'console': {
+            'class': 'logging.StreamHandler',
+        },
+    },
+    'loggers': {
+        'django': {
+            'handlers': ['console'],
+            'level': os.getenv('DJANGO_LOG_LEVEL', 'ERROR'),
+        },
+    },
 }

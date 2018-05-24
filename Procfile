@@ -1,1 +1,1 @@
-web: gunicorn sampledeploy.wsgi —-log-file -
+web: gunicorn nomad.wsgi —-log-file -

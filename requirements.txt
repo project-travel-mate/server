@@ -1,3 +1,4 @@
+dj-config-url==0.1.1
 Django==2.0.5
 djangorestframework==3.8.2
 gunicorn==19.8.1
