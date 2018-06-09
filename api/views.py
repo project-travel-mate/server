@@ -3,6 +3,7 @@ from rest_framework.permissions import AllowAny
 from rest_framework.response import Response
 from rest_framework import permissions, status
 from django.contrib.auth.models import User
+import requests
 
 from api.modules.city import view as city
 
@@ -39,3 +40,28 @@ def sign_up(request):
             return Response(status=status.HTTP_400_BAD_REQUEST)
 
     return Response(status=status.HTTP_201_CREATED)
+
+
+
+@api_view(['POST'])
+@permission_classes((AllowAny, ))
+def sign_in(request):
+    """
+    Signs in user
+    :param request:
+    :return:
+    """
+    username = request.POST['username']
+    password = request.POST['password']
+
+    try:
+        user = User.objects.get(username=username)
+        if user.check_password(password):
+            post_data = {'username': username, 'password': password}
+            response = requests.post('http://localhost:8000/api/obtain-auth-token/', data=post_data)
+            content = response.content
+            return Response(content)
+        else:
+            return Response("Incorrect Password.", status=status.HTTP_401_UNAUTHORIZED)
+    except User.DoesNotExist:
+        return Response("User does not exist. Kindly Sign Up.", status=status.HTTP_400_BAD_REQUEST)
