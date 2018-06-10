@@ -13,15 +13,18 @@ def get_city_weather(request, city_name):
     if request.method == 'GET':
         try:
             api_response = requests.get(OPEN_WEATHER_API_URL.format(city_name))
-            api_response = api_response.json()
+            api_response_json = api_response.json()
+            if not api_response.ok:
+                error_message = api_response_json['message']
+                return Response(error_message, status=status.HTTP_503_SERVICE_UNAVAILABLE)
 
-            response = WeatherResponse(temp=to_celsius(api_response['main']['temp']),
-                                       max_temp=to_celsius(api_response['main']['temp_max']),
-                                       min_temp=to_celsius(api_response['main']['temp_min']),
-                                       description=api_response['weather'][0]['main'],
-                                       icon=icon_to_url(api_response['weather'][0]['icon']),
-                                       humidity=api_response['main']['humidity'],
-                                       pressure=api_response['main']['pressure'])
+            response = WeatherResponse(temp=to_celsius(api_response_json['main']['temp']),
+                                       max_temp=to_celsius(api_response_json['main']['temp_max']),
+                                       min_temp=to_celsius(api_response_json['main']['temp_min']),
+                                       description=api_response_json['weather'][0]['main'],
+                                       icon=icon_to_url(api_response_json['weather'][0]['icon']),
+                                       humidity=api_response_json['main']['humidity'],
+                                       pressure=api_response_json['main']['pressure'])
         except Exception as e:
             return Response(str(e), status=status.HTTP_503_SERVICE_UNAVAILABLE)
 
@@ -38,9 +41,12 @@ def get_multiple_days_weather(request, num_of_days, city_name):
 
         try:
             api_response = requests.get(OPEN_FORECAST_API_URL.format(city_name, num_of_days))
-            api_response = api_response.json()
+            api_response_json = api_response.json()
+            if not api_response.ok:
+                error_message = api_response_json['message']
+                return Response(error_message, status=status.HTTP_503_SERVICE_UNAVAILABLE)
 
-            for result in api_response['list']:
+            for result in api_response_json['list']:
                 response.append(WeatherResponse(max_temp=to_celsius(result['temp']['max']),
                                                 min_temp=to_celsius(result['temp']['min']),
                                                 description=result['weather'][0]['main'],
