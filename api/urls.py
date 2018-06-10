@@ -5,6 +5,7 @@ from rest_framework.authtoken import views as auth_views
 from api import views
 from api.modules.city import views as city_views
 from api.modules.weather import views as weather_views
+from api.modules.shopping import views as shopping_views
 
 urlpatterns = [
     # Authentication
@@ -22,4 +23,7 @@ urlpatterns = [
     path('get-city-weather/<str:city_name>', weather_views.get_city_weather, name='get-city-weather'),
     path('get-multiple-days-weather/<int:num_of_days>/<str:city_name>', weather_views.get_multiple_days_weather,
          name='get-multiple-days-weather'),
+
+    # Shopping APIs
+    path('get-shopping-info/<str:query>', shopping_views.get_shopping_info, name="get-shopping-info")
 ]
