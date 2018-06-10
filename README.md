@@ -43,3 +43,12 @@ python manage.py runsever
 ```
 
 Open [localhost:8000](http://localhost:8000)
+
+## Working with authenticated APIs
+
+> You would need to have a registered user, with which you can generate a authentication token. Follow the following steps to generate a token *(You can download [Postman client](https://www.getpostman.com/) to make the following POST calls)*
+Reference: [TokenAuthentication API docs](http://www.django-rest-framework.org/api-guide/authentication/#tokenauthentication)
+
++ Make a POST call to `/api/sign-up` with 4 form-data body objects: `email`, `password`, `firstname`, `lastname`. You should get *"Successfully registered"* response with 201 status code.
++ Make a POST call to `/api/sign-in` with 2 form-data body objects: `username` (which is your email Id you used for sign up), `password`. You will get a token in JSON response, store it somewhere.
++ For making any subsequent request, use the above token by sending it as an "Authorization HTTP Header", eg: `Authorization: Token <your token>`

@@ -8,8 +8,8 @@ from api.modules.weather import views as weather_views
 
 urlpatterns = [
     # Authentication
-    path('sign-up', views.sign_up, name='sign-up'),
-    url(r'^api-token-auth/', auth_views.obtain_auth_token),
+    url(r'^sign-up', views.sign_up, name='sign-up'),
+    url(r'^sign-in', auth_views.obtain_auth_token, name='sign-in'),
 
     # City APIs
     path('get-all-cities', city_views.get_all_cities, name='get-all-cities'),

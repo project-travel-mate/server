@@ -21,13 +21,13 @@ def sign_up(request):
     username = parseaddr(request.POST.get('email', None))[1]
     password = request.POST.get('password', None)
 
-    if '@' not in username:
-        error_message = "Invalid email Id"
-        return Response(error_message, status=status.HTTP_400_BAD_REQUEST)
-
     if not firstname or not lastname or not username or not password:
         # incorrect request received
-        error_message = "Missing parametes in request. Send firstname, lastname, email, password"
+        error_message = "Missing parameters in request. Send firstname, lastname, email, password"
+        return Response(error_message, status=status.HTTP_400_BAD_REQUEST)
+
+    if '@' not in username:
+        error_message = "Invalid email Id"
         return Response(error_message, status=status.HTTP_400_BAD_REQUEST)
 
     try:
