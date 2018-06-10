@@ -9,6 +9,7 @@ class City(models.Model):
     longitude = models.DecimalField(max_digits=9, decimal_places=6)
     image = models.TextField(null=True, blank=True, validators=[URLValidator()])
     total_trips = models.IntegerField(default=0)
+    woeid = models.TextField(null=True, blank=True)  # Yahoo! Where On Earth ID
 
 
 class CityImage(models.Model):
