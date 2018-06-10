@@ -6,8 +6,6 @@ from django.contrib.auth.models import User
 
 from email.utils import parseaddr
 
-from api.modules.city import view as city
-
 
 @api_view(['POST'])
 @permission_classes((AllowAny,))

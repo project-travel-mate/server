@@ -1,0 +1,28 @@
+language: python
+
+python:
+  - "3.6"
+
+services: postgresql
+
+env:
+  - DJANGO=2.0.5
+
+before_install:
+  - export DJANGO_SETTINGS_MODULE=nomad.settings
+  - export PYTHONPATH=$HOME/builds/project-travel-mate/server
+  - export PIP_USE_MIRRORS=true
+
+install:
+  - pip install -r requirements.txt
+  - pip install django==$DJANGO --quiet
+
+before_script:
+  - psql -c "CREATE DATABASE travisci;" -U postgres
+  - python manage.py migrate
+
+script:
+  - flake8
+
+after_success:
+  - coveralls
