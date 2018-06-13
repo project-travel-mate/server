@@ -5,6 +5,7 @@ from rest_framework import status
 from django.contrib.auth.models import User
 
 from email.utils import parseaddr
+import string
 
 
 @api_view(['POST'])
@@ -30,6 +31,10 @@ def sign_up(request):
         error_message = "Invalid email Id"
         return Response(error_message, status=status.HTTP_400_BAD_REQUEST)
 
+    if not test_password(password):
+        error_message = "Invalid Password"
+        return Response(error_message, status=status.HTTP_400_BAD_REQUEST)
+
     try:
         User.objects.get(username=username)
         error_message = "Email Id already exists"
@@ -47,3 +52,30 @@ def sign_up(request):
 
     success_message = "Successfully registered"
     return Response(success_message, status=status.HTTP_201_CREATED)
+
+
+def long_enough(pw):
+    # Password must be at least length 8
+    return len(pw) >= 8
+
+
+def has_letter(pw):
+    # Password must contain a lowercase letter
+    return any(character.isalpha() for character in pw)
+
+
+def has_numeric(pw):
+    # Password must contain a digit
+    return len(set(string.digits).intersection(pw)) > 0
+
+
+def has_special(pw):
+    # Password must contain a special character
+    return len(set(string.punctuation).intersection(pw)) > 0
+
+
+def test_password(pw, tests=[long_enough, has_letter, has_numeric, has_special]):
+    for test in tests:
+        if not test(pw):
+            return False
+    return True

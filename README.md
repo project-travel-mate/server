@@ -39,7 +39,7 @@ python manage.py migrate
 
 + Finally! Run server
 ```
-python manage.py runsever
+python manage.py runserver
 ```
 
 Open [localhost:8000](http://localhost:8000)
