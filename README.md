@@ -37,6 +37,11 @@ python manage.py makemigrations
 python manage.py migrate
 ```
 
++ Run Tests
+```
+python manage.py test
+```
+
 + Finally! Run server
 ```
 python manage.py runserver
