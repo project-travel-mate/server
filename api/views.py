@@ -31,7 +31,7 @@ def sign_up(request):
         error_message = "Invalid email Id"
         return Response(error_message, status=status.HTTP_400_BAD_REQUEST)
 
-    if not test_password(password):
+    if not validatePassword(password):
         error_message = "Invalid Password"
         return Response(error_message, status=status.HTTP_400_BAD_REQUEST)
 
@@ -74,7 +74,7 @@ def has_special(pw):
     return len(set(string.punctuation).intersection(pw)) > 0
 
 
-def test_password(pw, tests=[long_enough, has_letter, has_numeric, has_special]):
+def validatePassword(pw, tests=[long_enough, has_letter, has_numeric, has_special]):
     for test in tests:
         if not test(pw):
             return False
