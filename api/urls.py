@@ -13,7 +13,7 @@ urlpatterns = [
     url(r'^sign-in', auth_views.obtain_auth_token, name='sign-in'),
 
     # City APIs
-    path('get-all-cities', city_views.get_all_cities, name='get-all-cities'),
+    path('get-all-cities/<int:no_of_cities>', city_views.get_all_cities, name='get-all-cities'),
     path('get-city/<int:city_id>', city_views.get_city, name='get-city'),
     path('get-city-images/<int:city_id>', city_views.get_all_city_images, name='get-city-images'),
     path('get-city-facts/<int:city_id>', city_views.get_all_city_facts, name='get-city-facts'),
