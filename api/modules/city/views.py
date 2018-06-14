@@ -11,14 +11,15 @@ from api.modules.city.serializers import CitySerializer, CityImageSerializer, Ci
 
 
 @api_view(['GET'])
-def get_all_cities(request):
+def get_all_cities(request, no_of_cities=8):
     """
     Returns a list of all the cities
     :param request:
+    :param no_of_cities: (default count: 8)
     :return:
     """
     if request.method == 'GET':
-        cities = City.objects.all()
+        cities = City.objects.all().order_by('-id')[:no_of_cities]
         serializer = CitySerializer(cities, many=True)
         return Response(serializer.data)
 
