@@ -11,7 +11,7 @@ from api.modules.city.serializers import CitySerializer, CityImageSerializer, Ci
 
 
 @api_view(['GET'])
-def get_all_cities(request, no_of_cities):
+def get_all_cities(request, no_of_cities = 10):
     """
     Returns a list of all the cities
     :param request:
