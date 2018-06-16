@@ -6,7 +6,7 @@ from rest_framework.response import Response
 
 from api.modules.city.constants import TWITTER_CONSUMER_KEY, TWITTER_OAUTH_TOKEN_SECRET, TWITTER_OAUTH_TOKEN, \
     TWITTER_CONSUMER_SECRET, TWITTER_API_URL
-from api.modules.city.model import City, CityImage, CityFact
+from api.models import City, CityFact, CityImage
 from api.modules.city.serializers import CitySerializer, CityImageSerializer, CityFactSerializer
 
 

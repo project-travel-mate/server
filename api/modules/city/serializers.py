@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from api.modules.city.model import City, CityImage, CityFact
+from api.models import City, CityImage, CityFact
 
 
 class CitySerializer(serializers.ModelSerializer):

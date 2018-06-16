@@ -4,8 +4,9 @@ from rest_framework.authtoken import views as auth_views
 
 from api.modules.users import views as user_views
 from api.modules.city import views as city_views
-from api.modules.weather import views as weather_views
 from api.modules.shopping import views as shopping_views
+from api.modules.weather import views as weather_views
+from api.modules.trips import views as trip_views
 
 urlpatterns = [
     # Authentication
@@ -29,5 +30,12 @@ urlpatterns = [
          name='get-multiple-days-weather'),
 
     # Shopping APIs
-    path('get-shopping-info/<str:query>', shopping_views.get_shopping_info, name="get-shopping-info")
+    path('get-shopping-info/<str:query>', shopping_views.get_shopping_info, name="get-shopping-info"),
+
+    # Trips
+    path('add-trip', trip_views.add_trip, name="add-trip"),
+    path('get-trip/<int:trip_id>', trip_views.get_trip, name="get-trip"),
+    path('get-all-trips', trip_views.get_all_trips, name="get-all-trips"),
+    path('get-all-trips/<int:no_of_trips>', trip_views.get_all_trips, name="get-all-trips"),
+    path('add-friend-to-trip/<int:trip_id>/<int:user_id>', trip_views.add_friend_to_trip, name="add-friend-to-trip"),
 ]
