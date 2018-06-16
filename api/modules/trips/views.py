@@ -10,17 +10,17 @@ from api.modules.trips.serializers import TripSerializer
 @api_view(['POST'])
 def add_trip(request):
     trip_name = request.POST.get('trip_name', None)
-    start_date = request.POST.get('start_date', None)
+    start_date_tx = request.POST.get('start_date_tx', None)
     city_id = request.POST.get('city_id', None)
 
-    if not trip_name or not start_date or not city_id:
+    if not trip_name or not start_date_tx or not city_id:
         # incorrect request received
-        error_message = "Missing parameters in request. Send trip_name, city_id, start_date"
+        error_message = "Missing parameters in request. Send trip_name, city_id, start_date_tx"
         return Response(error_message, status=status.HTTP_400_BAD_REQUEST)
 
     try:
         city = City.objects.get(pk=city_id)
-        trip = Trip(trip_name=trip_name, city=city, start_date=start_date)
+        trip = Trip(trip_name=trip_name, city=city, start_date_tx=start_date_tx)
         trip.save()
         trip.users.add(request.user)
     except Exception as e:
