@@ -1,11 +1,12 @@
+from email.utils import parseaddr
+
+from django.contrib.auth.models import User
+from rest_framework import status
 from rest_framework.decorators import permission_classes, api_view
 from rest_framework.permissions import AllowAny
 from rest_framework.response import Response
-from rest_framework import status
-from django.contrib.auth.models import User
 
-from email.utils import parseaddr
-import string
+from api.modules.users.validators import validate_password, validate_email
 
 
 @api_view(['POST'])
@@ -19,7 +20,7 @@ def sign_up(request):
     """
     firstname = request.POST.get('firstname', None)
     lastname = request.POST.get('lastname', None)
-    username = parseaddr(request.POST.get('email', None))[1]
+    username = parseaddr(request.POST.get('email', None))[1].lower()
     password = request.POST.get('password', None)
 
     if not firstname or not lastname or not username or not password:
@@ -27,11 +28,11 @@ def sign_up(request):
         error_message = "Missing parameters in request. Send firstname, lastname, email, password"
         return Response(error_message, status=status.HTTP_400_BAD_REQUEST)
 
-    if '@' not in username:
+    if not validate_email(username):
         error_message = "Invalid email Id"
         return Response(error_message, status=status.HTTP_400_BAD_REQUEST)
 
-    if not validatePassword(password):
+    if not validate_password(password):
         error_message = "Invalid Password"
         return Response(error_message, status=status.HTTP_400_BAD_REQUEST)
 
@@ -54,28 +55,14 @@ def sign_up(request):
     return Response(success_message, status=status.HTTP_201_CREATED)
 
 
-def long_enough(pw):
-    # Password must be at least length 8
-    return len(pw) >= 8
-
-
-def has_letter(pw):
-    # Password must contain a lowercase letter
-    return any(character.isalpha() for character in pw)
-
-
-def has_numeric(pw):
-    # Password must contain a digit
-    return len(set(string.digits).intersection(pw)) > 0
-
-
-def has_special(pw):
-    # Password must contain a special character
-    return len(set(string.punctuation).intersection(pw)) > 0
-
-
-def validatePassword(pw, tests=[long_enough, has_letter, has_numeric, has_special]):
-    for test in tests:
-        if not test(pw):
-            return False
-    return True
+@api_view(['GET'])
+def get_user(request, email):
+    filtered_users = User.objects.filter(is_staff=False, is_superuser=False, username__startswith=email)
+    response = []
+    for user in filtered_users:
+        response.append({
+            'email': user.username,
+            'firstname': user.first_name,
+            'lastname': user.last_name,
+        })
+    return Response(response)
