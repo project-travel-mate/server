@@ -2,15 +2,18 @@ from django.urls import path
 from django.conf.urls import url
 from rest_framework.authtoken import views as auth_views
 
-from api import views
+from api.modules.users import views as user_views
 from api.modules.city import views as city_views
 from api.modules.weather import views as weather_views
 from api.modules.shopping import views as shopping_views
 
 urlpatterns = [
     # Authentication
-    url(r'^sign-up', views.sign_up, name='sign-up'),
+    url(r'^sign-up', user_views.sign_up, name='sign-up'),
     url(r'^sign-in', auth_views.obtain_auth_token, name='sign-in'),
+
+    # Users
+    path('get-user/<str:email>', user_views.get_user, name='get-user'),
 
     # City APIs
     path('get-all-cities', city_views.get_all_cities, name='get-all-cities'),
