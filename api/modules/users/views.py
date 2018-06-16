@@ -6,6 +6,7 @@ from rest_framework.decorators import permission_classes, api_view
 from rest_framework.permissions import AllowAny
 from rest_framework.response import Response
 
+from api.modules.users.serializers import UserSerializer
 from api.modules.users.validators import validate_password, validate_email
 
 
@@ -57,12 +58,6 @@ def sign_up(request):
 
 @api_view(['GET'])
 def get_user(request, email):
-    filtered_users = User.objects.filter(is_staff=False, is_superuser=False, username__startswith=email)
-    response = []
-    for user in filtered_users:
-        response.append({
-            'email': user.username,
-            'firstname': user.first_name,
-            'lastname': user.last_name,
-        })
-    return Response(response)
+    users = User.objects.filter(is_staff=False, is_superuser=False, username__startswith=email)[:5]
+    serializer = UserSerializer(users, many=True)
+    return Response(serializer.data)
