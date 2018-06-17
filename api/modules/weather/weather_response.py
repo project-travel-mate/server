@@ -1,5 +1,15 @@
 class WeatherResponse(object):
+    """
+    Specifies the response to be sent for one weather object.
+    """
+
     def __init__(self, *args, **kwargs):
+        """
+        Set values for object.
+
+        :param args:
+        :param kwargs:
+        """
         self.temp = kwargs.get("temp", None)
         self.temp_units = kwargs.get("temp_units", "C")
 
@@ -15,4 +25,8 @@ class WeatherResponse(object):
         self.pressure_units = kwargs.get("pressure_units", "hPa")
 
     def to_json(self):
+        """
+        Return WeatherResponse object as python dictionary.
+        :return:
+        """
         return self.__dict__

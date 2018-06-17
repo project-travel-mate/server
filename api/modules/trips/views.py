@@ -9,6 +9,12 @@ from api.modules.trips.serializers import TripSerializer
 
 @api_view(['POST'])
 def add_trip(request):
+    """
+    Add a trip with current user as a default member to it
+    :param request:
+    :return: 400 if incorrect parameters are sent or database request failed
+    :return: 201 successful
+    """
     trip_name = request.POST.get('trip_name', None)
     start_date_tx = request.POST.get('start_date_tx', None)
     city_id = request.POST.get('city_id', None)
@@ -33,6 +39,14 @@ def add_trip(request):
 
 @api_view(['GET'])
 def get_trip(request, trip_id):
+    """
+    Returns a trip using 'trip_id'
+    :param request:
+    :param trip_id:
+    :return: 401 if user is not a member of this specific trip
+    :return: 404 if invalid trip id is sent
+    :return: 200 successful
+    """
     try:
         trip = Trip.objects.get(pk=trip_id)
         if request.user not in trip.users.all():
@@ -46,6 +60,12 @@ def get_trip(request, trip_id):
 
 @api_view(['GET'])
 def get_all_trips(request, no_of_trips=10):
+    """
+    Returns a list of all the trips for a given user
+    :param request:
+    :param no_of_trips: default 10
+    :return: 200 successful
+    """
     trips = Trip.objects.filter(users=request.user)[:no_of_trips]
     serializer = TripSerializer(trips, many=True)
     return Response(serializer.data)
@@ -53,6 +73,15 @@ def get_all_trips(request, no_of_trips=10):
 
 @api_view(['GET'])
 def add_friend_to_trip(request, trip_id, user_id):
+    """
+    Associates a user to existing trip
+    :param request:
+    :param trip_id:
+    :param user_id:
+    :return: 400 if trip or user does not exist or user is already associated with the trip
+    :return: 401 if current user is not associated with the specific trip
+    :return: 200 successful
+    """
     try:
         trip = Trip.objects.get(pk=trip_id)
         if request.user not in trip.users.all():

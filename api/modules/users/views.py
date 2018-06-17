@@ -17,7 +17,8 @@ def sign_up(request):
     Adds a new user to database
     Note: client's email is stored as username in database (NO explicit difference in email and username)
     :param request: contains first name, last name, email Id (username) and password
-    :return:
+    :return: 400 if incorrect parameters are sent or email ID already exists
+    :return: 201 successful
     """
     firstname = request.POST.get('firstname', None)
     lastname = request.POST.get('lastname', None)
@@ -58,6 +59,12 @@ def sign_up(request):
 
 @api_view(['GET'])
 def get_user(request, email):
+    """
+    Returns user object using user email address
+    :param request:
+    :param email:
+    :return: 200 successful
+    """
     users = User.objects.filter(is_staff=False, is_superuser=False, username__startswith=email)[:5]
     serializer = UserSerializer(users, many=True)
     return Response(serializer.data)
