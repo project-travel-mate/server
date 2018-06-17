@@ -43,6 +43,19 @@ def get_city(request, city_id):
 
 
 @api_view(['GET'])
+def get_city_by_name(request, city_prefix):
+    """
+    Returns a list of cities that starts with the given city prefix
+    :param request:
+    :param city_prefix:
+    :return:
+    """
+    cities = City.objects.filter(city_name__istartswith=city_prefix)[:5]
+    serializer = CitySerializer(cities, many=True)
+    return Response(serializer.data)
+
+
+@api_view(['GET'])
 def get_all_city_images(request, city_id):
     """
     Returns a list of all the images for a given city id
