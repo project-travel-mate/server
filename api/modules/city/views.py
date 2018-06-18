@@ -7,7 +7,7 @@ from rest_framework.response import Response
 from api.modules.city.constants import TWITTER_CONSUMER_KEY, TWITTER_OAUTH_TOKEN_SECRET, TWITTER_OAUTH_TOKEN, \
     TWITTER_CONSUMER_SECRET, TWITTER_API_URL
 from api.modules.city.model import City, CityImage, CityFact
-from api.modules.city.serializers import CitySerializer, CityImageSerializer, CityFactSerializer
+from api.modules.city.serializers import CitySerializer, CityImageSerializer, CityFactSerializer, CityAutocompleteSerializer
 
 
 @api_view(['GET'])
@@ -112,3 +112,18 @@ def get_city_trends(request, city_id):
         return Response(str(e), status=status.HTTP_503_SERVICE_UNAVAILABLE)
 
     return Response(response)
+
+
+@api_view(['GET'])
+def get_cities_autocomplete(request, query):
+    """
+    Returns a list of related cities on the basis of input query
+    :param request:
+    :param query:
+    :return:
+    """
+    cities = City.objects.filter(city_name__istartswith=query)[:5]
+
+    if request.method == 'GET':
+        serializer = CityAutocompleteSerializer(cities, many=True)
+        return Response(serializer.data)

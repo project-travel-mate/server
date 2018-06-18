@@ -14,6 +14,7 @@ urlpatterns = [
 
     # City APIs
     path('get-all-cities/<int:no_of_cities>', city_views.get_all_cities, name='get-all-cities'),
+    path('get-cities-autocomplete/<str:query>', city_views.get_cities_autocomplete, name='get-cities-autocomplete'),
     path('get-city/<int:city_id>', city_views.get_city, name='get-city'),
     path('get-city-images/<int:city_id>', city_views.get_all_city_images, name='get-city-images'),
     path('get-city-facts/<int:city_id>', city_views.get_all_city_facts, name='get-city-facts'),

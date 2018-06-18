@@ -8,6 +8,12 @@ class CitySerializer(serializers.ModelSerializer):
         fields = ('id', 'city_name', 'description', 'latitude', 'longitude', 'image')
 
 
+class CityAutocompleteSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = City
+        fields = ('id', 'city_name')
+
+
 class CityImageSerializer(serializers.ModelSerializer):
     city_id = serializers.RelatedField(source='city.city_id', read_only=True)
 
