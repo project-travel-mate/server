@@ -112,18 +112,3 @@ def get_city_trends(request, city_id):
         return Response(str(e), status=status.HTTP_503_SERVICE_UNAVAILABLE)
 
     return Response(response)
-
-
-@api_view(['GET'])
-def get_cities_autocomplete(request, query):
-    """
-    Returns a list of related cities on the basis of input query
-    :param request:
-    :param query:
-    :return:
-    """
-    cities = City.objects.filter(city_name__istartswith=query)[:5]
-
-    if request.method == 'GET':
-        serializer = CityAutocompleteSerializer(cities, many=True)
-        return Response(serializer.data)
