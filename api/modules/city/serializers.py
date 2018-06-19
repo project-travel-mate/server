@@ -1,17 +1,11 @@
 from rest_framework import serializers
-from api.modules.city.model import City, CityImage, CityFact
+from api.models import City, CityImage, CityFact
 
 
 class CitySerializer(serializers.ModelSerializer):
     class Meta:
         model = City
         fields = ('id', 'city_name', 'description', 'latitude', 'longitude', 'image')
-
-
-class CityAutocompleteSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = City
-        fields = ('id', 'city_name')
 
 
 class CityImageSerializer(serializers.ModelSerializer):
