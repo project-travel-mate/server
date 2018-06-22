@@ -68,3 +68,16 @@ def get_user(request, email):
     users = User.objects.filter(is_staff=False, is_superuser=False, username__startswith=email)[:5]
     serializer = UserSerializer(users, many=True)
     return Response(serializer.data)
+
+
+@api_view(['GET'])
+def get_user_by_id(request, user_id):
+    """
+    Returns user object using user id
+    :param request:
+    :param user_id:
+    :return: 200 successful
+    """
+    user = User.objects.get(id=user_id)
+    serializer = UserSerializer(user)
+    return Response(serializer.data)
