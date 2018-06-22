@@ -69,6 +69,7 @@ def get_user(request, email):
     serializer = UserSerializer(users, many=True)
     return Response(serializer.data)
 
+
 @api_view(['GET'])
 def get_user_by_id(request, user_id):
     """
