@@ -18,9 +18,10 @@ def get_all_cities(request, no_of_cities=8):
     :param no_of_cities: (default count: 8)
     :return: 200 successful
     """
-    cities = City.objects.all().order_by('-id')[:no_of_cities]
-    serializer = CitySerializer(cities, many=True)
-    return Response(serializer.data)
+    if request.method == 'GET':
+        cities = City.objects.all().order_by('-id')[:no_of_cities]
+        serializer = CitySerializer(cities, many=True)
+        return Response(serializer.data)
 
 
 @api_view(['GET'])
