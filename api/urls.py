@@ -16,7 +16,7 @@ urlpatterns = [
     # Users
     path('get-user/<int:user_id>', user_views.get_user_by_id, name='get-user-by-id'),
     path('get-user/<str:email>', user_views.get_user, name='get-user'),
-    
+
     # City APIs
     path('get-all-cities/<int:no_of_cities>', city_views.get_all_cities, name='get-all-cities'),
     path('get-city/<int:city_id>', city_views.get_city, name='get-city'),
