@@ -7,7 +7,7 @@ from rest_framework.response import Response
 from api.modules.city.constants import TWITTER_CONSUMER_KEY, TWITTER_OAUTH_TOKEN_SECRET, TWITTER_OAUTH_TOKEN, \
     TWITTER_CONSUMER_SECRET, TWITTER_API_URL
 from api.models import City, CityFact, CityImage
-from api.modules.city.serializers import CitySerializer, CityImageSerializer, CityFactSerializer
+from api.modules.city.serializers import AllCitiesSerializer, CitySerializer, CityImageSerializer, CityFactSerializer
 
 
 @api_view(['GET'])
@@ -19,7 +19,7 @@ def get_all_cities(request, no_of_cities=8):
     :return: 200 successful
     """
     cities = City.objects.all().order_by('-id')[:no_of_cities]
-    serializer = CitySerializer(cities, many=True)
+    serializer = AllCitiesSerializer(cities, many=True)
     return Response(serializer.data)
 
 
@@ -50,7 +50,7 @@ def get_city_by_name(request, city_prefix):
     :return: 200 successful
     """
     cities = City.objects.filter(city_name__istartswith=city_prefix)[:5]
-    serializer = CitySerializer(cities, many=True)
+    serializer = AllCitiesSerializer(cities, many=True)
     return Response(serializer.data)
 
 
