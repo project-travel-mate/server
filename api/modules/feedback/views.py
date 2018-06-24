@@ -13,15 +13,20 @@ def add_feedback(request):
     :return: 400 if incorrect parameters are sent or database request failed
     :return: 201 successful
     """
-    text = request.POST.get('text', None)
+    feedback_text = request.POST.get('text', None)
+    feedback_type = request.POST.get('type', None)
 
-    if not text:
+    if not feedback_text or not feedback_type:
         # incorrect request received
-        error_message = "Missing parameters in request. Send feedback text"
+        error_message = "Missing parameters in request. Send text, type"
         return Response(error_message, status=status.HTTP_400_BAD_REQUEST)
 
     # creating new feedback
-    Feedback.objects.create(user=request.user, text=text)
+    Feedback.objects.create(
+        user=request.user,
+        text=feedback_text,
+        type=feedback_type,
+    )
 
     success_message = "Sucessfully added new feedback."
     return Response(success_message, status=status.HTTP_201_CREATED)
