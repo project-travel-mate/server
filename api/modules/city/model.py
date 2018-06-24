@@ -18,5 +18,7 @@ class CityImage(models.Model):
 
 
 class CityFact(models.Model):
-    city = models.ForeignKey('City', on_delete=models.CASCADE)
+    city = models.ForeignKey('City', related_name="facts", on_delete=models.CASCADE)
     fact = models.TextField(null=False, blank=False)
+    source_text = models.TextField(null=False, blank=False)
+    source_url = models.TextField(null=False, blank=False)
