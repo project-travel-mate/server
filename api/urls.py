@@ -14,6 +14,7 @@ urlpatterns = [
     url(r'^sign-in', auth_views.obtain_auth_token, name='sign-in'),
 
     # Users
+    path('get-user/<int:user_id>', user_views.get_user_by_id, name='get-user-by-id'),
     path('get-user/<str:email>', user_views.get_user, name='get-user'),
 
     # City APIs
