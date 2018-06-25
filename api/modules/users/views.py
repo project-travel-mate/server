@@ -81,3 +81,25 @@ def get_user_by_id(request, user_id):
     user = User.objects.get(id=user_id)
     serializer = UserSerializer(user)
     return Response(serializer.data)
+
+
+@api_view(['POST'])
+def update_profile_image(request):
+    """
+    Add a profile image for user
+    :param request: contain profile_image_url
+    :return: 400 if incorrect parameters are sent
+    :return: 201 successful
+    """
+    profile_image_url = request.POST.get('profile_image_url')
+    if not profile_image_url:
+        # incorrect request received
+        error_message = "Missing parameters in request. Send profile_image_url"
+        return Response(error_message, status=status.HTTP_400_BAD_REQUEST)
+
+    user = request.user
+    if not hasattr(user, 'profile'):
+        user.save()  # to handle RelatedObjectDoenNotExist exception on existing users
+    user.profile.profile_image = profile_image_url
+    user.save()
+    return Response(None, status=status.HTTP_200_OK)
