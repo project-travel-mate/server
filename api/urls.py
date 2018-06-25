@@ -17,6 +17,7 @@ urlpatterns = [
     # Users
     path('get-user/<int:user_id>', user_views.get_user_by_id, name='get-user-by-id'),
     path('get-user/<str:email>', user_views.get_user, name='get-user'),
+    path('update-profile-image', user_views.update_profile_image, name='update-profile-image'),
 
     # City APIs
     path('get-all-cities', city_views.get_all_cities, name='get-all-cities'),
