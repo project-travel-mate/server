@@ -76,9 +76,14 @@ def get_user_by_id(request, user_id):
     Returns user object using user id
     :param request:
     :param user_id:
+    :return: 400 if incorrect user ID is sent
     :return: 200 successful
     """
-    user = User.objects.get(id=user_id)
+    try:
+        user = User.objects.get(pk=user_id)
+    except User.DoesNotExist:
+        error_message = "Invalid user ID"
+        return Response(error_message, status=status.HTTP_400_BAD_REQUEST)
     serializer = UserSerializer(user)
     return Response(serializer.data)
 
