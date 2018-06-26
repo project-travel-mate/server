@@ -3,9 +3,14 @@ from api.models import City, CityImage, CityFact
 
 
 class CitySerializer(serializers.ModelSerializer):
+    facts_count = serializers.SerializerMethodField()
+
     class Meta:
         model = City
-        fields = ('id', 'city_name', 'description', 'latitude', 'longitude', 'image')
+        fields = ('id', 'city_name', 'description', 'latitude', 'longitude', 'image', 'facts_count')
+
+    def get_facts_count(self, obj):
+        return obj.facts.count()
 
 
 class CityImageSerializer(serializers.ModelSerializer):
@@ -21,4 +26,4 @@ class CityFactSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = CityFact
-        fields = ('id', 'city_id', 'fact')
+        fields = ('id', 'city_id', 'fact', 'source_text', 'source_url')
