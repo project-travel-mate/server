@@ -27,7 +27,9 @@ def get_city_weather(request, city_name):
         response = WeatherResponse(temp=to_celsius(api_response_json['main']['temp']),
                                    max_temp=to_celsius(api_response_json['main']['temp_max']),
                                    min_temp=to_celsius(api_response_json['main']['temp_min']),
-                                   description=api_response_json['weather'][0]['main'],
+                                   code=api_response_json['weather'][0]['id'],
+                                   condensed=api_response_json['weather'][0]['main'],
+                                   description=api_response_json['weather'][0]['description'],
                                    icon=icon_to_url(api_response_json['weather'][0]['icon']),
                                    humidity=api_response_json['main']['humidity'],
                                    pressure=api_response_json['main']['pressure'])
@@ -63,7 +65,9 @@ def get_multiple_days_weather(request, num_of_days, city_name):
         for result in api_response_json['list']:
             response.append(WeatherResponse(max_temp=to_celsius(result['temp']['max']),
                                             min_temp=to_celsius(result['temp']['min']),
-                                            description=result['weather'][0]['main'],
+                                            code=result['weather'][0]['id'],
+                                            condensed=result['weather'][0]['main'],
+                                            description=result['weather'][0]['description'],
                                             icon=icon_to_url(result['weather'][0]['icon']),
                                             humidity=result['humidity'],
                                             pressure=result['pressure']).to_json())
