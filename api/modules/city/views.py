@@ -1,4 +1,6 @@
 import requests
+import requests_cache
+from datetime import timedelta
 from requests_oauthlib import OAuth1
 from rest_framework import status
 from rest_framework.decorators import api_view
@@ -8,6 +10,9 @@ from api.modules.city.constants import TWITTER_CONSUMER_KEY, TWITTER_OAUTH_TOKEN
     TWITTER_CONSUMER_SECRET, TWITTER_API_URL
 from api.models import City, CityFact, CityImage
 from api.modules.city.serializers import AllCitiesSerializer, CitySerializer, CityImageSerializer, CityFactSerializer
+
+hour_difference = timedelta(hours=1)
+requests_cache.install_cache(expire_after=hour_difference)
 
 
 @api_view(['GET'])

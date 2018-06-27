@@ -1,4 +1,6 @@
 import requests
+import requests_cache
+from datetime import timedelta
 from rest_framework import status
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
@@ -6,6 +8,9 @@ from rest_framework.response import Response
 from api.modules.weather.constants import OPEN_WEATHER_API_URL, OPEN_FORECAST_API_URL
 from api.modules.weather.utils import to_celsius, icon_to_url
 from api.modules.weather.weather_response import WeatherResponse
+
+hour_difference = timedelta(hours=1)
+requests_cache.install_cache(expire_after=hour_difference)
 
 
 @api_view(['GET'])

@@ -1,10 +1,15 @@
 import requests
+import requests_cache
+from datetime import timedelta
 from rest_framework import status
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
 
 from api.modules.shopping.constants import EBAY_API_URL
 from api.modules.shopping.shopping_item import ShoppingItem
+
+day_difference = timedelta(days=1)
+requests_cache.install_cache(expire_after=day_difference)
 
 
 @api_view(['GET'])
