@@ -12,7 +12,7 @@ class UserSerializer(serializers.ModelSerializer):
 
     class Meta(object):
         model = User
-        fields = ('username', 'first_name', 'last_name', 'id', 'image')
+        fields = ('username', 'first_name', 'last_name', 'id', 'image','date_joined')
 
     def get_image(self, obj):
         if hasattr(obj, 'profile'):
