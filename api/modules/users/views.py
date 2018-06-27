@@ -58,7 +58,19 @@ def sign_up(request):
 
 
 @api_view(['GET'])
-def get_user(request, email):
+def get_user_profile(request):
+    """
+    Returns user object using user email address
+    :param request:
+    :param email:
+    :return: 200 successful
+    """
+    serializer = UserSerializer(request.user)
+    return Response(serializer.data)
+
+
+@api_view(['GET'])
+def get_users_by_email(request, email):
     """
     Returns user object using user email address
     :param request:
