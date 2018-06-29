@@ -58,7 +58,19 @@ def sign_up(request):
 
 
 @api_view(['GET'])
-def get_user(request, email):
+def get_user_profile(request):
+    """
+    Returns user object using user email address
+    :param request:
+    :param email:
+    :return: 200 successful
+    """
+    serializer = UserSerializer(request.user)
+    return Response(serializer.data)
+
+
+@api_view(['GET'])
+def get_users_by_email(request, email):
     """
     Returns user object using user email address
     :param request:
@@ -76,8 +88,56 @@ def get_user_by_id(request, user_id):
     Returns user object using user id
     :param request:
     :param user_id:
+    :return: 400 if incorrect user ID is sent
     :return: 200 successful
     """
-    user = User.objects.get(id=user_id)
+    try:
+        user = User.objects.get(pk=user_id)
+    except User.DoesNotExist:
+        error_message = "Invalid user ID"
+        return Response(error_message, status=status.HTTP_400_BAD_REQUEST)
     serializer = UserSerializer(user)
     return Response(serializer.data)
+
+
+@api_view(['POST'])
+def update_profile_image(request):
+    """
+    Add a profile image for user
+    :param request: contain profile_image_url
+    :return: 400 if incorrect parameters are sent
+    :return: 201 successful
+    """
+    profile_image_url = request.POST.get('profile_image_url')
+    if not profile_image_url:
+        # incorrect request received
+        error_message = "Missing parameters in request. Send profile_image_url"
+        return Response(error_message, status=status.HTTP_400_BAD_REQUEST)
+
+    user = request.user
+    if not hasattr(user, 'profile'):
+        user.save()  # to handle RelatedObjectDoenNotExist exception on existing users
+    user.profile.profile_image = profile_image_url
+    user.save()
+    return Response(None, status=status.HTTP_200_OK)
+
+
+@api_view(['POST'])
+def update_user_details(request):
+    updated_firstname = request.POST.get('firstname', None)
+    updated_lastname = request.POST.get('lastname', None)
+
+    if not updated_firstname or not updated_lastname:
+        error_message = "Missing parameters in request. Send firstname, lastname"
+        return Response(error_message, status=status.HTTP_400_BAD_REQUEST)
+
+    try:
+        user = request.user
+        user.first_name = updated_firstname
+        user.last_name = updated_lastname
+        user.save()
+    except Exception as e:
+        error_message = "User update failed due to {0}".format(str(e))
+        return Response(error_message, status=status.HTTP_400_BAD_REQUEST)
+
+    return Response(status=status.HTTP_200_OK)

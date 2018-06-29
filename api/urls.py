@@ -15,8 +15,11 @@ urlpatterns = [
     url(r'^sign-in', auth_views.obtain_auth_token, name='sign-in'),
 
     # Users
+    path('get-user', user_views.get_user_profile, name='get-user'),
     path('get-user/<int:user_id>', user_views.get_user_by_id, name='get-user-by-id'),
-    path('get-user/<str:email>', user_views.get_user, name='get-user'),
+    path('get-user/<str:email>', user_views.get_users_by_email, name='get-users-by-email'),
+    path('update-user-details', user_views.update_user_details, name='update-user-details'),
+    path('update-profile-image', user_views.update_profile_image, name='update-profile-image'),
 
     # City APIs
     path('get-all-cities', city_views.get_all_cities, name='get-all-cities'),

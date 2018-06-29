@@ -16,6 +16,8 @@ class WeatherResponse(object):
         self.max_temp = kwargs.get("max_temp", None)
         self.min_temp = kwargs.get("min_temp", None)
 
+        self.code = kwargs.get("code", None)
+        self.condensed = kwargs.get("condensed", None)
         self.description = kwargs.get("description", None)
         self.icon = kwargs.get("icon", None)
 
