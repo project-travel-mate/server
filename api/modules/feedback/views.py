@@ -5,7 +5,7 @@ from rest_framework.response import Response
 from api.models import Feedback
 from django.contrib.auth.models import User
 
-from api.modules.feedback.serializers import FeedbackSerializer
+from api.modules.feedback.serializers import FeedbackSerializer,FeedbackIDSerializer
 
 @api_view(['POST'])
 def add_feedback(request):
@@ -48,8 +48,10 @@ def get_feedback_all(request):
 @api_view(['GET'])
 def get_feedback_id(request,feedback_id):
     """
-    This api recieves the call to return the feedback by a certain feedback id
-
+    Returns the feedback pertaining to a certain feedback id
+    :param request:
+    :return: 400 if incorrect parameters are sent or database request failed
+    :return: 201 successful
     """
     try:
         user_feedback = Feedback.objects.get(pk=feedback_id)
@@ -58,5 +60,5 @@ def get_feedback_id(request,feedback_id):
         error_message = "Feedback doesnt exist"
         return Response(error_message,status = status.HTTP_404_NOT_FOUND)
     
-    serializer = FeedbackSerializer(user_feedback)
+    serializer = FeedbackIDSerializer(user_feedback)
     return Response(serializer.data)
