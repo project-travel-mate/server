@@ -3,6 +3,8 @@ from rest_framework.decorators import api_view
 from rest_framework.response import Response
 
 from api.models import Feedback
+from django.contrib.auth.models import User
+
 from api.modules.feedback.serializers import FeedbackSerializer
 
 @api_view(['POST'])
@@ -38,6 +40,23 @@ def get_feedback_all(request):
     descending order of date
     """
     person = request.user
-    user_feedback = Feedback.objects.filter(user=person).order_by('-created')
+    person_id = User.objects.filter(username=person).only('id')
+    user_feedback = Feedback.objects.filter(user_id=person_id)
+    serializer = FeedbackSerializer(user_feedback)
+    return Response(serializer.data)
+
+@api_view(['GET'])
+def get_feedback_id(request,feedback_id):
+    """
+    This api recieves the call to return the feedback by a certain feedback id
+
+    """
+    try:
+        user_feedback = Feedback.objects.get(pk=feedback_id)
+
+    except Feedback.DoesNotExist:
+        error_message = "Feedback doesnt exist"
+        return Response(error_message,status = status.HTTP_404_NOT_FOUND)
+    
     serializer = FeedbackSerializer(user_feedback)
     return Response(serializer.data)
