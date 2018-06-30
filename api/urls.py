@@ -47,6 +47,6 @@ urlpatterns = [
 
     # Feedback
     path('add-feedback',  feedback_views.add_feedback, name="add-feedback"),
-    path('user-feedback', feedback_views.get_feedback_all, name="user-feedback"),
-    path('get-feedback-id/<int:feedback_id>', feedback_views.get_feedback_id, name="get-feedback-id"),
+    path('get-all-user-feedback', feedback_views.get_all_user_feedback, name="get-all-user-feedback"),
+    path('get-feedback/<int:feedback_id>', feedback_views.get_feedback, name="get-feedback"),
 ]

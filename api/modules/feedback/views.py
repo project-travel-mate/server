@@ -3,7 +3,7 @@ from rest_framework.decorators import api_view
 from rest_framework.response import Response
 
 from api.models import Feedback
-from api.modules.feedback.serializers import FeedbackSerializer, FeedbackIDSerializer
+from api.modules.feedback.serializers import FeedbackSerializer, FeedbackCondensedSerializer
 
 
 @api_view(['POST'])
@@ -34,7 +34,7 @@ def add_feedback(request):
 
 
 @api_view(['GET'])
-def get_feedback_id(request, feedback_id):
+def get_feedback(request, feedback_id):
     """
     Returns the feedback pertaining to a certain feedback id
     :param request:
@@ -45,10 +45,9 @@ def get_feedback_id(request, feedback_id):
         user_feedback = Feedback.objects.get(pk=feedback_id)
 
     except Feedback.DoesNotExist:
-        error_message = "Feedback doesnt exist"
-        return Response(error_message, status=status.HTTP_404_NOT_FOUND)
+        return Response(status=status.HTTP_404_NOT_FOUND)
 
-    serializer = FeedbackIDSerializer(user_feedback)
+    serializer = FeedbackCondensedSerializer(user_feedback)
     return Response(serializer.data)
 
 
@@ -57,18 +56,16 @@ has to be specified in both the serializer as well as here. """
 
 
 @api_view(['GET'])
-def get_feedback_all(request):
+def get_all_user_feedback(request):
     """
     Returns a list of all the feedbacks for a given user
     :param request:
-    :param no_of_trips: default 10
     :return: 200 successful
     """
     try:
-        person = Feedback.objects.filter(user=request.user)
+        feedbacks = Feedback.objects.filter(user=request.user)
     except Feedback.DoesNotExist:
-        error_message = "Feedback doesnt exist"
-        return Response(error_message, status=status.HTTP_404_NOT_FOUND)
-
-    serializer = FeedbackSerializer(person, many=True)
+        return Response(status=status.HTTP_404_NOT_FOUND)
+        
+    serializer = FeedbackSerializer(feedbacks, many=True)
     return Response(serializer.data)
