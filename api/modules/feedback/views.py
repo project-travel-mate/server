@@ -39,20 +39,14 @@ def get_feedback(request, feedback_id):
     Returns the feedback pertaining to a certain feedback id
     :param request:
     :return: 400 if incorrect parameters are sent or database request failed
-<<<<<<< HEAD
     :return: 401 if authorization failed
     :return: 404 if not found
-=======
->>>>>>> 6a54625458d5a57de20f45f712b3e05aed82b49d
     :return: 201 successful
     """
     try:
         user_feedback = Feedback.objects.get(pk=feedback_id)
-<<<<<<< HEAD
         if request.user is not user_feedback.user:
             return Response(status=status.HTTP_401_UNAUTHORIZED)
-=======
->>>>>>> 6a54625458d5a57de20f45f712b3e05aed82b49d
 
     except Feedback.DoesNotExist:
         return Response(status=status.HTTP_404_NOT_FOUND)
@@ -74,11 +68,6 @@ def get_all_user_feedback(request):
     """
     try:
         feedbacks = Feedback.objects.get(user=request.user)
-<<<<<<< HEAD
-=======
-        if request.user not in feedbacks.user.all():
-            return Response(status=status.HTTP_401_UNAUTHORIZED)
->>>>>>> 6a54625458d5a57de20f45f712b3e05aed82b49d
 
     except Feedback.DoesNotExist:
         return Response(status=status.HTTP_404_NOT_FOUND)
