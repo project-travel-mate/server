@@ -16,7 +16,7 @@ class FeedbackCondensedSerializer(serializers.ModelSerializer):
 
 
 class FeedbackSerializer(serializers.ModelSerializer):
-    users = UserSerializer(many=True, read_only=True)
+    users = UserSerializer(read_only=True)
 
     class Meta:
         model = Feedback

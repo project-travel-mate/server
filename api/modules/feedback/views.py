@@ -63,9 +63,9 @@ def get_all_user_feedback(request):
     :return: 200 successful
     """
     try:
-        feedbacks = Feedback.objects.filter(user=request.user)
+        feedbacks = Feedback.objects.get(user=request.user)
     except Feedback.DoesNotExist:
         return Response(status=status.HTTP_404_NOT_FOUND)
-        
-    serializer = FeedbackSerializer(feedbacks, many=True)
+
+    serializer = FeedbackSerializer(feedbacks)
     return Response(serializer.data)
