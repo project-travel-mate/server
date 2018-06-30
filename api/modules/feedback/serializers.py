@@ -6,10 +6,11 @@ from api.modules.users.serializers import UserSerializer
 
 
 class FeedbackCondensedSerializer(serializers.ModelSerializer):
+    user = UserSerializer(read_only=True)
 
     class Meta:
         model = Feedback
-        fields = ('id', 'type', 'created', 'user_id')
+        fields = ('id', 'type', 'created', 'user')
 
 
 """ This is different because we have a user column which is a foreign key having one to one relation """

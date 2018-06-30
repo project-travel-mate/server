@@ -41,8 +41,9 @@ def get_feedback(request, feedback_id):
     :return: 400 if incorrect parameters are sent or database request failed
     :return: 401 if authorization failed
     :return: 404 if not found
-    :return: 201 successful
+    :return: 200 successful
     """
+
     try:
         user_feedback = Feedback.objects.get(pk=feedback_id)
         if request.user is not user_feedback.user:
@@ -53,10 +54,6 @@ def get_feedback(request, feedback_id):
 
     serializer = FeedbackCondensedSerializer(user_feedback)
     return Response(serializer.data)
-
-
-""" The many specified here is important because we have a one to many relation and
-has to be specified in both the serializer as well as here. """
 
 
 @api_view(['GET'])
