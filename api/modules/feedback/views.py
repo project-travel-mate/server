@@ -34,18 +34,6 @@ def add_feedback(request):
     return Response(success_message, status=status.HTTP_201_CREATED)
 
 @api_view(['GET'])
-def get_feedback_all(request):
-    """
-    This api recieves the call to return the feedback by a curent user in
-    descending order of date
-    """
-    person = request.user
-    person_id = User.objects.filter(username=person).only('id')
-    user_feedback = Feedback.objects.filter(user_id=person_id)
-    serializer = FeedbackSerializer(user_feedback)
-    return Response(serializer.data)
-
-@api_view(['GET'])
 def get_feedback_id(request,feedback_id):
     """
     Returns the feedback pertaining to a certain feedback id
@@ -61,4 +49,25 @@ def get_feedback_id(request,feedback_id):
         return Response(error_message,status = status.HTTP_404_NOT_FOUND)
     
     serializer = FeedbackIDSerializer(user_feedback)
+    return Response(serializer.data)
+
+""" The many specified here is important because we have a one to many relation and
+has to be specified in both the serializer as well as here. """
+
+
+@api_view(['GET'])
+def get_feedback_all(request):
+    """
+    Returns a list of all the feedbacks for a given user
+    :param request:
+    :param no_of_trips: default 10
+    :return: 200 successful
+    """
+    try:
+        person = Feedback.objects.filter(user=request.user)
+    except Feedback.DoesNotExist:
+        error_message = "Feedback doesnt exist"
+        return Response(error_message,status=status.HTTP_404_NOT_FOUND)
+        
+    serializer = FeedbackSerializer(person, many=True)
     return Response(serializer.data)
