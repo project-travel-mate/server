@@ -3,7 +3,8 @@ from rest_framework.decorators import api_view
 from rest_framework.response import Response
 
 from api.models import Feedback
-from api.modules.feedback.serializers import FeedbackSerializer
+from api.modules.feedback.serializers import FeedbackSerializer, FeedbackCondensedSerializer
+
 
 @api_view(['POST'])
 def add_feedback(request):
@@ -31,13 +32,45 @@ def add_feedback(request):
     success_message = "Sucessfully added new feedback."
     return Response(success_message, status=status.HTTP_201_CREATED)
 
+
 @api_view(['GET'])
-def get_feedback_all(request):
+def get_feedback(request, feedback_id):
     """
-    This api recieves the call to return the feedback by a curent user in
-    descending order of date
+    Returns the feedback pertaining to a certain feedback id
+    :param request:
+    :return: 400 if incorrect parameters are sent or database request failed
+    :return: 401 if authorization failed
+    :return: 404 if not found
+    :return: 201 successful
     """
-    person = request.user
-    user_feedback = Feedback.objects.filter(user=person).order_by('-created')
-    serializer = FeedbackSerializer(user_feedback)
+    try:
+        user_feedback = Feedback.objects.get(pk=feedback_id)
+        if request.user is not user_feedback.user:
+            return Response(status=status.HTTP_401_UNAUTHORIZED)
+
+    except Feedback.DoesNotExist:
+        return Response(status=status.HTTP_404_NOT_FOUND)
+
+    serializer = FeedbackCondensedSerializer(user_feedback)
+    return Response(serializer.data)
+
+
+""" The many specified here is important because we have a one to many relation and
+has to be specified in both the serializer as well as here. """
+
+
+@api_view(['GET'])
+def get_all_user_feedback(request):
+    """
+    Returns a list of all the feedbacks for a given user
+    :param request:
+    :return: 200 successful
+    """
+    try:
+        feedbacks = Feedback.objects.get(user=request.user)
+
+    except Feedback.DoesNotExist:
+        return Response(status=status.HTTP_404_NOT_FOUND)
+
+    serializer = FeedbackSerializer(feedbacks)
     return Response(serializer.data)
