@@ -46,7 +46,7 @@ urlpatterns = [
     path('add-friend-to-trip/<int:trip_id>/<int:user_id>', trip_views.add_friend_to_trip, name="add-friend-to-trip"),
 
     # Feedback
-    path('add-feedback', feedback_views.add_feedback, name="add-feedback"),
-    path('user-feedback',feedback_views.get_feedback_all,name="user-feedback"),
-    path('get-feedback-id/<int:feedback_id>',feedback_views.get_feedback_id,name="get-feedback-id"),
+    path('add-feedback',  feedback_views.add_feedback, name="add-feedback"),
+    path('user-feedback', feedback_views.get_feedback_all, name="user-feedback"),
+    path('get-feedback-id/<int:feedback_id>', feedback_views.get_feedback_id, name="get-feedback-id"),
 ]

@@ -3,9 +3,8 @@ from rest_framework.decorators import api_view
 from rest_framework.response import Response
 
 from api.models import Feedback
-from django.contrib.auth.models import User
+from api.modules.feedback.serializers import FeedbackSerializer, FeedbackIDSerializer
 
-from api.modules.feedback.serializers import FeedbackSerializer,FeedbackIDSerializer
 
 @api_view(['POST'])
 def add_feedback(request):
@@ -33,8 +32,9 @@ def add_feedback(request):
     success_message = "Sucessfully added new feedback."
     return Response(success_message, status=status.HTTP_201_CREATED)
 
+
 @api_view(['GET'])
-def get_feedback_id(request,feedback_id):
+def get_feedback_id(request, feedback_id):
     """
     Returns the feedback pertaining to a certain feedback id
     :param request:
@@ -46,10 +46,11 @@ def get_feedback_id(request,feedback_id):
 
     except Feedback.DoesNotExist:
         error_message = "Feedback doesnt exist"
-        return Response(error_message,status = status.HTTP_404_NOT_FOUND)
-    
+        return Response(error_message, status=status.HTTP_404_NOT_FOUND)
+
     serializer = FeedbackIDSerializer(user_feedback)
     return Response(serializer.data)
+
 
 """ The many specified here is important because we have a one to many relation and
 has to be specified in both the serializer as well as here. """
@@ -67,7 +68,7 @@ def get_feedback_all(request):
         person = Feedback.objects.filter(user=request.user)
     except Feedback.DoesNotExist:
         error_message = "Feedback doesnt exist"
-        return Response(error_message,status=status.HTTP_404_NOT_FOUND)
-        
+        return Response(error_message, status=status.HTTP_404_NOT_FOUND)
+
     serializer = FeedbackSerializer(person, many=True)
     return Response(serializer.data)
