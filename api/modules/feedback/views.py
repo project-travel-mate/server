@@ -64,6 +64,9 @@ def get_all_user_feedback(request):
     """
     try:
         feedbacks = Feedback.objects.get(user=request.user)
+        if request.user not in feedbacks.user.all():
+            return Response(status=status.HTTP_401_UNAUTHORIZED)
+
     except Feedback.DoesNotExist:
         return Response(status=status.HTTP_404_NOT_FOUND)
 
