@@ -32,6 +32,7 @@ $ sudo -u postgres createdb nomad
 $ sudo -u postgres psql
 psql=# alter user nomad with encrypted password 'pass';
 psql=# grant all privileges on database nomad to nomad ;
+psql=# ALTER USER nomad CREATEDB ;
 ```
 For Windows-
 ```
@@ -41,6 +42,7 @@ postgres=# create database nomad;
 postgres=# create user nomad;
 postgres=# alter user nomad with encrypted password 'pass';
 postgres=# grant all privileges on database nomad to nomad ;
+psql=# ALTER USER nomad CREATEDB ;
 ```
 
 + Database migrations
