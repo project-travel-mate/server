@@ -3,6 +3,7 @@ from rest_framework.decorators import api_view
 from rest_framework.response import Response
 
 from api.models import Feedback
+from api.modules.feedback.serializers import FeedbackSerializer, FeedbackCondensedSerializer
 
 
 @api_view(['POST'])
@@ -30,3 +31,43 @@ def add_feedback(request):
 
     success_message = "Sucessfully added new feedback."
     return Response(success_message, status=status.HTTP_201_CREATED)
+
+
+@api_view(['GET'])
+def get_feedback(request, feedback_id):
+    """
+    Returns the feedback pertaining to a certain feedback id
+    :param request:
+    :return: 400 if incorrect parameters are sent or database request failed
+    :return: 401 if authorization failed
+    :return: 404 if not found
+    :return: 200 successful
+    """
+
+    try:
+        user_feedback = Feedback.objects.get(pk=feedback_id)
+        if request.user is not user_feedback.user:
+            return Response(status=status.HTTP_401_UNAUTHORIZED)
+
+    except Feedback.DoesNotExist:
+        return Response(status=status.HTTP_404_NOT_FOUND)
+
+    serializer = FeedbackCondensedSerializer(user_feedback)
+    return Response(serializer.data)
+
+
+@api_view(['GET'])
+def get_all_user_feedback(request):
+    """
+    Returns a list of all the feedbacks for a given user
+    :param request:
+    :return: 200 successful
+    """
+    try:
+        feedbacks = Feedback.objects.get(user=request.user)
+
+    except Feedback.DoesNotExist:
+        return Response(status=status.HTTP_404_NOT_FOUND)
+
+    serializer = FeedbackSerializer(feedbacks)
+    return Response(serializer.data)
