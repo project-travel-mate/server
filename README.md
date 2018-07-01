@@ -23,6 +23,8 @@ pip install -r requirements.txt
 ```
 + Setup Postgres database and user
 *(assuming Postgres is already installed on system; See [postgres setup instructions](http://postgresguide.com/setup/install.html))*
+
+For Linux-
 ```
 $ sudo -u postgres createuser nomad
 $ sudo -u postgres createdb nomad
@@ -31,6 +33,16 @@ $ sudo -u postgres psql
 psql=# alter user nomad with encrypted password 'pass';
 psql=# grant all privileges on database nomad to nomad ;
 ```
+For Windows-
+```
+The complete path>psql -U postgres -h localhost
+Password:The one given during setup of postgres.
+postgres=# create database nomad;
+postgres=# create user nomad;
+postgres=# alter user nomad with encrypted password 'pass';
+postgres=# grant all privileges on database nomad to nomad ;
+```
+
 + Database migrations
 ```
 python manage.py makemigrations
