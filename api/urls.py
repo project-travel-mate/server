@@ -9,7 +9,6 @@ from api.modules.weather import views as weather_views
 from api.modules.trips import views as trip_views
 from api.modules.feedback import views as feedback_views
 
-
 urlpatterns = [
     # Authentication
     url(r'^sign-up', user_views.sign_up, name='sign-up'),
@@ -45,9 +44,11 @@ urlpatterns = [
     path('get-all-trips', trip_views.get_all_trips, name="get-all-trips"),
     path('get-all-trips/<int:no_of_trips>', trip_views.get_all_trips, name="get-all-trips"),
     path('add-friend-to-trip/<int:trip_id>/<int:user_id>', trip_views.add_friend_to_trip, name="add-friend-to-trip"),
+    path('remove-friend-from-trip/<int:trip_id>/<int:user_id>', trip_views.remove_friend_from_trip,
+         name="remove-friend-from-trip"),
 
     # Feedback
-    path('add-feedback',  feedback_views.add_feedback, name="add-feedback"),
+    path('add-feedback', feedback_views.add_feedback, name="add-feedback"),
     path('get-all-user-feedback', feedback_views.get_all_user_feedback, name="get-all-user-feedback"),
     path('get-feedback/<int:feedback_id>', feedback_views.get_feedback, name="get-feedback"),
 ]
