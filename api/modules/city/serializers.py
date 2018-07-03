@@ -57,4 +57,3 @@ class CityVisitSerializer(serializers.ModelSerializer):
     class Meta:
         model = CityVisitLog
         fields = ['city', 'visit_count']
-
