@@ -28,4 +28,3 @@ class CityVisitLog(models.Model):
     city = models.ForeignKey('City', related_name="logs", on_delete=models.CASCADE)
     user = models.ForeignKey(settings.AUTH_USER_MODEL, related_name='logs', on_delete=models.CASCADE)
     created_at = models.DateTimeField(auto_now_add=True)
-    visit_count = models.IntegerField(default=0)

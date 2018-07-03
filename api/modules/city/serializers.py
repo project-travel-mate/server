@@ -54,6 +54,11 @@ class CityFactSerializer(serializers.ModelSerializer):
 
 
 class CityVisitSerializer(serializers.ModelSerializer):
+    total_trips = serializers.SerializerMethodField()
+
     class Meta:
         model = CityVisitLog
-        fields = ['city', 'visit_count']
+        fields = ['city', 'total_trips']
+
+    def get_total_trips(self, obj):
+        return obj.logs.total_trips
