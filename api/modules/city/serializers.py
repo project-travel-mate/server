@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from api.models import City, CityImage, CityFact
+from api.models import City, CityImage, CityFact, CityVisitLog
 
 
 class AllCitiesSerializer(serializers.ModelSerializer):
@@ -51,3 +51,12 @@ class CityFactSerializer(serializers.ModelSerializer):
     class Meta:
         model = CityFact
         fields = ('id', 'city_id', 'fact', 'source_text', 'source_url')
+
+class CityVisitSerializer(serializers.ModelSerializer):
+    total_visits = serializers.SerializerMethodField()
+    class Meta:
+        model = CityVisitLog
+        fields = ['city', 'total_visits']
+
+    def get_total_visits(self, obj):
+        return obj.logs.total_trips

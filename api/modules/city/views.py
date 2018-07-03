@@ -141,3 +141,13 @@ def get_city_trends(request, city_id):
         return Response(str(e), status=status.HTTP_503_SERVICE_UNAVAILABLE)
 
     return Response(response)
+
+@api_view(['GET'])
+def get_city_visits(request):
+    try:
+        city_visits = CityVisitLog.objects.filter(user = request.user)
+    except CityVisitLog.DoesNotExist:
+        return Response(status=status.HTTP_404_NOT_FOUND)
+
+    serializer = CityVisitSerializer(city_visits, many=True)
+    return Response(serializer.data)
