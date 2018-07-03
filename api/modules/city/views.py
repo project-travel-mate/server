@@ -144,10 +144,20 @@ def get_city_trends(request, city_id):
 
 @api_view(['GET'])
 def get_city_visits(request):
-    try:
-        city_visits = CityVisitLog.objects.filter(user = request.user)
-    except CityVisitLog.DoesNotExist:
-        return Response(status=status.HTTP_404_NOT_FOUND)
+    """
+        Returns a list of cities visited by a user
+        :param request:
+        :return: 404 if invalid user not authenticated
+        :return: 200 successful
+        """
+    if request.user.is_authenticated():
+        try:
+            city_visits = CityVisitLog.objects.filter(user=request.user)
+        except CityVisitLog.DoesNotExist:
+            return Response(status=status.HTTP_404_NOT_FOUND)
 
-    serializer = CityVisitSerializer(city_visits, many=True)
-    return Response(serializer.data)
+        serializer = CityVisitSerializer(city_visits, many=True)
+        return Response(serializer.data)
+
+    error_message = "User needs to be authenticated"
+    return Response(error_message, status = status.HTTP_503_SERVICE_UNAVAILABLE)
