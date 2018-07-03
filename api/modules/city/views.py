@@ -1,6 +1,8 @@
 import requests
 import requests_cache
 from datetime import timedelta
+
+from django.db.models import Count
 from requests_oauthlib import OAuth1
 from rest_framework import status
 from rest_framework.decorators import api_view
@@ -8,7 +10,7 @@ from rest_framework.response import Response
 
 from api.modules.city.constants import TWITTER_CONSUMER_KEY, TWITTER_OAUTH_TOKEN_SECRET, TWITTER_OAUTH_TOKEN, \
     TWITTER_CONSUMER_SECRET, TWITTER_API_URL
-from api.models import City, CityFact, CityImage
+from api.models import City, CityFact, CityImage, CityVisitLog
 from api.modules.city.serializers import AllCitiesSerializer, CitySerializer, CityImageSerializer, CityFactSerializer
 
 hour_difference = timedelta(hours=1)
@@ -18,12 +20,12 @@ requests_cache.install_cache(expire_after=hour_difference)
 @api_view(['GET'])
 def get_all_cities(request, no_of_cities=8):
     """
-    Returns a list of all the cities
+    Returns a list of cities with maximum number of logs (visits)
     :param request:
     :param no_of_cities: (default count: 8)
     :return: 200 successful
     """
-    cities = City.objects.all().order_by('-id')[:no_of_cities]
+    cities = City.objects.annotate(visit_count=Count('logs')).order_by('-visit_count')[:no_of_cities]
     serializer = AllCitiesSerializer(cities, many=True)
     return Response(serializer.data)
 
@@ -41,6 +43,13 @@ def get_city(request, city_id):
         city = City.objects.get(pk=city_id)
     except City.DoesNotExist:
         return Response(status=status.HTTP_404_NOT_FOUND)
+
+    # Add city visit log
+    try:
+        city_visit_log = CityVisitLog(city=city, user=request.user)
+        city_visit_log.save()
+    except Exception as e:
+        pass
 
     serializer = CitySerializer(city)
     return Response(serializer.data)

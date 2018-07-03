@@ -45,10 +45,14 @@ urlpatterns = [
     path('get-all-trips', trip_views.get_all_trips, name="get-all-trips"),
     path('get-all-trips/<int:no_of_trips>', trip_views.get_all_trips, name="get-all-trips"),
     path('add-friend-to-trip/<int:trip_id>/<int:user_id>', trip_views.add_friend_to_trip, name="add-friend-to-trip"),
+    path('remove-friend-from-trip/<int:trip_id>/<int:user_id>', trip_views.remove_friend_from_trip,
+         name="remove-friend-from-trip"),
 
     # Notification
     path('get-notifications', notification_views.get_notifications, name="get-notifications"),
 
     # Feedback
     path('add-feedback', feedback_views.add_feedback, name="add-feedback"),
+    path('get-all-user-feedback', feedback_views.get_all_user_feedback, name="get-all-user-feedback"),
+    path('get-feedback/<int:feedback_id>', feedback_views.get_feedback, name="get-feedback"),
 ]

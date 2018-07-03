@@ -5,10 +5,11 @@ from api.models import City, CityImage, CityFact
 class AllCitiesSerializer(serializers.ModelSerializer):
     image = serializers.SerializerMethodField()
     facts_count = serializers.SerializerMethodField()
+    visit_count = serializers.IntegerField(read_only=True)
 
     class Meta:
         model = City
-        fields = ('id', 'city_name', 'facts_count', 'image')
+        fields = ('id', 'city_name', 'facts_count', 'image', 'visit_count')
 
     def get_image(self, obj):
         if obj.images.count() == 0:
