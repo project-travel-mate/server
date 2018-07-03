@@ -50,6 +50,12 @@ urlpatterns = [
 
     # Notification
     path('get-notifications', notification_views.get_notifications, name="get-notifications"),
+    path('mark-notification/<int:notification_id>',
+         notification_views.mark_notification_as_read,
+         name="mark-notification"),
+    path('mark-all-notification',
+         notification_views.mark_all_notification_as_read,
+         name="mark-all-notification"),
 
     # Feedback
     path('add-feedback', feedback_views.add_feedback, name="add-feedback"),
