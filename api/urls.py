@@ -8,6 +8,7 @@ from api.modules.shopping import views as shopping_views
 from api.modules.weather import views as weather_views
 from api.modules.trips import views as trip_views
 from api.modules.feedback import views as feedback_views
+from api.modules.currencyconverter import views as currency_views
 
 urlpatterns = [
     # Authentication
@@ -45,4 +46,7 @@ urlpatterns = [
 
     # Feedback
     path('add-feedback', feedback_views.add_feedback, name="add-feedback"),
+
+    # Currency Conversion
+    path('get-conversion-rate', currency_views.get_currency_exchange_rate, name="get-conversion-rate")
 ]
