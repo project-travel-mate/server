@@ -2,13 +2,12 @@ import requests
 from rest_framework import status
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
-
 from api.modules.currencyconverter.constants import CURRENCY_CONVERTER_API_URL
 from api.modules.currencyconverter.currencycon_item import CurrencyItem
 
+
 @api_view(['GET'])
 def get_currency_exchange_rate(request, source, target):
-
 
     try:
         query = source + "_" + target
