@@ -149,16 +149,13 @@ def get_city_visits(request):
     """
     Returns a list of cities visited by a user
     :param request:
-    :return: 404 if invalid user not authenticated
+    :return: 404 if user not authenticated
     :return: 200 successful
     """
-    if request.user.is_authenticated():
-        try:
-            city_visits = CityVisitLog.objects.filter(user=request.user)
-        except CityVisitLog.DoesNotExist:
-            return Response(status=status.HTTP_404_NOT_FOUND)
+    city_visits = CityVisitLog.objects.filter(user=request.user).values('city_id').annotate(total=Count('city'))
+    for visit in city_visits:
+        obj = City.objects.get(id=visit['city_id'])
+        visit['city_name'] = obj.city_name
 
-        serializer = CityVisitSerializer(city_visits, many=True)
-        return Response(serializer.data)
-    error_message = "User needs to be authenticated"
-    return Response(error_message, statuss=status.HTTP_503_SERVICE_UNAVAILABLE)
+    serializer = CityVisitSerializer(city_visits, many=True)
+    return Response(serializer.data)
