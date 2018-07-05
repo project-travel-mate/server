@@ -4,7 +4,7 @@ import requests_cache
 from datetime import timedelta
 from rest_framework import status
 from rest_framework.response import Response
-from api.modules.food.constants import BASE_URL, header
+from api.modules.food.constants import BASE_URL, ZOMATO_API_KEY, USER_AGENT, ACCEPT
 from api.modules.food.zomato_response import ZomatoResponse 
 
 
@@ -25,10 +25,8 @@ def get_all_restaurants(request, latitude, longitude):
     """
 
     try:
-
-        latitude_user, longitude_user = 'lat=' + latitude, 'lon=' + longitude
-        comp = BASE_URL+latitude_user+'&'+longitude_user
-        req = requests.get(comp, headers=header)
+        header = {"User-agent": USER_AGENT, "Accept": ACCEPT, "user_key": ZOMATO_API_KEY}
+        req = requests.get(BASE_URL.format(latitude,longitude), headers=header)
         all_details = req.json()
         if not req.ok:
             error_message = all_details['message']
