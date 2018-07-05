@@ -7,19 +7,18 @@ from api.modules.currencyconverter.currencycon_item import CurrencyItem
 
 
 @api_view(['GET'])
-def get_currency_exchange_rate(request, source, target):
+def get_currency_exchange_rate(request, query):
 
     try:
-        query = source + "_" + target
         api_response = requests.get(CURRENCY_CONVERTER_API_URL.format(query))
         api_response_json = api_response.json()
         if not api_response.ok:
             error_message = "Missing parameters in request"
             return Response(error_message, status=status.HTTP_400_BAD_REQUEST)
 
-        response = CurrencyItem(source=source,
-                                target=target,
-                                result=api_response_json[query])
+        response = CurrencyItem(source=api_response_json["results"][query]["fr"],
+                                target=api_response_json["results"][query]["to"],
+                                result=api_response_json["results"][query]["val"])
 
     except Exception as e:
         return Response(str(e), status=status.HTTP_503_SERVICE_UNAVAILABLE)
