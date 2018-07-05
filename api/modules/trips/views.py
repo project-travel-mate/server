@@ -3,8 +3,9 @@ from rest_framework import status
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
 
-from api.models import Trip, City
+from api.models import Trip, City, NotificationTypeChoice
 from api.modules.trips.serializers import TripSerializer, TripCondensedSerializer
+from api.modules.notification.views import add_notification
 
 
 @api_view(['POST'])
@@ -96,8 +97,18 @@ def add_friend_to_trip(request, trip_id, user_id):
         if user in trip.users.all():
             error_message = "User already associated with trip"
             return Response(error_message, status=status.HTTP_400_BAD_REQUEST)
-
         trip.users.add(user)
+        # creating notification
+        notification_text = "You are added to %s trip by %s %s." % (
+            trip.city.city_name,
+            request.user.first_name,
+            request.user.last_name,)
+        if not (add_notification(
+                initiator_user=request.user,
+                destined_user=user,
+                text=notification_text,
+                notification_type=NotificationTypeChoice.TRIP.value,)):
+            raise RuntimeError("Error while creating notification")
     except Trip.DoesNotExist:
         error_message = "Trip does not exist"
         return Response(error_message, status=status.HTTP_404_NOT_FOUND)
