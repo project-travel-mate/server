@@ -65,6 +65,6 @@ urlpatterns = [
     path('get-feedback/<int:feedback_id>', feedback_views.get_feedback, name="get-feedback"),
 
     # Zomato APIs
-    path('get-restaurants-all/<str:latitude>/<str:longitude>', zomato_views.get_restaurants_all,
-         name="get-restaurants-all"),
+    path('get-all-restaurants/<str:latitude>/<str:longitude>', zomato_views.get_all_restaurants,
+         name="get-all-restaurants"),
 ]

@@ -4,8 +4,8 @@ import requests_cache
 from datetime import timedelta
 from rest_framework import status
 from rest_framework.response import Response
-from api.modules.zomato.constants import BASE_URL, header
-from api.modules.zomato.zomato_response import Zomato_Response as Food
+from api.modules.food.constants import BASE_URL, header
+from api.modules.food.zomato_response import ZomatoResponse 
 
 
 hour_difference = timedelta(hours=1)
@@ -13,7 +13,7 @@ requests_cache.install_cache(expire_after=hour_difference)
 
 
 @api_view(['GET'])
-def get_restaurants_all(request, latitude, longitude):
+def get_all_restaurants(request, latitude, longitude):
     response = []
     """
     Returns restaurant details forecast for given city using coordinates
@@ -26,16 +26,17 @@ def get_restaurants_all(request, latitude, longitude):
 
     try:
 
-        lat, long = 'lat=' + latitude, 'lon=' + longitude
-        comp = BASE_URL+lat+'&'+long
+        latitude_user, longitude_user = 'lat=' + latitude, 'lon=' + longitude
+        comp = BASE_URL+latitude_user+'&'+longitude_user
         req = requests.get(comp, headers=header)
         all_details = req.json()
         if not req.ok:
-            return Response(status=status.HTTP_503_SERVICE_UNAVAILABLE)
+            error_message = all_details['message']
+            return Response(error_message, status=status.HTTP_503_SERVICE_UNAVAILABLE)
 
         for rest in all_details['nearby_restaurants']:
             food = rest['restaurant']
-            response.append(Food(id=food['id'],
+            response.append(ZomatoResponse(id=food['id'],
                             name=food['name'],
                             url=food['url'],
                             latitude=food['location']['latitude'],

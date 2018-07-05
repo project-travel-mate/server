@@ -1,4 +1,4 @@
-class Zomato_Response(object):
+class ZomatoResponse(object):
     """
     Specifies the response to be sent for the zomato details.
     """
