@@ -1,3 +1,4 @@
+from django.conf import settings
 from django.core.validators import URLValidator
 from django.db import models
 
@@ -21,3 +22,9 @@ class CityFact(models.Model):
     fact = models.TextField(null=False, blank=False)
     source_text = models.TextField(null=False, blank=False)
     source_url = models.TextField(null=False, blank=False)
+
+
+class CityVisitLog(models.Model):
+    city = models.ForeignKey('City', related_name="logs", on_delete=models.CASCADE)
+    user = models.ForeignKey(settings.AUTH_USER_MODEL, related_name='logs', on_delete=models.CASCADE)
+    created_at = models.DateTimeField(auto_now_add=True)

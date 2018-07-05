@@ -58,7 +58,19 @@ def sign_up(request):
 
 
 @api_view(['GET'])
-def get_user(request, email):
+def get_user_profile(request):
+    """
+    Returns user object using user email address
+    :param request:
+    :param email:
+    :return: 200 successful
+    """
+    serializer = UserSerializer(request.user)
+    return Response(serializer.data)
+
+
+@api_view(['GET'])
+def get_users_by_email(request, email):
     """
     Returns user object using user email address
     :param request:
@@ -108,3 +120,24 @@ def update_profile_image(request):
     user.profile.profile_image = profile_image_url
     user.save()
     return Response(None, status=status.HTTP_200_OK)
+
+
+@api_view(['POST'])
+def update_user_details(request):
+    updated_firstname = request.POST.get('firstname', None)
+    updated_lastname = request.POST.get('lastname', None)
+
+    if not updated_firstname or not updated_lastname:
+        error_message = "Missing parameters in request. Send firstname, lastname"
+        return Response(error_message, status=status.HTTP_400_BAD_REQUEST)
+
+    try:
+        user = request.user
+        user.first_name = updated_firstname
+        user.last_name = updated_lastname
+        user.save()
+    except Exception as e:
+        error_message = "User update failed due to {0}".format(str(e))
+        return Response(error_message, status=status.HTTP_400_BAD_REQUEST)
+
+    return Response(status=status.HTTP_200_OK)

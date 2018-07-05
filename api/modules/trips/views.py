@@ -3,8 +3,9 @@ from rest_framework import status
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
 
-from api.models import Trip, City
-from api.modules.trips.serializers import TripSerializer
+from api.models import Trip, City, NotificationTypeChoice
+from api.modules.trips.serializers import TripSerializer, TripCondensedSerializer
+from api.modules.notification.views import add_notification
 
 
 @api_view(['POST'])
@@ -33,7 +34,7 @@ def add_trip(request):
         error_message = str(e)
         return Response(error_message, status=status.HTTP_400_BAD_REQUEST)
 
-    success_message = "Sucessfully added new trip."
+    success_message = "Successfully added new trip."
     return Response(success_message, status=status.HTTP_201_CREATED)
 
 
@@ -55,6 +56,11 @@ def get_trip(request, trip_id):
         return Response(status=status.HTTP_404_NOT_FOUND)
 
     serializer = TripSerializer(trip)
+    # remove current user from the list of users
+    for user in serializer.data['users']:
+        if user['id'] == request.user.id:
+            serializer.data['users'].remove(user)
+            break
     return Response(serializer.data)
 
 
@@ -66,8 +72,8 @@ def get_all_trips(request, no_of_trips=10):
     :param no_of_trips: default 10
     :return: 200 successful
     """
-    trips = Trip.objects.filter(users=request.user)[:no_of_trips]
-    serializer = TripSerializer(trips, many=True)
+    trips = Trip.objects.filter(users=request.user).order_by('-start_date_tx')[:no_of_trips]
+    serializer = TripCondensedSerializer(trips, many=True)
     return Response(serializer.data)
 
 
@@ -78,8 +84,8 @@ def add_friend_to_trip(request, trip_id, user_id):
     :param request:
     :param trip_id:
     :param user_id:
-    :return: 400 if trip or user does not exist or user is already associated with the trip
-    :return: 401 if current user is not associated with the specific trip
+    :return: 400 if user is already associated with the trip
+    :return: 404 if trip or user does not exist
     :return: 200 successful
     """
     try:
@@ -91,14 +97,58 @@ def add_friend_to_trip(request, trip_id, user_id):
         if user in trip.users.all():
             error_message = "User already associated with trip"
             return Response(error_message, status=status.HTTP_400_BAD_REQUEST)
-
         trip.users.add(user)
+        # creating notification
+        notification_text = "You are added to %s trip by %s %s." % (
+            trip.city.city_name,
+            request.user.first_name,
+            request.user.last_name,)
+        if not (add_notification(
+                initiator_user=request.user,
+                destined_user=user,
+                text=notification_text,
+                notification_type=NotificationTypeChoice.TRIP.value,)):
+            raise RuntimeError("Error while creating notification")
     except Trip.DoesNotExist:
         error_message = "Trip does not exist"
-        return Response(error_message, status=status.HTTP_400_BAD_REQUEST)
+        return Response(error_message, status=status.HTTP_404_NOT_FOUND)
     except User.DoesNotExist:
         error_message = "User does not exist"
-        return Response(error_message, status=status.HTTP_400_BAD_REQUEST)
+        return Response(error_message, status=status.HTTP_404_NOT_FOUND)
+    except Exception as e:
+        return Response(str(e), status=status.HTTP_400_BAD_REQUEST)
+
+    return Response(status=status.HTTP_200_OK)
+
+
+@api_view(['GET'])
+def remove_friend_from_trip(request, trip_id, user_id):
+    """
+    Dissociates a user to existing trip
+    :param request:
+    :param trip_id:
+    :param user_id:
+    :return: 400 if user not present in the trip
+    :return: 404 if trip or user does not exist
+    :return: 200 successful
+    """
+    try:
+        trip = Trip.objects.get(pk=trip_id)
+        if request.user not in trip.users.all():
+            return Response(status=status.HTTP_401_UNAUTHORIZED)
+
+        user = User.objects.get(pk=user_id)
+        if user not in trip.users.all():
+            error_message = "User already not a part of trip"
+            return Response(error_message, status=status.HTTP_400_BAD_REQUEST)
+
+        trip.users.remove(user)
+    except Trip.DoesNotExist:
+        error_message = "Trip does not exist"
+        return Response(error_message, status=status.HTTP_404_NOT_FOUND)
+    except User.DoesNotExist:
+        error_message = "User does not exist"
+        return Response(error_message, status=status.HTTP_404_NOT_FOUND)
     except Exception as e:
         return Response(str(e), status=status.HTTP_400_BAD_REQUEST)
 
