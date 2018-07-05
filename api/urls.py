@@ -8,12 +8,9 @@ from api.modules.shopping import views as shopping_views
 from api.modules.weather import views as weather_views
 from api.modules.trips import views as trip_views
 from api.modules.feedback import views as feedback_views
-<<<<<<< 95cc3db539ca1b0f40876e9e65505e2c11a261a9
 from api.modules.notification import views as notification_views
-=======
 from api.modules.zomato import views as zomato_views
 
->>>>>>> zomato views made
 
 urlpatterns = [
     # Authentication
