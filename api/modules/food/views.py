@@ -26,7 +26,7 @@ def get_all_restaurants(request, latitude, longitude):
 
     try:
         header = {"User-agent": USER_AGENT, "Accept": ACCEPT, "user_key": ZOMATO_API_KEY}
-        req = requests.get(BASE_URL.format(latitude,longitude), headers=header)
+        req = requests.get(BASE_URL.format(latitude, longitude), headers=header)
         all_details = req.json()
         if not req.ok:
             error_message = """ all_details['message'] """ "Hi"
