@@ -9,7 +9,7 @@ from api.modules.weather import views as weather_views
 from api.modules.trips import views as trip_views
 from api.modules.feedback import views as feedback_views
 from api.modules.notification import views as notification_views
-from api.modules.zomato import views as zomato_views
+from api.modules.food import views as food_views
 
 
 urlpatterns = [
@@ -65,6 +65,6 @@ urlpatterns = [
     path('get-feedback/<int:feedback_id>', feedback_views.get_feedback, name="get-feedback"),
 
     # Zomato APIs
-    path('get-all-restaurants/<str:latitude>/<str:longitude>', zomato_views.get_all_restaurants,
+    path('get-all-restaurants/<str:latitude>/<str:longitude>', food_views.get_all_restaurants,
          name="get-all-restaurants"),
 ]

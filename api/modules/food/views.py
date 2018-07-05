@@ -29,7 +29,7 @@ def get_all_restaurants(request, latitude, longitude):
         req = requests.get(BASE_URL.format(latitude,longitude), headers=header)
         all_details = req.json()
         if not req.ok:
-            error_message = all_details['message']
+            error_message = """ all_details['message'] """ "Hi"
             return Response(error_message, status=status.HTTP_503_SERVICE_UNAVAILABLE)
 
         for rest in all_details['nearby_restaurants']:
