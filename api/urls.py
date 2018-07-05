@@ -30,6 +30,7 @@ urlpatterns = [
     path('get-city-images/<int:city_id>', city_views.get_all_city_images, name='get-city-images'),
     path('get-city-facts/<int:city_id>', city_views.get_all_city_facts, name='get-city-facts'),
     path('get-city-trends/<int:city_id>', city_views.get_city_trends, name='get-city-trends'),
+    path('get-city-trips', city_views.get_city_visits, name='get-city-visits'),
 
     # Weather APIs
     path('get-city-weather/<str:city_name>', weather_views.get_city_weather, name='get-city-weather'),
