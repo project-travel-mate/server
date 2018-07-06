@@ -31,18 +31,18 @@ def get_all_restaurants(request, latitude, longitude):
             error_message = api_response_json['message']
             return Response(error_message, status=status.HTTP_503_SERVICE_UNAVAILABLE)
 
-       for restaurant inapi_response_json['nearby_restaurants']:
-            restaurant_obj = restaurant['restaurant']
-            response.append(ZomatoResponse(id=restaurant_obj['id'],
-                            name=restaurant_obj['name'],
-                            url=restaurant_obj['url'],
-                            latitude=restaurant_obj['location']['latitude'],
-                            longitude=restaurant_obj['location']['longitude'],
-                            avg2=restaurant_obj['average_cost_for_two'],
-                            currency=restaurant_obj['currency'],
-                            image=restaurant_obj['featured_image'],
-                            rating=restaurant_obj['user_rating']['aggregate_rating'],
-                            votes=restaurant_obj['user_rating']['votes']).to_json())
+        for restaurant in api_response_json['nearby_restaurants']:
+            food = restaurant['restaurant']
+            response.append(ZomatoResponse(id=food['id'],
+                            name=food['name'],
+                            url=food['url'],
+                            latitude=food['location']['latitude'],
+                            longitude=food['location']['longitude'],
+                            avg2=food['average_cost_for_two'],
+                            currency=food['currency'],
+                            image=food['featured_image'],
+                            rating=food['user_rating']['aggregate_rating'],
+                            votes=food['user_rating']['votes']).to_json())
 
     except Exception as e:
         return Response(str(e), status=status.HTTP_503_SERVICE_UNAVAILABLE)
