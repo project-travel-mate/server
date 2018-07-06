@@ -24,4 +24,3 @@ def get_currency_exchange_rate(request, query):
         return Response(str(e), status=status.HTTP_503_SERVICE_UNAVAILABLE)
 
     return Response(response.to_json())
-
