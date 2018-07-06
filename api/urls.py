@@ -9,7 +9,7 @@ from api.modules.weather import views as weather_views
 from api.modules.trips import views as trip_views
 from api.modules.feedback import views as feedback_views
 from api.modules.notification import views as notification_views
-from api.modules.currencyconverter import views as currency_views
+from api.modules.currency import views as currency_views
 
 urlpatterns = [
     # Authentication
@@ -67,5 +67,6 @@ urlpatterns = [
     path('get-feedback/<int:feedback_id>', feedback_views.get_feedback, name="get-feedback"),
 
     # Currency Conversion
-    path('get-conversion-rate/<str:query>', currency_views.get_currency_exchange_rate, name="get-conversion-rate")
+    path('get-currency-conversion-rate/<str:source_currency_code>_<str:target_currency_code>',
+         currency_views.get_currency_exchange_rate, name="get-conversion-rate")
 ]
