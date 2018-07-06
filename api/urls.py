@@ -8,9 +8,17 @@ from api.modules.shopping import views as shopping_views
 from api.modules.weather import views as weather_views
 from api.modules.trips import views as trip_views
 from api.modules.feedback import views as feedback_views
+<<<<<<< 95cc3db539ca1b0f40876e9e65505e2c11a261a9
 from api.modules.notification import views as notification_views
+<<<<<<< 846cf973b228e6725fbce79902c85c64cbf08b40
 from api.modules.zomato import views as zomato_views
 
+=======
+=======
+from api.modules.zomato import views as zomato_views
+
+>>>>>>> zomato views made
+>>>>>>> merge conflict removed
 
 urlpatterns = [
     # Authentication
@@ -67,7 +75,12 @@ urlpatterns = [
     path('get-all-user-feedback', feedback_views.get_all_user_feedback, name="get-all-user-feedback"),
     path('get-feedback/<int:feedback_id>', feedback_views.get_feedback, name="get-feedback"),
 
+<<<<<<< 846cf973b228e6725fbce79902c85c64cbf08b40
     # Zomato APIs
     path('get-all-restaurants/<str:latitude>/<str:longitude>', zomato_views.get_all_restaurants,
          name="get-all-restaurants"),
+=======
+    #Zomato APIs
+    path('get-restaurants-all/<float:latitude>/<float:longitude>', zomato_views.get_restaurants_all, name="get-restaurants-all")
+>>>>>>> merge conflict removed
 ]
