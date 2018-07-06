@@ -11,7 +11,8 @@ from rest_framework.response import Response
 from api.modules.city.constants import TWITTER_CONSUMER_KEY, TWITTER_OAUTH_TOKEN_SECRET, TWITTER_OAUTH_TOKEN, \
     TWITTER_CONSUMER_SECRET, TWITTER_API_URL
 from api.models import City, CityFact, CityImage, CityVisitLog
-from api.modules.city.serializers import AllCitiesSerializer, CitySerializer, CityImageSerializer, CityFactSerializer
+from api.modules.city.serializers import AllCitiesSerializer, CitySerializer, CityImageSerializer, CityFactSerializer, \
+    CityVisitSerializer
 
 hour_difference = timedelta(hours=1)
 requests_cache.install_cache(expire_after=hour_difference)
@@ -141,3 +142,20 @@ def get_city_trends(request, city_id):
         return Response(str(e), status=status.HTTP_503_SERVICE_UNAVAILABLE)
 
     return Response(response)
+
+
+@api_view(['GET'])
+def get_city_visits(request):
+    """
+    Returns a list of cities visited by a user
+    :param request:
+    :return: 404 if invalid user not authenticated
+    :return: 200 successful
+    """
+    city_visits = CityVisitLog.objects.filter(user=request.user).values('city_id').annotate(
+        visit_count=Count('city')).order_by('-visit_count')
+    for visit in city_visits:
+        visit['city'] = City.objects.get(pk=visit['city_id'])
+
+    serializer = CityVisitSerializer(city_visits, many=True)
+    return Response(serializer.data)
