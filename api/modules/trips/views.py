@@ -153,3 +153,30 @@ def remove_friend_from_trip(request, trip_id, user_id):
         return Response(str(e), status=status.HTTP_400_BAD_REQUEST)
 
     return Response(status=status.HTTP_200_OK)
+
+
+@api_view(['GET'])
+def update_trip_name(request, trip_id, trip_name):
+    """
+    :param request:
+    :param trip_id:
+    :param trip_name:
+    :return: 400 if user not present in the trip
+    :return: 404 if trip or user does not exist
+    :return: 200 successful
+    """
+    try:
+        trip = Trip.objects.get(id=trip_id)
+        if request.user not in trip.users.all():
+            return Response(status=status.HTTP_401_UNAUTHORIZED)
+
+        trip.trip_name = trip_name
+        trip.save(update_fields=['trip_name'])
+
+    except Trip.DoesNotExist:
+        error_message = "Trip does not exist"
+        return Response(error_message, status=status.HTTP_404_NOT_FOUND)
+    except Exception as e:
+        return Response(str(e), status=status.HTTP_400_BAD_REQUEST)
+
+    return Response(status=status.HTTP_200_OK)
