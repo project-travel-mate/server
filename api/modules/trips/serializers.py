@@ -1,5 +1,6 @@
 from rest_framework import serializers
 
+from django.contrib.auth.models import User
 from api.models import Trip
 from api.modules.city.serializers import CitySerializer
 from api.modules.users.serializers import UserSerializer
@@ -24,3 +25,10 @@ class TripCondensedSerializer(serializers.ModelSerializer):
 
     def get_users_count(self, obj):
         return obj.users.count()
+
+
+class AllFriendsSerializer(serializers.ModelSerializer):
+
+    class Meta:
+        model = User
+        fields = ['username']

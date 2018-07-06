@@ -4,7 +4,7 @@ from rest_framework.decorators import api_view
 from rest_framework.response import Response
 
 from api.models import Trip, City, NotificationTypeChoice
-from api.modules.trips.serializers import TripSerializer, TripCondensedSerializer
+from api.modules.trips.serializers import TripSerializer, TripCondensedSerializer, AllFriendsSerializer
 from api.modules.notification.views import add_notification
 
 
@@ -180,3 +180,23 @@ def update_trip_name(request, trip_id, trip_name):
         return Response(str(e), status=status.HTTP_400_BAD_REQUEST)
 
     return Response(status=status.HTTP_200_OK)
+
+
+@api_view(['GET'])
+def trip_friends_all(request):
+    """
+    Returns a list of friends user had been to trip
+    :param request:
+    :return: 200 successful
+    """
+    try:
+        all_trips = User.objects.filter(trip__users=request.user).distinct()
+
+    except Trip.DoesNotExist:
+        error_message = "Trip does not exist"
+        return Response(error_message, status=status.HTTP_404_NOT_FOUND)
+    except Exception as e:
+        return Response(str(e), status=status.HTTP_400_BAD_REQUEST)
+
+    serializer = AllFriendsSerializer(all_trips, many=True)
+    return Response(serializer.data)

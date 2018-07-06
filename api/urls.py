@@ -50,6 +50,7 @@ urlpatterns = [
     path('remove-friend-from-trip/<int:trip_id>/<int:user_id>', trip_views.remove_friend_from_trip,
          name="remove-friend-from-trip"),
     path('update-trip-name/<int:trip_id>/<str:trip_name>', trip_views.update_trip_name, name="update-trip-name"),
+    path('trip-friends-all', trip_views.trip_friends_all, name="trip-friends-all"),
 
     # Notification
     path('get-notifications', notification_views.get_notifications, name="get-notifications"),
