@@ -31,6 +31,8 @@ urlpatterns = [
     path('get-city-images/<int:city_id>', city_views.get_all_city_images, name='get-city-images'),
     path('get-city-facts/<int:city_id>', city_views.get_all_city_facts, name='get-city-facts'),
     path('get-city-trends/<int:city_id>', city_views.get_city_trends, name='get-city-trends'),
+    path('get-city-visits', city_views.get_city_visits, name='get-city-visits'),
+
 
     # Weather APIs
     path('get-city-weather/<str:city_name>', weather_views.get_city_weather, name='get-city-weather'),
@@ -48,6 +50,7 @@ urlpatterns = [
     path('add-friend-to-trip/<int:trip_id>/<int:user_id>', trip_views.add_friend_to_trip, name="add-friend-to-trip"),
     path('remove-friend-from-trip/<int:trip_id>/<int:user_id>', trip_views.remove_friend_from_trip,
          name="remove-friend-from-trip"),
+    path('update-trip-name/<int:trip_id>/<str:trip_name>', trip_views.update_trip_name, name="update-trip-name"),
 
     # Notification
     path('get-notifications', notification_views.get_notifications, name="get-notifications"),
