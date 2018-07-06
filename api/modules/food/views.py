@@ -14,7 +14,6 @@ requests_cache.install_cache(expire_after=hour_difference)
 
 @api_view(['GET'])
 def get_all_restaurants(request, latitude, longitude):
-    response = []
     """
     Returns restaurant details forecast for given city using coordinates
     :param request:
@@ -23,17 +22,17 @@ def get_all_restaurants(request, latitude, longitude):
     :return: 503 if Zomato api fails
     :return: 200 successful
     """
-
+    response = []
     try:
         header = {"User-agent": USER_AGENT, "Accept": ACCEPT, "user_key": ZOMATO_API_KEY}
-        req = requests.get(BASE_URL.format(latitude, longitude), headers=header)
-        all_details = req.json()
-        if not req.ok:
-            error_message = """ all_details['message'] """ "Hi"
+        api_response = requests.get(BASE_URL.format(latitude, longitude), headers=header)
+        api_response_json = api_response.json()
+        if not api_response.ok:
+            error_message = api_response_json['message']
             return Response(error_message, status=status.HTTP_503_SERVICE_UNAVAILABLE)
 
-        for rest in all_details['nearby_restaurants']:
-            food = rest['restaurant']
+        for restaurant inapi_response_json['nearby_restaurants']:
+            food = restaurant['restaurant']
             response.append(ZomatoResponse(id=food['id'],
                             name=food['name'],
                             url=food['url'],
