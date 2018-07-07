@@ -4,7 +4,8 @@ from rest_framework.decorators import api_view
 from rest_framework.response import Response
 
 from api.models import Trip, City, NotificationTypeChoice
-from api.modules.trips.serializers import TripSerializer, TripCondensedSerializer, AllFriendsSerializer
+from api.modules.trips.serializers import TripSerializer, TripCondensedSerializer
+from api.modules.users.serializers import AllFriendsSerializer
 from api.modules.notification.views import add_notification
 
 
