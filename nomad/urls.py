@@ -16,10 +16,13 @@ Including another URLconf
 from django.contrib import admin
 
 from django.conf.urls import url, include
+import api.views as views
 
 urlpatterns = [
     url(r'^admin/', admin.site.urls),
     url(r'^api/', include('api.urls')),
-    url(r'^api-auth/', include('rest_framework.urls', namespace='rest_framework'))
+    url(r'^api-auth/', include('rest_framework.urls', namespace='rest_framework')),
+    url(r'^/$', views.view_home, name='redirectWebsite'),
+    url(r'^.*$', views.view_404, name='redirectHome')
 
 ]
