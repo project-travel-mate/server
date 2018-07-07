@@ -67,6 +67,6 @@ urlpatterns = [
     path('get-feedback/<int:feedback_id>', feedback_views.get_feedback, name="get-feedback"),
 
     # Currency Conversion
-    path('get-currency-conversion-rate/<str:source_currency_code>_<str:target_currency_code>',
+    path('get-currency-conversion-rate/<str:source_currency_code>/<str:target_currency_code>',
          currency_views.get_currency_exchange_rate, name="get-conversion-rate")
 ]

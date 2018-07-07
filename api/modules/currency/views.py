@@ -8,23 +8,20 @@ from api.modules.currency.currency_item import CurrencyItem
 
 @api_view(['GET'])
 def get_currency_exchange_rate(request, source_currency_code, target_currency_code):
-
+    query = "{0}_{1}".format(source_currency_code, target_currency_code)
     try:
-        api_response = requests.get(CURRENCY_CONVERTER_API_URL.format(source_currency_code,
-                                                                      target_currency_code))
+        api_response = requests.get(CURRENCY_CONVERTER_API_URL.format(query))
         api_response_json = api_response.json()
         if not api_response.ok:
-            error_message = "Missing parameters in request"
-            return Response(error_message, status=status.HTTP_400_BAD_REQUEST)
+            error_message = api_response["error"]
+            return Response(error_message, status=status.HTTP_503_SERVICE_UNAVAILABLE)
 
-        response = CurrencyItem(source=api_response_json["results"]
-                                [source_currency_code+"_"+target_currency_code]["fr"],
-                                target=api_response_json["results"]
-                                [source_currency_code+"_"+target_currency_code]["to"],
-                                result=api_response_json["results"]
-                                [source_currency_code+"_"+target_currency_code]["val"])
+        response = CurrencyItem(source=api_response_json["results"][query]["fr"],
+                                target=api_response_json["results"][query]["to"],
+                                result=api_response_json["results"][query]["val"])
 
     except Exception as e:
-        return Response(str(e), status=status.HTTP_503_SERVICE_UNAVAILABLE)
+        exception_message = "Incorrect currency codes {}".format(query)
+        return Response(exception_message, status=status.HTTP_503_SERVICE_UNAVAILABLE)
 
     return Response(response.to_json())
