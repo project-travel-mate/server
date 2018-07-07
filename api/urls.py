@@ -9,6 +9,7 @@ from api.modules.weather import views as weather_views
 from api.modules.trips import views as trip_views
 from api.modules.feedback import views as feedback_views
 from api.modules.notification import views as notification_views
+from api.modules.currency import views as currency_views
 
 urlpatterns = [
     # Authentication
@@ -50,7 +51,6 @@ urlpatterns = [
     path('remove-friend-from-trip/<int:trip_id>/<int:user_id>', trip_views.remove_friend_from_trip,
          name="remove-friend-from-trip"),
     path('update-trip-name/<int:trip_id>/<str:trip_name>', trip_views.update_trip_name, name="update-trip-name"),
-
     path('trip-friends-all', trip_views.trip_friends_all, name="trip-friends-all"),
 
     # Notification
@@ -66,4 +66,8 @@ urlpatterns = [
     path('add-feedback', feedback_views.add_feedback, name="add-feedback"),
     path('get-all-user-feedback', feedback_views.get_all_user_feedback, name="get-all-user-feedback"),
     path('get-feedback/<int:feedback_id>', feedback_views.get_feedback, name="get-feedback"),
+
+    # Currency Conversion
+    path('get-currency-conversion-rate/<str:source_currency_code>/<str:target_currency_code>',
+         currency_views.get_currency_exchange_rate, name="get-conversion-rate")
 ]
