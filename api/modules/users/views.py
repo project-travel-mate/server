@@ -173,7 +173,7 @@ def update_user_status(request):
     """
     updated_status = request.POST.get('status', None)
 
-    if not status:
+    if not updated_status:
         error_message = "Missing parameters in request. Send user status"
         return Response(error_message, status=status.HTTP_400_BAD_REQUEST)
     try:
