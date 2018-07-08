@@ -162,7 +162,7 @@ def trip_friends_all(request):
     serializer = UserSerializer(all_trips, many=True)
     return Response(serializer.data)
 
-  
+
 @api_view(['POST'])
 def update_user_status(request):
     """
@@ -185,7 +185,7 @@ def update_user_status(request):
 
     return Response(status=status.HTTP_200_OK)
 
-  
+
 @api_view(['GET'])
 def remove_profile_image(request):
     """
