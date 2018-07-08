@@ -10,6 +10,7 @@ from api.modules.trips import views as trip_views
 from api.modules.feedback import views as feedback_views
 from api.modules.notification import views as notification_views
 from api.modules.currency import views as currency_views
+from api.modules.github import views as github_views
 
 urlpatterns = [
     # Authentication
@@ -22,6 +23,7 @@ urlpatterns = [
     path('get-user/<str:email>', user_views.get_users_by_email, name='get-users-by-email'),
     path('update-user-details', user_views.update_user_details, name='update-user-details'),
     path('update-profile-image', user_views.update_profile_image, name='update-profile-image'),
+    path('remove-profile-image', user_views.remove_profile_image, name='remove-profile-image'),
 
     # City APIs
     path('get-all-cities', city_views.get_all_cities, name='get-all-cities'),
@@ -51,6 +53,7 @@ urlpatterns = [
     path('remove-friend-from-trip/<int:trip_id>/<int:user_id>', trip_views.remove_friend_from_trip,
          name="remove-friend-from-trip"),
     path('update-trip-name/<int:trip_id>/<str:trip_name>', trip_views.update_trip_name, name="update-trip-name"),
+    path('trip-friends-all', user_views.trip_friends_all, name="trip-friends-all"),
 
     # Notification
     path('get-notifications', notification_views.get_notifications, name="get-notifications"),
@@ -68,5 +71,8 @@ urlpatterns = [
 
     # Currency Conversion
     path('get-currency-conversion-rate/<str:source_currency_code>/<str:target_currency_code>',
-         currency_views.get_currency_exchange_rate, name="get-conversion-rate")
+         currency_views.get_currency_exchange_rate, name="get-conversion-rate"),
+
+    # Github API
+    path('get-contributors/<str:project>', github_views.get_contributors, name="get-contributors"),
 ]

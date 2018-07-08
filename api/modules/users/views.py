@@ -141,3 +141,38 @@ def update_user_details(request):
         return Response(error_message, status=status.HTTP_400_BAD_REQUEST)
 
     return Response(status=status.HTTP_200_OK)
+
+
+@api_view(['GET'])
+def trip_friends_all(request):
+    """
+    Returns a list of friends user had been to trip
+    :param request:
+    :return: 200 successful
+    """
+    try:
+        all_trips = User.objects.filter(trip__users=request.user).distinct()
+
+    except User.DoesNotExist:
+        error_message = "Trip does not exist"
+        return Response(error_message, status=status.HTTP_404_NOT_FOUND)
+    except Exception as e:
+        return Response(str(e), status=status.HTTP_400_BAD_REQUEST)
+
+    serializer = UserSerializer(all_trips, many=True)
+    return Response(serializer.data)
+
+
+@api_view(['GET'])
+def remove_profile_image(request):
+    """
+    Remove Profile image of user
+    :param request:
+    :return: 200 successful
+    """
+    user = request.user
+    if not hasattr(user, 'profile'):
+        user.save()  # to handle RelatedObjectDoenNotExist exception on existing users
+    user.profile.profile_image = None
+    user.save()
+    return Response("Profile image succesfully removed.", status=status.HTTP_200_OK)
