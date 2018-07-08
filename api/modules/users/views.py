@@ -161,3 +161,25 @@ def trip_friends_all(request):
 
     serializer = UserSerializer(all_trips, many=True)
     return Response(serializer.data)
+
+
+@api_view(['POST'])
+def update_user_status(request):
+    """
+    Adds user status for user
+    :param request:
+    :return: 200 successful
+    """
+    updated_status = request.POST.get('status', None)
+
+    if not status:
+        error_message = "Missing parameters in request. Send user status"
+        return Response(error_message, status=status.HTTP_400_BAD_REQUEST)
+    try:
+        user = request.user.profile
+        user.status = updated_status
+        user.save(update_fields=['status'])
+    except Exception as e:
+        return Response(str(e), status=status.HTTP_400_BAD_REQUEST)
+
+    return Response(status=status.HTTP_200_OK)
