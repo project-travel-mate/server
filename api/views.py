@@ -1,5 +1,4 @@
 from django.shortcuts import redirect
-from django.template import RequestContext
 
 
 def view_404(request):
