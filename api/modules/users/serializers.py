@@ -18,10 +18,3 @@ class UserSerializer(serializers.ModelSerializer):
         if hasattr(obj, 'profile'):
             return obj.profile.profile_image
         return None
-
-
-class AllFriendsSerializer(serializers.ModelSerializer):
-
-    class Meta:
-        model = User
-        fields = ['username']
