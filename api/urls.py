@@ -10,6 +10,7 @@ from api.modules.trips import views as trip_views
 from api.modules.feedback import views as feedback_views
 from api.modules.notification import views as notification_views
 from api.modules.github import views as github_views
+from api.modules.currency import views as currency_views
 
 urlpatterns = [
     # Authentication
@@ -31,6 +32,8 @@ urlpatterns = [
     path('get-city-images/<int:city_id>', city_views.get_all_city_images, name='get-city-images'),
     path('get-city-facts/<int:city_id>', city_views.get_all_city_facts, name='get-city-facts'),
     path('get-city-trends/<int:city_id>', city_views.get_city_trends, name='get-city-trends'),
+    path('get-city-visits', city_views.get_city_visits, name='get-city-visits'),
+
 
     # Weather APIs
     path('get-city-weather/<str:city_name>', weather_views.get_city_weather, name='get-city-weather'),
@@ -48,6 +51,7 @@ urlpatterns = [
     path('add-friend-to-trip/<int:trip_id>/<int:user_id>', trip_views.add_friend_to_trip, name="add-friend-to-trip"),
     path('remove-friend-from-trip/<int:trip_id>/<int:user_id>', trip_views.remove_friend_from_trip,
          name="remove-friend-from-trip"),
+    path('update-trip-name/<int:trip_id>/<str:trip_name>', trip_views.update_trip_name, name="update-trip-name"),
 
     # Notification
     path('get-notifications', notification_views.get_notifications, name="get-notifications"),
@@ -65,4 +69,8 @@ urlpatterns = [
 
     # Github API
     path('get-contributors/<str:project>', github_views.get_contributors, name="get-contributors"),
+
+    # Currency Conversion
+    path('get-currency-conversion-rate/<str:source_currency_code>/<str:target_currency_code>',
+         currency_views.get_currency_exchange_rate, name="get-conversion-rate"),
 ]
