@@ -168,6 +168,7 @@ def update_user_status(request):
     """
     Adds user status for user
     :param request:
+    :return: 400 if incorrect parameters are sent
     :return: 200 successful
     """
     updated_status = request.POST.get('status', None)
