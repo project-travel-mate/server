@@ -161,3 +161,18 @@ def trip_friends_all(request):
 
     serializer = UserSerializer(all_trips, many=True)
     return Response(serializer.data)
+
+
+@api_view(['GET'])
+def remove_profile_image(request):
+    """
+    Remove Profile image of user
+    :param request:
+    :return: 200 successful
+    """
+    user = request.user
+    if not hasattr(user, 'profile'):
+        user.save()  # to handle RelatedObjectDoenNotExist exception on existing users
+    user.profile.profile_image = None
+    user.save()
+    return Response("Profile image succesfully removed.", status=status.HTTP_200_OK)
