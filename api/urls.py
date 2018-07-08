@@ -9,6 +9,7 @@ from api.modules.weather import views as weather_views
 from api.modules.trips import views as trip_views
 from api.modules.feedback import views as feedback_views
 from api.modules.notification import views as notification_views
+from api.modules.github import views as github_views
 from api.modules.currency import views as currency_views
 
 urlpatterns = [
@@ -66,7 +67,10 @@ urlpatterns = [
     path('get-all-user-feedback', feedback_views.get_all_user_feedback, name="get-all-user-feedback"),
     path('get-feedback/<int:feedback_id>', feedback_views.get_feedback, name="get-feedback"),
 
+    # Github API
+    path('get-contributors/<str:project>', github_views.get_contributors, name="get-contributors"),
+
     # Currency Conversion
     path('get-currency-conversion-rate/<str:source_currency_code>/<str:target_currency_code>',
-         currency_views.get_currency_exchange_rate, name="get-conversion-rate")
+         currency_views.get_currency_exchange_rate, name="get-conversion-rate"),
 ]
