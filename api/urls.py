@@ -23,6 +23,7 @@ urlpatterns = [
     path('get-user/<str:email>', user_views.get_users_by_email, name='get-users-by-email'),
     path('update-user-details', user_views.update_user_details, name='update-user-details'),
     path('update-profile-image', user_views.update_profile_image, name='update-profile-image'),
+    path('update-user-status', user_views.update_user_status, name='update-user-status'),
     path('remove-profile-image', user_views.remove_profile_image, name='remove-profile-image'),
 
     # City APIs
