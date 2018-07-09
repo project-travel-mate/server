@@ -1,4 +1,5 @@
 from django.shortcuts import redirect
+from nomad.constants import URL_NOT_FOUND_REDIRECT
 
 
 def view_404(request):
@@ -6,4 +7,4 @@ def view_404(request):
 
 
 def view_home(request):
-    return redirect('http://project-travel-mate.github.io/Travel-Mate/')
+    return redirect(URL_NOT_FOUND_REDIRECT)

@@ -23,6 +23,6 @@ urlpatterns = [
     url(r'^api/', include('api.urls')),
     url(r'^api-auth/', include('rest_framework.urls', namespace='rest_framework')),
     url(r'^$', views.view_home, name='redirectWebsite'),
-
+    url(r'^.*/$', views.view_404, name='redirect404')
 ]
-handler404 = views.view_404
+
