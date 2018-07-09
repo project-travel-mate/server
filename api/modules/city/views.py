@@ -1,21 +1,11 @@
-import requests
-import requests_cache
-from datetime import timedelta
-
 from django.db.models import Count
-from requests_oauthlib import OAuth1
 from rest_framework import status
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
 
-from api.modules.city.constants import TWITTER_CONSUMER_KEY, TWITTER_OAUTH_TOKEN_SECRET, TWITTER_OAUTH_TOKEN, \
-    TWITTER_CONSUMER_SECRET, TWITTER_API_URL
 from api.models import City, CityFact, CityImage, CityVisitLog
 from api.modules.city.serializers import AllCitiesSerializer, CitySerializer, CityImageSerializer, CityFactSerializer, \
     CityVisitSerializer
-
-hour_difference = timedelta(hours=1)
-requests_cache.install_cache(expire_after=hour_difference)
 
 
 @api_view(['GET'])
@@ -103,45 +93,6 @@ def get_all_city_facts(request, city_id):
 
     serializer = CityFactSerializer(city_facts, many=True)
     return Response(serializer.data)
-
-
-@api_view(['GET'])
-def get_city_trends(request, city_id):
-    """
-    Returns a list of top trending tweets in the given city
-    :param request:
-    :param city_id:
-    :return: 404 if invalid city id is sent
-    :return: 503 if Twitter API request fails
-    :return: 200 successful
-    """
-    try:
-        city = City.objects.get(pk=city_id)
-    except City.DoesNotExist:
-        error_message = "Invalid City ID"
-        return Response(error_message, status=status.HTTP_404_NOT_FOUND)
-
-    twitter_auth = OAuth1(TWITTER_CONSUMER_KEY, TWITTER_CONSUMER_SECRET, TWITTER_OAUTH_TOKEN,
-                          TWITTER_OAUTH_TOKEN_SECRET)
-
-    # check if city WOEID is in database or not
-    if not city.woeid:
-        try:
-            url = TWITTER_API_URL + "closest.json?lat={0}&long={1}".format(city.latitude, city.longitude)
-            woeid_response = requests.get(url, auth=twitter_auth)
-            city.woeid = woeid_response.json()[0]['woeid']
-            city.save()
-        except Exception as e:
-            return Response(str(e), status=status.HTTP_503_SERVICE_UNAVAILABLE)
-
-    try:
-        url = TWITTER_API_URL + "place.json?id={0}".format(city.woeid)
-        api_response = requests.get(url, auth=twitter_auth)
-        response = api_response.json()[0]['trends']
-    except Exception as e:
-        return Response(str(e), status=status.HTTP_503_SERVICE_UNAVAILABLE)
-
-    return Response(response)
 
 
 @api_view(['GET'])

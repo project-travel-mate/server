@@ -11,6 +11,7 @@ from api.modules.feedback import views as feedback_views
 from api.modules.notification import views as notification_views
 from api.modules.currency import views as currency_views
 from api.modules.github import views as github_views
+from api.modules.twitter import views as twitter_views
 
 urlpatterns = [
     # Authentication
@@ -32,7 +33,6 @@ urlpatterns = [
     path('get-city-by-name/<str:city_prefix>', city_views.get_city_by_name, name='get-city-by-name'),
     path('get-city-images/<int:city_id>', city_views.get_all_city_images, name='get-city-images'),
     path('get-city-facts/<int:city_id>', city_views.get_all_city_facts, name='get-city-facts'),
-    path('get-city-trends/<int:city_id>', city_views.get_city_trends, name='get-city-trends'),
     path('get-city-visits', city_views.get_city_visits, name='get-city-visits'),
 
 
@@ -75,4 +75,8 @@ urlpatterns = [
 
     # Github API
     path('get-contributors/<str:project>', github_views.get_contributors, name="get-contributors"),
+
+    # Twitter API
+    path('get-city-trends/<int:city_id>', twitter_views.get_city_trends, name='get-city-trends'),
+    path('get-search-tweets/<str:query>', twitter_views.get_search_tweets, name='get-search-tweets'),
 ]
