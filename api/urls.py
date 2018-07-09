@@ -38,7 +38,7 @@ urlpatterns = [
 
 
     # Weather APIs
-    path('get-city-weather/<str:city_name>', weather_views.get_city_weather, name='get-city-weather'),
+    path('get-city-weather/<int:city_id>', weather_views.get_city_weather, name='get-city-weather'),
     path('get-multiple-days-weather/<int:num_of_days>/<str:city_name>', weather_views.get_multiple_days_weather,
          name='get-multiple-days-weather'),
 
