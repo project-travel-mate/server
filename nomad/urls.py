@@ -25,4 +25,3 @@ urlpatterns = [
     url(r'^$', views.view_home, name='redirectWebsite'),
     url(r'^.*/$', views.view_404, name='redirect404')
 ]
-
