@@ -21,4 +21,6 @@ class UserSerializer(serializers.ModelSerializer):
         return None
 
     def get_status(self, obj):
-        return obj.profile.status
+        if hasattr(obj, 'profile'):
+            return obj.profile.status
+        return None

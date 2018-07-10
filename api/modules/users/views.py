@@ -65,6 +65,8 @@ def get_user_profile(request):
     :param email:
     :return: 200 successful
     """
+    if not hasattr(request.user, 'profile'):
+        request.user.save()
     serializer = UserSerializer(request.user)
     return Response(serializer.data)
 
@@ -78,6 +80,9 @@ def get_users_by_email(request, email):
     :return: 200 successful
     """
     users = User.objects.filter(is_staff=False, is_superuser=False, username__startswith=email)[:5]
+    for user in users:
+        if not hasattr(user, 'profile'):
+            request.user.save()
     serializer = UserSerializer(users, many=True)
     return Response(serializer.data)
 
@@ -93,6 +98,8 @@ def get_user_by_id(request, user_id):
     """
     try:
         user = User.objects.get(pk=user_id)
+        if not hasattr(user, 'profile'):
+            user.save()
     except User.DoesNotExist:
         error_message = "Invalid user ID"
         return Response(error_message, status=status.HTTP_400_BAD_REQUEST)

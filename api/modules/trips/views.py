@@ -103,11 +103,8 @@ def add_friend_to_trip(request, trip_id, user_id):
             trip.city.city_name,
             request.user.first_name,
             request.user.last_name,)
-        if not (add_notification(
-                initiator_user=request.user,
-                destined_user=user,
-                text=notification_text,
-                notification_type=NotificationTypeChoice.TRIP.value,)):
+        if not add_notification(initiator_user=request.user, destined_user=user, text=notification_text,
+                                notification_type=NotificationTypeChoice.TRIP.value, trip=trip):
             raise RuntimeError("Error while creating notification")
     except Trip.DoesNotExist:
         error_message = "Trip does not exist"
