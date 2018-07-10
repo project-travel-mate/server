@@ -6,7 +6,8 @@ from api.models import Notification, NotificationTypeChoice
 from api.modules.notification.serializers import NotificationSerializer
 
 
-def add_notification(initiator_user, destined_user, text, notification_type=NotificationTypeChoice.COMMON.value):
+def add_notification(initiator_user, destined_user, text, notification_type=NotificationTypeChoice.COMMON.value,
+                     trip=None):
     """
     Add Notification for user
     :param request:
@@ -14,16 +15,20 @@ def add_notification(initiator_user, destined_user, text, notification_type=Noti
     :param destined_user:
     :param text:
     :param notification_type:
+    :param trip: Optional Parameter
     :return: True if notification created
     :return: False if error occurs
     """
     try:
-        Notification.objects.create(
+        notification = Notification(
             initiator_user=initiator_user,
             destined_user=destined_user,
             text=text,
             notification_type=notification_type,
         )
+        if notification_type == NotificationTypeChoice.TRIP.value:
+            notification.trip = trip
+        notification.save()
     except Exception:
         return False  # Failed to create notification
     return True  # Notification successfully Created
@@ -75,3 +80,19 @@ def mark_all_notification_as_read(request):
     notifications.update(is_read=True)
     success_message = "Successfully marked all notifications as read."
     return Response(success_message, status=status.HTTP_200_OK)
+
+
+@api_view(['GET'])
+def get_number_of_unread_notifications(request):
+    """
+    Return number of unread notification for user
+    :param request:
+    :return 200 successful:
+    """
+    response = {}
+    no_of_notifications = Notification.objects.filter(
+        destined_user=request.user,
+        is_read=False
+    ).count()
+    response['number_of_unread_notifications'] = no_of_notifications
+    return Response(response, status=status.HTTP_200_OK)

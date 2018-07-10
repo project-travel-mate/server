@@ -64,6 +64,9 @@ urlpatterns = [
     path('mark-all-notification',
          notification_views.mark_all_notification_as_read,
          name="mark-all-notification"),
+    path('number-of-unread-notifications',
+         notification_views.get_number_of_unread_notifications,
+         name="number-of-unread-notifications"),
 
     # Feedback
     path('add-feedback', feedback_views.add_feedback, name="add-feedback"),

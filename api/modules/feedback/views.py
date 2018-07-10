@@ -38,7 +38,6 @@ def get_feedback(request, feedback_id):
     """
     Returns the feedback pertaining to a certain feedback id
     :param request:
-    :return: 400 if incorrect parameters are sent or database request failed
     :return: 401 if authorization failed
     :return: 404 if not found
     :return: 200 successful
@@ -63,11 +62,6 @@ def get_all_user_feedback(request):
     :param request:
     :return: 200 successful
     """
-    try:
-        feedbacks = Feedback.objects.get(user=request.user)
-
-    except Feedback.DoesNotExist:
-        return Response(status=status.HTTP_404_NOT_FOUND)
-
-    serializer = FeedbackSerializer(feedbacks)
+    feedbacks = Feedback.objects.filter(user=request.user).order_by('-created')
+    serializer = FeedbackSerializer(feedbacks, many=True)
     return Response(serializer.data)
