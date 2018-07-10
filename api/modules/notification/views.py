@@ -75,3 +75,19 @@ def mark_all_notification_as_read(request):
     notifications.update(is_read=True)
     success_message = "Successfully marked all notifications as read."
     return Response(success_message, status=status.HTTP_200_OK)
+
+
+@api_view(['GET'])
+def get_number_of_unread_notifications(request):
+    """
+    Return number of unread notification for user
+    :param request:
+    :return 200 successful:
+    """
+    response = {}
+    no_of_notifications = Notification.objects.filter(
+        destined_user=request.user,
+        is_read=False
+    ).count()
+    response['number_of_unread_notifications'] = no_of_notifications
+    return Response(response, status=status.HTTP_200_OK)
