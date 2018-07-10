@@ -12,6 +12,8 @@ from api.modules.notification import views as notification_views
 from api.modules.currency import views as currency_views
 from api.modules.github import views as github_views
 from api.modules.twitter import views as twitter_views
+from api.modules.food import views as food_views
+
 
 urlpatterns = [
     # Authentication
@@ -69,6 +71,10 @@ urlpatterns = [
     path('add-feedback', feedback_views.add_feedback, name="add-feedback"),
     path('get-all-user-feedback', feedback_views.get_all_user_feedback, name="get-all-user-feedback"),
     path('get-feedback/<int:feedback_id>', feedback_views.get_feedback, name="get-feedback"),
+
+    # Zomato APIs
+    path('get-all-restaurants/<str:latitude>/<str:longitude>', food_views.get_all_restaurants,
+         name="get-all-restaurants"),
 
     # Currency Conversion
     path('get-currency-conversion-rate/<str:source_currency_code>/<str:target_currency_code>',
