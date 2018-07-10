@@ -7,7 +7,7 @@ from rest_framework.response import Response
 from api.modules.food.zomato_response import ZomatoResponse
 from api.modules.food.constants import BASE_URL, ZOMATO_API_KEY, USER_AGENT, ACCEPT
 
-hour_difference = timedelta(hours=1)
+hour_difference = timedelta(days=1)
 requests_cache.install_cache(expire_after=hour_difference)
 
 
@@ -18,7 +18,7 @@ def get_all_restaurants(request, latitude, longitude):
     :param request:
     :param latitude:
     :param longitude:
-    :return: 503 if Zomato api fails
+    :return: 503 if Zomato API fails
     :return: 200 successful
     """
     response = []
@@ -28,24 +28,21 @@ def get_all_restaurants(request, latitude, longitude):
         api_response_json = api_response.json()
         if not api_response.ok:
             error_message = api_response_json['message']
-        req = requests.get(BASE_URL.format(latitude, longitude), headers=header)
-        all_details = req.json()
-        if not req.ok:
-            error_message = all_details['message']
             return Response(error_message, status=status.HTTP_503_SERVICE_UNAVAILABLE)
 
         for restaurant in api_response_json['nearby_restaurants']:
-            food = restaurant['restaurant']
-            response.append(ZomatoResponse(id=food['id'],
-                            name=food['name'],
-                            url=food['url'],
-                            latitude=food['location']['latitude'],
-                            longitude=food['location']['longitude'],
-                            avg2=food['average_cost_for_two'],
-                            currency=food['currency'],
-                            image=food['featured_image'],
-                            rating=food['user_rating']['aggregate_rating'],
-                            votes=food['user_rating']['votes']).to_json())
+            restaurant_obj = restaurant['restaurant']
+            response.append(ZomatoResponse(id=restaurant_obj['id'],
+                            name=restaurant_obj['name'],
+                            url=restaurant_obj['url'],
+                            latitude=restaurant_obj['location']['latitude'],
+                            longitude=restaurant_obj['location']['longitude'],
+                            avg2=restaurant_obj['average_cost_for_two'],
+                            currency=restaurant_obj['currency'],
+                            image=restaurant_obj['featured_image'],
+                            rating=restaurant_obj['user_rating']['aggregate_rating'],
+                            votes=restaurant_obj['user_rating']['votes']),
+                            address=restaurant_obj['location']['address'].to_json())
 
     except Exception as e:
         return Response(str(e), status=status.HTTP_503_SERVICE_UNAVAILABLE)
