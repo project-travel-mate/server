@@ -75,7 +75,7 @@ urlpatterns = [
 <<<<<<< ecb0169c0e81a4492899d9afad9b7c599a44b560
 <<<<<<< HEAD
     # Zomato APIs
-    path('get-all-restaurants/<str:latitude>/<str:longitude>', zomato_views.get_all_restaurants,
+    path('get-all-restaurants/<str:latitude>/<str:longitude>', food_views.get_all_restaurants,
          name="get-all-restaurants"),
 =======
     # Currency Conversion
