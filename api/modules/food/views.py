@@ -5,7 +5,7 @@ from datetime import timedelta
 from rest_framework import status
 from rest_framework.response import Response
 from api.modules.food.zomato_response import ZomatoResponse
-from api.modules.food.constants import *
+from api.modules.food.constants import BASE_URL, ZOMATO_API_KEY, USER_AGENT, ACCEPT
 
 hour_difference = timedelta(hours=1)
 requests_cache.install_cache(expire_after=hour_difference)
