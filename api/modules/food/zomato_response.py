@@ -3,6 +3,7 @@ class ZomatoResponse(object):
     Specifies the response to be sent for the zomato details.
     """
 
+
 def __init__(self, *args, **kwargs):
 
         self.restaurant_id = kwargs.get("id", -1)
@@ -16,6 +17,7 @@ def __init__(self, *args, **kwargs):
         self.aggregate_rating = kwargs.get("rating", 0)
         self.votes = kwargs.get("votes", 0)
         self.phone_numbers = kwargs.get("phone_numbers", 0)
+
 
 def to_json(self):
     """
