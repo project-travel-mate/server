@@ -28,13 +28,13 @@ def get_all_restaurants(request, latitude, longitude):
         api_response_json = api_response.json()
         if not api_response.ok:
             error_message = api_response_json['message']
-        req = requests.get(BASE_URL.format(latitude,longitude), headers=header)
+        req = requests.get(BASE_URL.format(latitude, longitude), headers=header)
         all_details = req.json()
         if not req.ok:
             error_message = all_details['message']
             return Response(error_message, status=status.HTTP_503_SERVICE_UNAVAILABLE)
 
-        for restaurant inapi_response_json['nearby_restaurants']:
+        for restaurant in api_response_json['nearby_restaurants']:
             food = restaurant['restaurant']
             response.append(ZomatoResponse(id=food['id'],
                             name=food['name'],
