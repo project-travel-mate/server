@@ -70,11 +70,6 @@ urlpatterns = [
     path('get-all-user-feedback', feedback_views.get_all_user_feedback, name="get-all-user-feedback"),
     path('get-feedback/<int:feedback_id>', feedback_views.get_feedback, name="get-feedback"),
 
-<<<<<<< HEAD
-    # Zomato APIs
-    path('get-all-restaurants/<str:latitude>/<str:longitude>', zomato_views.get_all_restaurants,
-         name="get-all-restaurants"),
-=======
     # Currency Conversion
     path('get-currency-conversion-rate/<str:source_currency_code>/<str:target_currency_code>',
          currency_views.get_currency_exchange_rate, name="get-conversion-rate"),
@@ -85,5 +80,8 @@ urlpatterns = [
     # Twitter API
     path('get-city-trends/<int:city_id>', twitter_views.get_city_trends, name='get-city-trends'),
     path('get-search-tweets/<str:query>', twitter_views.get_search_tweets, name='get-search-tweets'),
->>>>>>> upstream/master
+
+    # Zomato API
+    path('get-all-restaurants/<str:latitude>/<str:longitude>', food_views.get_all_restaurants,
+        name="get-all-restaurants"),
 ]
