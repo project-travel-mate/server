@@ -5,6 +5,7 @@ from rest_framework import status
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
 
+from api.models import City
 from api.modules.weather.constants import OPEN_WEATHER_API_URL, OPEN_FORECAST_API_URL
 from api.modules.weather.utils import to_celsius, icon_to_url
 from api.modules.weather.weather_response import WeatherResponse
@@ -14,16 +15,23 @@ requests_cache.install_cache(expire_after=hour_difference)
 
 
 @api_view(['GET'])
-def get_city_weather(request, city_name):
+def get_city_weather(request, city_id):
     """
     Return current city weather using city name
     :param request:
-    :param city_name:
+    :param city_id:
+    :return: 404 if Invalid City ID is passed
     :return: 503 if OpenWeatherMap api fails
     :return: 200 successful
     """
     try:
-        api_response = requests.get(OPEN_WEATHER_API_URL.format(city_name))
+        city = City.objects.get(pk=city_id)
+    except City.DoesNotExist:
+        error_message = "Invalid City ID"
+        return Response(error_message, status=status.HTTP_404_NOT_FOUND)
+
+    try:
+        api_response = requests.get(OPEN_WEATHER_API_URL.format(city.latitude, city.longitude))
         api_response_json = api_response.json()
         if not api_response.ok:
             error_message = api_response_json['message']
