@@ -15,3 +15,22 @@ class ContributorResponse(object):
         :return:
         """
         return self.__dict__
+
+
+class IssueResponse(object):
+    """
+    Specifies the response to be sent for one github issue object.
+    """
+    def __init__(self, *args, **kwargs):
+        self.title = kwargs.get('title', None)
+        self.created_at = kwargs.get('created_at', None)
+        self.comments = kwargs.get('comments', None)
+        self.issue_number = kwargs.get('issue_number', None)
+        self.tags = kwargs.get('labels', None)
+
+    def to_json(self):
+        """
+        Return IssueResponse object as python dictionary.
+        :return:
+        """
+        return self.__dict__
