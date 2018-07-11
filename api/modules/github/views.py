@@ -56,10 +56,13 @@ def get_issues(request, project):
         :return: 503 if github api fails
         :return: 200 successful
         """
+
     try:
         api_response = requests.get(GITHUB_API_GET_ISSUES_URL.format(project_name=project))
         api_response_json = api_response.json()
-
+        if api_response.status_code == 404:
+            error_message = "Repository does not exist"
+            return Response(error_message, status=status.HTTP_404_NOT_FOUND)
         if api_response.status_code == 401:
             raise Exception("Authentication fails. Invalid github access token.")
         response = []
@@ -68,8 +71,11 @@ def get_issues(request, project):
             tags = []
             # Making custom dictionary for tags
             for i in range(0, labels_length):
-                mydict = {k: v for k, v in issue["labels"][i].items() if k in ["name"]}
-                tags.append(mydict)
+                # Searching inside "labels" key for tag_name
+                for tag, tag_name in issue["labels"][i].items():
+                    if tag in ["name"]:
+                        label = tag_name
+                tags.append(label)
             result = IssueResponse(
                 title=issue['title'],
                 created_at=issue['created_at'],
