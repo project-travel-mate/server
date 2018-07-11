@@ -75,6 +75,7 @@ def get_issues(request, project):
                 created_at=issue['created_at'],
                 comments=issue['comments'],
                 issue_number=issue['number'],
+                repository_url=issue['repository_url'],
                 labels=tags
             )
             result_as_json = result.to_json()

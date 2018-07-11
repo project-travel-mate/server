@@ -22,6 +22,7 @@ class IssueResponse(object):
     Specifies the response to be sent for one github issue object.
     """
     def __init__(self, *args, **kwargs):
+        self.repository_url = kwargs.get('repository_url', None)
         self.title = kwargs.get('title', None)
         self.created_at = kwargs.get('created_at', None)
         self.comments = kwargs.get('comments', None)
