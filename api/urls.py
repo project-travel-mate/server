@@ -80,6 +80,7 @@ urlpatterns = [
 
     # Github API
     path('get-contributors/<str:project>', github_views.get_contributors, name="get-contributors"),
+    path('get-issues/<str:project>', github_views.get_issues, name="get-issues"),
 
     # Twitter API
     path('get-city-trends/<int:city_id>', twitter_views.get_city_trends, name='get-city-trends'),
