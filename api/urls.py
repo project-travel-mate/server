@@ -12,6 +12,7 @@ from api.modules.notification import views as notification_views
 from api.modules.currency import views as currency_views
 from api.modules.github import views as github_views
 from api.modules.twitter import views as twitter_views
+from api.modules.food import views as food_views
 
 urlpatterns = [
     # Authentication
@@ -55,6 +56,7 @@ urlpatterns = [
          name="remove-friend-from-trip"),
     path('update-trip-name/<int:trip_id>/<str:trip_name>', trip_views.update_trip_name, name="update-trip-name"),
     path('trip-friends-all', user_views.trip_friends_all, name="trip-friends-all"),
+    path('get-common-trips/<int:user_id>', trip_views.get_common_trips, name="get-common-trips"),
 
     # Notification
     path('get-notifications', notification_views.get_notifications, name="get-notifications"),
@@ -73,20 +75,20 @@ urlpatterns = [
     path('get-all-user-feedback', feedback_views.get_all_user_feedback, name="get-all-user-feedback"),
     path('get-feedback/<int:feedback_id>', feedback_views.get_feedback, name="get-feedback"),
 
-<<<<<<< HEAD
-    # Zomato APIs
-    path('get-all-restaurants/<str:latitude>/<str:longitude>', zomato_views.get_all_restaurants,
-         name="get-all-restaurants"),
-=======
     # Currency Conversion
     path('get-currency-conversion-rate/<str:source_currency_code>/<str:target_currency_code>',
          currency_views.get_currency_exchange_rate, name="get-conversion-rate"),
 
     # Github API
     path('get-contributors/<str:project>', github_views.get_contributors, name="get-contributors"),
+    path('get-issues/<str:project>', github_views.get_issues, name="get-issues"),
 
     # Twitter API
     path('get-city-trends/<int:city_id>', twitter_views.get_city_trends, name='get-city-trends'),
     path('get-search-tweets/<str:query>', twitter_views.get_search_tweets, name='get-search-tweets'),
->>>>>>> upstream/master
+
+    # Zomato API
+    path('get-all-restaurants/<str:latitude>/<str:longitude>', food_views.get_all_restaurants,
+         name="get-all-restaurants"),
+
 ]
