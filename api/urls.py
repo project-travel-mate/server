@@ -78,6 +78,8 @@ urlpatterns = [
     # Currency Conversion
     path('get-currency-conversion-rate/<str:source_currency_code>/<str:target_currency_code>',
          currency_views.get_currency_exchange_rate, name="get-conversion-rate"),
+    path('get-all-currency-rate/<str:start_date>/<str:end_date>/<str:source_currency_code>/<str:target_currency_code>',
+         currency_views.get_all_currency_exchange_rate, name='get-all-currency-rate'),
 
     # Github API
     path('get-contributors/<str:project>', github_views.get_contributors, name="get-contributors"),
