@@ -54,11 +54,11 @@ def get_all_currency_exchange_rate(request, start_date, end_date, source_currenc
     y_start = start_date.split('-')[0]
     m_start = start_date.split('-')[1]
     d_start = start_date.split('-')[2]
-    start = datetime.datetime.strptime(y_start+m_start+d_start, '%d%m%Y').date()
+    start = datetime.datetime.strptime(y_start+m_start+d_start, '%Y%m%d').date()
     y_end = end_date.split('-')[0]
     m_end = end_date.split('-')[1]
     d_end = end_date.split('-')[2]
-    end = datetime.datetime.strptime(y_end+m_end+d_end, '%d%m%Y').date()
+    end = datetime.datetime.strptime(y_end+m_end+d_end, '%Y%m%d').date()
     if end < start:
         error_message = "End Date is before Start Date"
         return Response(error_message, status=status.HTTP_400_BAD_REQUEST)

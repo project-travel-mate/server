@@ -31,7 +31,6 @@ class CurrencyDate(object):
         :param args:
         :param kwargs:
         """
-        self.date = kwargs.get("date", None)
         self.value = kwargs.get("value", None)
 
     def to_json(self):
