@@ -205,3 +205,38 @@ def get_common_trips(request, user_id):
     serializer = TripSerializer(common_trips, many=True)
 
     return Response(serializer.data, status=status.HTTP_200_OK)
+
+
+@api_view(['GET'])
+def remove_user_from_trip(request, trip_id):
+    """
+    Dissociates current signed-in user from existing trip
+    :param request:
+    :param trip_id:
+    :return: 400 if user not present in the trip
+    :return: 404 if trip or user does not exist
+    :return: 200 successful
+    """
+    try:
+        trip = Trip.objects.get(pk=trip_id)
+
+        # if signed-in user not associated with requested trip
+        if request.user not in trip.users.all():
+            error_message = "User not a part of trip"
+            return Response(error_message, status=status.HTTP_400_BAD_REQUEST)
+
+        if trip.users.count() == 1:
+            trip.delete()  # delete trip if signed-in user is only member
+        else:
+            trip.users.remove(request.user)
+
+    except Trip.DoesNotExist:
+        error_message = "Trip does not exist"
+        return Response(error_message, status=status.HTTP_404_NOT_FOUND)
+    except User.DoesNotExist:
+        error_message = "User does not exist"
+        return Response(error_message, status=status.HTTP_404_NOT_FOUND)
+    except Exception as e:
+        return Response(str(e), status=status.HTTP_400_BAD_REQUEST)
+
+    return Response(status=status.HTTP_200_OK)
