@@ -223,7 +223,7 @@ def remove_user_from_trip(request, trip_id):
         # if signed-in user not associated with requested trip
         if request.user not in trip.users.all():
             error_message = "User not a part of trip"
-            return Response(error_message, status=status.HTTP_400_BAD_REQUEST)
+            return Response(error_message, status=status.HTTP_401_UNAUTHORIZED)
 
         if trip.users.count() == 1:
             trip.delete()  # delete trip if signed-in user is only member
@@ -232,9 +232,6 @@ def remove_user_from_trip(request, trip_id):
 
     except Trip.DoesNotExist:
         error_message = "Trip does not exist"
-        return Response(error_message, status=status.HTTP_404_NOT_FOUND)
-    except User.DoesNotExist:
-        error_message = "User does not exist"
         return Response(error_message, status=status.HTTP_404_NOT_FOUND)
     except Exception as e:
         return Response(str(e), status=status.HTTP_400_BAD_REQUEST)
