@@ -206,3 +206,20 @@ def remove_profile_image(request):
     user.profile.profile_image = None
     user.save()
     return Response("Profile image succesfully removed.", status=status.HTTP_200_OK)
+
+
+@api_view(['GET'])
+def remove_user_status(request):
+    """
+    Remove user status of a user
+    :param request:
+    :return: 200 successful
+    """
+    try:
+        user = request.user.profile
+        user.status = None
+        user.save(update_fields=['status'])
+    except Exception as e:
+        return Response(str(e), status=status.HTTP_400_BAD_REQUEST)
+
+    return Response(status=status.HTTP_200_OK)
