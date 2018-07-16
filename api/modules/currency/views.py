@@ -79,7 +79,7 @@ def get_all_currency_exchange_rate(request, start_date, end_date, source_currenc
                     current_value = currency_dates[0][1]
                     currency_dates = currency_dates[1:]
 
-                if current_date == end_date:
+                if current_date > end_date:
                     break
                 currency_list.append(CurrencyDate(value=current_value).to_json)
 
