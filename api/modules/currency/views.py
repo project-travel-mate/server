@@ -51,32 +51,40 @@ def get_all_currency_exchange_rate(request, start_date, end_date, source_currenc
     :return: 200 successful
     """
     currency_list = []
-    y_start = start_date.split('-')[0]
-    m_start = start_date.split('-')[1]
-    d_start = start_date.split('-')[2]
-    start = datetime.datetime.strptime(y_start+m_start+d_start, '%Y%m%d').date()
-    y_end = end_date.split('-')[0]
-    m_end = end_date.split('-')[1]
-    d_end = end_date.split('-')[2]
-    end = datetime.datetime.strptime(y_end+m_end+d_end, '%Y%m%d').date()
+    start = datetime.datetime.strptime(start_date, '%Y-%m-%d').date()
+    end = datetime.datetime.strptime(end_date, '%Y-%m-%d').date()
     if end < start:
         error_message = "End Date is before Start Date"
         return Response(error_message, status=status.HTTP_400_BAD_REQUEST)
     try:
-        api_response_start = requests.get(CURRENCY_VALUE_DATE_API_URL.format(
+        api_response = requests.get(CURRENCY_VALUE_DATE_API_URL.format(
             start_date, source_currency_code, target_currency_code))
-        api_response_end = requests.get(CURRENCY_VALUE_DATE_API_URL.format(
-            end_date, source_currency_code, target_currency_code))
-        if not api_response_start.ok or not api_response_end.ok:
+        if not api_response.ok:
             error_message = "Incorrect parameters please check dates"
             return Response(error_message, status=status.HTTP_400_BAD_REQUEST)
-        delta = end - start
-        for day in range(delta.days + 1):
-            actual_date = str(start + timedelta(day))
-            response = requests.get(CURRENCY_VALUE_DATE_API_URL.format(
-                actual_date, source_currency_code, target_currency_code))
-            currency_value = response.json()
-            currency_list.append(CurrencyDate(value=str(currency_value)).to_json())
+        api_response_content = api_response.content.split('\n')
+        currency_dates = []
+        currency_dates = map(lambda x: x.split(' '), api_response_content)
+        current_value = currency_dates[0][1]
+        current_date = datetime.datetime.strptime(start, '%Y-%m-%d').date()
+        currency_list.append(current_value)
+        currency_dates = currency_dates[1:]
+
+        while True:
+            try:
+                current_date = current_date + timedelta(days=1)
+                next_date = datetime.datetime.strptime(currency_dates[0][0], '%Y-%m-%d').date()
+                if current_date == next_date:
+                    current_date = next_date
+                    current_value = currency_dates[0][1]
+                    currency_dates = currency_dates[1:]
+
+                if current_date == end_date:
+                    break
+                currency_list.append(CurrencyDate(value=current_value).to_json)
+
+            except Exception as e:
+                pass
 
     except Exception as e:
         return Response(str(e), status=status.HTTP_503_SERVICE_UNAVAILABLE)
