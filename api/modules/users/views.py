@@ -65,6 +65,8 @@ def get_user_profile(request):
     :param email:
     :return: 200 successful
     """
+    if not hasattr(request.user, 'profile'):
+        request.user.save()
     serializer = UserSerializer(request.user)
     return Response(serializer.data)
 
@@ -78,6 +80,9 @@ def get_users_by_email(request, email):
     :return: 200 successful
     """
     users = User.objects.filter(is_staff=False, is_superuser=False, username__startswith=email)[:5]
+    for user in users:
+        if not hasattr(user, 'profile'):
+            request.user.save()
     serializer = UserSerializer(users, many=True)
     return Response(serializer.data)
 
@@ -93,6 +98,8 @@ def get_user_by_id(request, user_id):
     """
     try:
         user = User.objects.get(pk=user_id)
+        if not hasattr(user, 'profile'):
+            user.save()
     except User.DoesNotExist:
         error_message = "Invalid user ID"
         return Response(error_message, status=status.HTTP_400_BAD_REQUEST)
@@ -163,6 +170,29 @@ def trip_friends_all(request):
     return Response(serializer.data)
 
 
+@api_view(['POST'])
+def update_user_status(request):
+    """
+    Adds user status for user
+    :param request:
+    :return: 400 if incorrect parameters are sent
+    :return: 200 successful
+    """
+    updated_status = request.POST.get('status', None)
+
+    if not updated_status:
+        error_message = "Missing parameters in request. Send user status"
+        return Response(error_message, status=status.HTTP_400_BAD_REQUEST)
+    try:
+        user = request.user.profile
+        user.status = updated_status
+        user.save(update_fields=['status'])
+    except Exception as e:
+        return Response(str(e), status=status.HTTP_400_BAD_REQUEST)
+
+    return Response(status=status.HTTP_200_OK)
+
+
 @api_view(['GET'])
 def remove_profile_image(request):
     """
@@ -176,3 +206,20 @@ def remove_profile_image(request):
     user.profile.profile_image = None
     user.save()
     return Response("Profile image succesfully removed.", status=status.HTTP_200_OK)
+
+
+@api_view(['GET'])
+def remove_user_status(request):
+    """
+    Remove user status of a user
+    :param request:
+    :return: 200 successful
+    """
+    try:
+        user = request.user.profile
+        user.status = None
+        user.save(update_fields=['status'])
+    except Exception as e:
+        return Response(str(e), status=status.HTTP_400_BAD_REQUEST)
+
+    return Response(status=status.HTTP_200_OK)

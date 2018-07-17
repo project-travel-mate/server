@@ -103,11 +103,8 @@ def add_friend_to_trip(request, trip_id, user_id):
             trip.city.city_name,
             request.user.first_name,
             request.user.last_name,)
-        if not (add_notification(
-                initiator_user=request.user,
-                destined_user=user,
-                text=notification_text,
-                notification_type=NotificationTypeChoice.TRIP.value,)):
+        if not add_notification(initiator_user=request.user, destined_user=user, text=notification_text,
+                                notification_type=NotificationTypeChoice.TRIP.value, trip=trip):
             raise RuntimeError("Error while creating notification")
     except Trip.DoesNotExist:
         error_message = "Trip does not exist"
@@ -180,3 +177,31 @@ def update_trip_name(request, trip_id, trip_name):
         return Response(str(e), status=status.HTTP_400_BAD_REQUEST)
 
     return Response(status=status.HTTP_200_OK)
+
+
+@api_view(['GET'])
+def get_common_trips(request, user_id):
+    """
+    Common trips with a given friend
+    :param request:
+    :param user_id:
+    :return: 400 if user_id and request.user are same
+    :return: 404 if user with user_id does not exist
+    :return: 200 successful
+    """
+    # if user with user_id does not exist
+    if not User.objects.filter(id=user_id).exists():
+        error_message = "User does not exists."
+        return Response(error_message, status=status.HTTP_404_NOT_FOUND)
+
+    # if user_id is same as of request.user
+    if user_id == request.user.id:
+        error_message = "Requested user and logged in user are same."
+        return Response(error_message, status=status.HTTP_400_BAD_REQUEST)
+
+    common_trips = Trip.objects\
+        .filter(users=request.user)\
+        .filter(users=user_id)
+    serializer = TripSerializer(common_trips, many=True)
+
+    return Response(serializer.data, status=status.HTTP_200_OK)

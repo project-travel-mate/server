@@ -11,6 +11,8 @@ from api.modules.feedback import views as feedback_views
 from api.modules.notification import views as notification_views
 from api.modules.currency import views as currency_views
 from api.modules.github import views as github_views
+from api.modules.twitter import views as twitter_views
+from api.modules.food import views as food_views
 
 urlpatterns = [
     # Authentication
@@ -23,7 +25,9 @@ urlpatterns = [
     path('get-user/<str:email>', user_views.get_users_by_email, name='get-users-by-email'),
     path('update-user-details', user_views.update_user_details, name='update-user-details'),
     path('update-profile-image', user_views.update_profile_image, name='update-profile-image'),
+    path('update-user-status', user_views.update_user_status, name='update-user-status'),
     path('remove-profile-image', user_views.remove_profile_image, name='remove-profile-image'),
+    path('remove-user-status', user_views.remove_user_status, name='remove-user-status'),
 
     # City APIs
     path('get-all-cities', city_views.get_all_cities, name='get-all-cities'),
@@ -32,12 +36,11 @@ urlpatterns = [
     path('get-city-by-name/<str:city_prefix>', city_views.get_city_by_name, name='get-city-by-name'),
     path('get-city-images/<int:city_id>', city_views.get_all_city_images, name='get-city-images'),
     path('get-city-facts/<int:city_id>', city_views.get_all_city_facts, name='get-city-facts'),
-    path('get-city-trends/<int:city_id>', city_views.get_city_trends, name='get-city-trends'),
     path('get-city-visits', city_views.get_city_visits, name='get-city-visits'),
 
 
     # Weather APIs
-    path('get-city-weather/<str:city_name>', weather_views.get_city_weather, name='get-city-weather'),
+    path('get-city-weather/<int:city_id>', weather_views.get_city_weather, name='get-city-weather'),
     path('get-multiple-days-weather/<int:num_of_days>/<str:city_name>', weather_views.get_multiple_days_weather,
          name='get-multiple-days-weather'),
 
@@ -54,6 +57,7 @@ urlpatterns = [
          name="remove-friend-from-trip"),
     path('update-trip-name/<int:trip_id>/<str:trip_name>', trip_views.update_trip_name, name="update-trip-name"),
     path('trip-friends-all', user_views.trip_friends_all, name="trip-friends-all"),
+    path('get-common-trips/<int:user_id>', trip_views.get_common_trips, name="get-common-trips"),
 
     # Notification
     path('get-notifications', notification_views.get_notifications, name="get-notifications"),
@@ -63,6 +67,9 @@ urlpatterns = [
     path('mark-all-notification',
          notification_views.mark_all_notification_as_read,
          name="mark-all-notification"),
+    path('number-of-unread-notifications',
+         notification_views.get_number_of_unread_notifications,
+         name="number-of-unread-notifications"),
 
     # Feedback
     path('add-feedback', feedback_views.add_feedback, name="add-feedback"),
@@ -75,4 +82,13 @@ urlpatterns = [
 
     # Github API
     path('get-contributors/<str:project>', github_views.get_contributors, name="get-contributors"),
+    path('get-issues/<str:project>', github_views.get_issues, name="get-issues"),
+
+    # Twitter API
+    path('get-city-trends/<int:city_id>', twitter_views.get_city_trends, name='get-city-trends'),
+    path('get-search-tweets/<str:query>', twitter_views.get_search_tweets, name='get-search-tweets'),
+
+    # Zomato API
+    path('get-all-restaurants/<str:latitude>/<str:longitude>', food_views.get_all_restaurants,
+         name="get-all-restaurants"),
 ]

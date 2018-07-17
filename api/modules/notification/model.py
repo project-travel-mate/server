@@ -32,3 +32,4 @@ class Notification(models.Model):
     text = models.TextField()
     is_read = models.BooleanField(default=False)
     created_at = models.DateTimeField(auto_now_add=True)
+    trip = models.ForeignKey('Trip', on_delete=models.CASCADE, null=True, default=None)
