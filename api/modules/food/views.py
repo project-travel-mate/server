@@ -41,8 +41,8 @@ def get_all_restaurants(request, latitude, longitude):
                             currency=restaurant_obj['currency'],
                             image=restaurant_obj['featured_image'],
                             rating=restaurant_obj['user_rating']['aggregate_rating'],
-                            votes=restaurant_obj['user_rating']['votes']),
-                            address=restaurant_obj['location']['address'].to_json())
+                            votes=restaurant_obj['user_rating']['votes'],
+                            address=restaurant_obj['location']['address']).to_json())
 
     except Exception as e:
         return Response(str(e), status=status.HTTP_503_SERVICE_UNAVAILABLE)
