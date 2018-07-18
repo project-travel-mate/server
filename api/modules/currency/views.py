@@ -63,7 +63,6 @@ def get_all_currency_exchange_rate(request, start_date, end_date, source_currenc
             error_message = "Incorrect parameters please check dates"
             return Response(error_message, status=status.HTTP_400_BAD_REQUEST)
         api_response_content = api_response.content.split('\n')
-        currency_dates = []
         currency_dates = map(lambda x: x.split(' '), api_response_content)
         current_value = currency_dates[0][1]
         current_date = datetime.datetime.strptime(start, '%Y-%m-%d').date()
@@ -71,20 +70,18 @@ def get_all_currency_exchange_rate(request, start_date, end_date, source_currenc
         currency_dates = currency_dates[1:]
 
         while True:
-            try:
-                current_date = current_date + timedelta(days=1)
-                next_date = datetime.datetime.strptime(currency_dates[0][0], '%Y-%m-%d').date()
-                if current_date == next_date:
-                    current_date = next_date
-                    current_value = currency_dates[0][1]
-                    currency_dates = currency_dates[1:]
 
-                if current_date > end_date:
-                    break
-                currency_list.append(CurrencyDate(value=current_value).to_json)
+            current_date = current_date + timedelta(days=1)
+            next_date = datetime.datetime.strptime(currency_dates[0][0], '%Y-%m-%d').date()
+            if current_date == next_date:
+                current_date = next_date
+                current_value = currency_dates[0][1]
+                currency_dates = currency_dates[1:]
 
-            except Exception as e:
-                pass
+            currency_list.append(CurrencyDate(value=current_value).to_json)
+
+            if current_date == end_date:
+                break
 
     except Exception as e:
         return Response(str(e), status=status.HTTP_503_SERVICE_UNAVAILABLE)
