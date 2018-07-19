@@ -91,4 +91,5 @@ urlpatterns = [
     # Zomato API
     path('get-all-restaurants/<str:latitude>/<str:longitude>', food_views.get_all_restaurants,
          name="get-all-restaurants"),
+
 ]
