@@ -58,7 +58,7 @@ def get_all_currency_exchange_rate(request, start_date, end_date, source_currenc
         return Response(error_message, status=status.HTTP_400_BAD_REQUEST)
     try:
         api_response = requests.get(CURRENCY_VALUE_DATE_API_URL.format(
-            start_date, source_currency_code, target_currency_code))
+            start_date, end_date, source_currency_code, target_currency_code))
         if not api_response.ok:
             error_message = "Incorrect parameters please check dates"
             return Response(error_message, status=status.HTTP_400_BAD_REQUEST)
@@ -66,11 +66,10 @@ def get_all_currency_exchange_rate(request, start_date, end_date, source_currenc
         currency_dates = map(lambda x: x.split(' '), api_response_content)
         current_value = currency_dates[0][1]
         current_date = datetime.datetime.strptime(start, '%Y-%m-%d').date()
-        currency_list.append(current_value)
+        currency_list.append(CurrencyDate(value=current_value).to_json())
         currency_dates = currency_dates[1:]
 
-        while True:
-
+        for i in range((end-start).days):
             current_date = current_date + timedelta(days=1)
             next_date = datetime.datetime.strptime(currency_dates[0][0], '%Y-%m-%d').date()
             if current_date == next_date:
@@ -78,7 +77,7 @@ def get_all_currency_exchange_rate(request, start_date, end_date, source_currenc
                 current_value = currency_dates[0][1]
                 currency_dates = currency_dates[1:]
 
-            currency_list.append(CurrencyDate(value=current_value).to_json)
+            currency_list.append(CurrencyDate(value=current_value).to_json())
 
             if current_date == end_date:
                 break
