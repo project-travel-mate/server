@@ -62,10 +62,10 @@ def get_all_currency_exchange_rate(request, start_date, end_date, source_currenc
         if not api_response.ok:
             error_message = "Incorrect parameters please check dates"
             return Response(error_message, status=status.HTTP_400_BAD_REQUEST)
-        api_response_content = api_response.content.split('\n')
-        currency_dates = map(lambda x: x.split(' '), api_response_content)
+        api_response_content = api_response.text.split('\n')
+        currency_dates = list(map(lambda x: x.split(' '), api_response_content))
         current_value = currency_dates[0][1]
-        current_date = datetime.datetime.strptime(start, '%Y-%m-%d').date()
+        current_date = start
         currency_list.append(CurrencyDate(value=current_value).to_json())
         currency_dates = currency_dates[1:]
 
@@ -78,9 +78,6 @@ def get_all_currency_exchange_rate(request, start_date, end_date, source_currenc
                 currency_dates = currency_dates[1:]
 
             currency_list.append(CurrencyDate(value=current_value).to_json())
-
-            if current_date == end_date:
-                break
 
     except Exception as e:
         return Response(str(e), status=status.HTTP_503_SERVICE_UNAVAILABLE)
