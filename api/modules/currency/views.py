@@ -3,7 +3,7 @@ from rest_framework import status
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
 from api.modules.currency.constants import CURRENCY_CONVERTER_API_URL, CURRENCY_VALUE_DATE_API_URL
-from api.modules.currency.currency_item import CurrencyItem, CurrencyDate
+from api.modules.currency.currency_item import CurrencyItem
 import datetime
 from datetime import timedelta
 
@@ -66,7 +66,7 @@ def get_all_currency_exchange_rate(request, start_date, end_date, source_currenc
         currency_dates = list(map(lambda x: x.split(' '), api_response_content))
         current_value = currency_dates[0][1]
         current_date = start
-        currency_list.append(CurrencyDate(value=current_value).to_json())
+        currency_list.append(float(current_value))
         currency_dates = currency_dates[1:]
 
         for i in range((end-start).days):
@@ -77,7 +77,7 @@ def get_all_currency_exchange_rate(request, start_date, end_date, source_currenc
                 current_value = currency_dates[0][1]
                 currency_dates = currency_dates[1:]
 
-            currency_list.append(CurrencyDate(value=current_value).to_json())
+            currency_list.append(float(current_value))
 
     except Exception as e:
         return Response(str(e), status=status.HTTP_503_SERVICE_UNAVAILABLE)
