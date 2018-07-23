@@ -10,10 +10,11 @@ class UserSerializer(serializers.ModelSerializer):
     """
     image = serializers.SerializerMethodField()
     status = serializers.SerializerMethodField()
+    unique_code = serializers.SerializerMethodField()
 
     class Meta(object):
         model = User
-        fields = ('username', 'first_name', 'last_name', 'id', 'image', 'date_joined', 'status')
+        fields = ('username', 'first_name', 'last_name', 'id', 'image', 'date_joined', 'status', 'unique_code')
 
     def get_image(self, obj):
         if hasattr(obj, 'profile'):
@@ -23,4 +24,9 @@ class UserSerializer(serializers.ModelSerializer):
     def get_status(self, obj):
         if hasattr(obj, 'profile'):
             return obj.profile.status
+        return None
+
+    def get_unique_code(self, obj):
+        if hasattr(obj, 'profile'):
+            return obj.profile.unique_code
         return None
