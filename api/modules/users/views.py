@@ -6,7 +6,7 @@ from rest_framework.decorators import permission_classes, api_view
 from rest_framework.permissions import AllowAny
 from rest_framework.response import Response
 
-from api.modules.users.serializers import UserSerializer
+from api.modules.users.serializers import UserSerializer, UserOnlySerializer
 from api.modules.users.validators import validate_password, validate_email
 
 
@@ -166,7 +166,7 @@ def trip_friends_all(request):
     except Exception as e:
         return Response(str(e), status=status.HTTP_400_BAD_REQUEST)
 
-    serializer = UserSerializer(all_trips, many=True)
+    serializer = UserOnlySerializer(all_trips, many=True)
     return Response(serializer.data)
 
 
