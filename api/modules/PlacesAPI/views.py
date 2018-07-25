@@ -12,6 +12,7 @@ from api.modules.PlacesAPI.constants import PLACES_API_SEARCH
 hour_difference = timedelta(days=1)
 requests_cache.install_cache(expire_after=hour_difference)
 
+
 @api_view(['GET'])
 def get_places(request, latitude, longitude, place_keyword):
     """
@@ -22,7 +23,7 @@ def get_places(request, latitude, longitude, place_keyword):
         :param : place_keyword:
         :return: 503 if Places api fails
         :return: 200 successful
-        """
+    """
     try:
         api_response = requests.get(
             PLACES_API_SEARCH.format(latitude=latitude, longitude=longitude, place_keyword=place_keyword)

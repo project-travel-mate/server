@@ -28,6 +28,10 @@ def get_shopping_info(request, query):
             error_message = api_response_json['errorMessage'][0]['error'][0]['message'][0]
             return Response(error_message, status=status.HTTP_503_SERVICE_UNAVAILABLE)
 
+        #  if ebay api returns empty response with no items
+        if api_response_json['findItemsAdvancedResponse'][0]['searchResult'][0]['@count'] == '0':
+            return Response([], status=status.HTTP_400_BAD_REQUEST)
+
         response = []
         for item in api_response_json['findItemsAdvancedResponse'][0]['searchResult'][0]['item']:
             response.append(ShoppingItem(
