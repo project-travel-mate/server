@@ -13,6 +13,7 @@ from api.modules.currency import views as currency_views
 from api.modules.github import views as github_views
 from api.modules.twitter import views as twitter_views
 from api.modules.food import views as food_views
+from api.modules.PlacesAPI import views as places_views
 
 urlpatterns = [
     # Authentication
@@ -91,4 +92,7 @@ urlpatterns = [
     # Zomato API
     path('get-all-restaurants/<str:latitude>/<str:longitude>', food_views.get_all_restaurants,
          name="get-all-restaurants"),
+
+    # Places API
+    path('get-places/<str:latitude>/<str:longitude>/<str:place_keyword>',places_views.get_places, name='get-places')
 ]

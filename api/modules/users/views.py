@@ -213,6 +213,7 @@ def remove_user_status(request):
     """
     Remove user status of a user
     :param request:
+    :return: 400 if profile does not exist
     :return: 200 successful
     """
     try:
