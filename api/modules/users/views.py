@@ -1,3 +1,4 @@
+from smtplib import SMTPException
 from email.utils import parseaddr
 
 from django.contrib.auth.models import User
@@ -7,7 +8,7 @@ from rest_framework.decorators import permission_classes, api_view
 from rest_framework.permissions import AllowAny
 from rest_framework.response import Response
 from nomad.settings import EMAIL_HOST_USER
-from api.modules.users.constants import SUBJECT, MESSAGE, UNIQUE_CODE
+from api.modules.email.templates import SUBJECT, MESSAGE
 from api.modules.users.serializers import UserSerializer
 from api.modules.users.validators import validate_password, validate_email
 
@@ -50,11 +51,14 @@ def sign_up(request):
         user.last_name = lastname
         user.is_superuser = False
         user.is_staff = False
-        user.profile.unique_code = UNIQUE_CODE
         user.save()
         from_email = EMAIL_HOST_USER
         to_list = [user.username, EMAIL_HOST_USER]
-        send_mail(SUBJECT, MESSAGE, from_email, to_list, fail_silently=True)
+        try:
+            send_mail(SUBJECT, MESSAGE, from_email, to_list, fail_silently=True)
+        except SMTPException as e:
+            error_message = str(e)
+            return Response(error_message, status=status.HTTP_400_BAD_REQUEST)
     except Exception as e:
         error_message = str(e)
         return Response(error_message, status=status.HTTP_400_BAD_REQUEST)
