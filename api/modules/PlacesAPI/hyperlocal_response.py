@@ -1,11 +1,11 @@
-class PlaceResponse(object):
+class HyperLocalResponse(object):
     """
     Specifies the response to be sent foo one place object.
     """
     def __init__(self, *args, **kwargs):
         self.title = kwargs.get('title')
-        self.vicinty = kwargs.get('vicinity')
-        self.href = kwargs.get('href')
+        self.address = kwargs.get('address')
+        self.website = kwargs.get('website')
 
     def to_json(self):
         """

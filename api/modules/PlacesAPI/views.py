@@ -6,8 +6,8 @@ from rest_framework import status
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
 
-from api.modules.PlacesAPI.response import PlaceResponse
-from api.modules.PlacesAPI.constants import PLACES_API_SEARCH
+from api.modules.PlacesAPI.hyperlocal_response import HyperLocalResponse
+from api.modules.PlacesAPI.constants import PLACES_SEARCH_API_URL
 
 hour_difference = timedelta(days=1)
 requests_cache.install_cache(expire_after=hour_difference)
@@ -26,7 +26,7 @@ def get_places(request, latitude, longitude, place_keyword):
     """
     try:
         api_response = requests.get(
-            PLACES_API_SEARCH.format(latitude=latitude, longitude=longitude, place_keyword=place_keyword)
+            PLACES_SEARCH_API_URL.format(latitude=latitude, longitude=longitude, place_keyword=place_keyword)
         )
         api_response_json = api_response.json()
         if api_response.status_code == 503:
@@ -35,9 +35,10 @@ def get_places(request, latitude, longitude, place_keyword):
         response = []
         suggestions = api_response_json['results']
         for place in suggestions:
-            result = PlaceResponse(
+            result = HyperLocalResponse(
                 title=place['title'],
-                href=place['href']
+                website=place['href'],
+                address=place['vicinity'],
             )
             result_as_json = result.to_json()
             response.append(result_as_json)
