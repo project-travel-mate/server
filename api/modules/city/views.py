@@ -1,11 +1,19 @@
+import requests
+import requests_cache
+from datetime import timedelta
+
 from django.db.models import Count
 from rest_framework import status
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
 
 from api.models import City, CityFact, CityImage, CityVisitLog
+from api.modules.city.utils import extract_as_dict, clean_wiki_extract
 from api.modules.city.serializers import AllCitiesSerializer, CitySerializer, CityImageSerializer, CityFactSerializer, \
     CityVisitSerializer
+
+seven_day_difference = timedelta(days=7)
+requests_cache.install_cache(expire_after=seven_day_difference)
 
 
 @api_view(['GET'])
@@ -110,3 +118,35 @@ def get_city_visits(request):
 
     serializer = CityVisitSerializer(city_visits, many=True)
     return Response(serializer.data)
+
+
+@api_view(['GET'])
+def get_city_information(request, city_id):
+    """
+    Return detail of city extracted using wikipedia api
+    :param request:
+    :param city_id:
+    :return: 503 if wiki api fails
+    :return: 404 if city is not found
+    :return: 200 successful
+    """
+    try:
+        city = City.objects.get(id=city_id)
+        wiki_api_url = "https://en.wikipedia.org/w/api.php" +\
+            "?action=query&prop=extracts&explaintext&titles=" + \
+            city.city_name + \
+            "&format=json"
+        api_response = requests.get(wiki_api_url)
+        data = api_response.json()
+        # fetching unique number associated with every city as a key in response
+        city_wiki_number = list((data['query']['pages']).keys())[0]
+        extract = data['query']['pages'][city_wiki_number]['extract']
+        extract = clean_wiki_extract(extract)
+        city_detail = extract_as_dict(extract)
+    except City.DoesNotExist:
+        error_message = "City does not exist"
+        return Response(error_message, status=status.HTTP_404_NOT_FOUND)
+    except Exception as e:
+        return Response(str(e), status=status.HTTP_503_SERVICE_UNAVAILABLE)
+
+    return Response(city_detail, status=status.HTTP_200_OK)

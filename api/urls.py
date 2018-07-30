@@ -37,7 +37,7 @@ urlpatterns = [
     path('get-city-images/<int:city_id>', city_views.get_all_city_images, name='get-city-images'),
     path('get-city-facts/<int:city_id>', city_views.get_all_city_facts, name='get-city-facts'),
     path('get-city-visits', city_views.get_city_visits, name='get-city-visits'),
-
+    path('get-city-information/<int:city_id>', city_views.get_city_information, name="get-city-information"),
 
     # Weather APIs
     path('get-city-weather/<int:city_id>', weather_views.get_city_weather, name='get-city-weather'),
@@ -94,5 +94,4 @@ urlpatterns = [
     # Zomato API
     path('get-all-restaurants/<str:latitude>/<str:longitude>', food_views.get_all_restaurants,
          name="get-all-restaurants"),
-
 ]
