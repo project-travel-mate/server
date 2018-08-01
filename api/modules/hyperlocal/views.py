@@ -1,55 +1,61 @@
-import requests
-import requests_cache
 from datetime import timedelta
 
+import requests
+import requests_cache
 from rest_framework import status
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
 
-from api.modules.hyperlocal.hyperlocal_response import HyperLocalResponse
 from api.modules.hyperlocal.constants import PLACES_SEARCH_API_URL
+from api.modules.hyperlocal.hyperlocal_response import HyperLocalResponse
 
 hour_difference = timedelta(days=1)
 requests_cache.install_cache(expire_after=hour_difference)
 
 
 @api_view(['GET'])
-def get_places(request, latitude, longitude, place_keyword):
+def get_places(request, latitude, longitude, places_query):
     """
     Return list of places matched
     :param request:
     :param latitude:
-    :param: longitude:
-    :param : place_keyword:
+    :param longitude:
+    :param places_query:
     :return: 503 if Places api fails
     :return: 400 if invalid parameters are passed
     :return: 200 successful
     """
     try:
         api_response = requests.get(
-            PLACES_SEARCH_API_URL.format(latitude=latitude, longitude=longitude, place_keyword=place_keyword)
+            PLACES_SEARCH_API_URL.format(latitude=latitude, longitude=longitude, places_query=places_query)
         )
         api_response_json = api_response.json()
         if api_response.status_code == 503:
             error_message = "Service Unavailable"
             return Response(error_message, status=status.HTTP_503_SERVICE_UNAVAILABLE)
         if api_response.status_code == 401:
-            error_message = 'API Authntication failed'
+            error_message = 'API Authentication failed'
             return Response(error_message, status=status.HTTP_400_BAD_REQUEST)
-        response = []
-        suggestions = api_response_json['results']
-        if len(suggestions) == 0:
-            error_message = 'Enter a valid Place keyword'
-            return Response(error_message, status=status.HTTP_400_BAD_REQUEST)
-        for place in suggestions:
-            result = HyperLocalResponse(
-                title=place['title'],
-                website=place['href'],
-                address=place['vicinity'],
-            )
-            result_as_json = result.to_json()
-            response.append(result_as_json)
     except Exception as e:
         return Response(str(e), status=status.HTTP_503_SERVICE_UNAVAILABLE)
+
+    response = []
+    suggestions = api_response_json['results']['items']
+    if len(suggestions) == 0:
+        error_message = 'Enter a valid Place keyword'
+        return Response(error_message, status=status.HTTP_400_BAD_REQUEST)
+
+    for place in suggestions:
+        result = HyperLocalResponse(
+            title=place['title'],
+            website=place['href'],
+            address=place['vicinity'],
+            icon=place['icon'],
+            latitude=place['position'][0],
+            longitude=place['position'][1],
+            distance=place['distance']
+        )
+        result_as_json = result.to_json()
+        response.append(result_as_json)
 
     return Response(response)
