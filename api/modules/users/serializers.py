@@ -24,3 +24,15 @@ class UserSerializer(serializers.ModelSerializer):
         if hasattr(obj, 'profile'):
             return obj.profile.status
         return None
+
+
+class UserOnlySerializer(serializers.ModelSerializer):
+
+    name = serializers.SerializerMethodField()
+
+    def get_name(self, obj):
+        return obj.first_name + ' ' + obj.last_name
+
+    class Meta:
+        model = User
+        fields = ('username', 'name')
