@@ -1,18 +1,19 @@
-from django.urls import path
 from django.conf.urls import url
+from django.urls import path
 from rest_framework.authtoken import views as auth_views
 
-from api.modules.users import views as user_views
 from api.modules.city import views as city_views
-from api.modules.shopping import views as shopping_views
-from api.modules.weather import views as weather_views
-from api.modules.trips import views as trip_views
-from api.modules.feedback import views as feedback_views
-from api.modules.notification import views as notification_views
 from api.modules.currency import views as currency_views
-from api.modules.github import views as github_views
-from api.modules.twitter import views as twitter_views
+from api.modules.feedback import views as feedback_views
 from api.modules.food import views as food_views
+from api.modules.github import views as github_views
+from api.modules.hyperlocal import views as places_views
+from api.modules.notification import views as notification_views
+from api.modules.shopping import views as shopping_views
+from api.modules.trips import views as trip_views
+from api.modules.twitter import views as twitter_views
+from api.modules.users import views as user_views
+from api.modules.weather import views as weather_views
 
 urlpatterns = [
     # Authentication
@@ -37,7 +38,7 @@ urlpatterns = [
     path('get-city-images/<int:city_id>', city_views.get_all_city_images, name='get-city-images'),
     path('get-city-facts/<int:city_id>', city_views.get_all_city_facts, name='get-city-facts'),
     path('get-city-visits', city_views.get_city_visits, name='get-city-visits'),
-
+    path('get-city-information/<int:city_id>', city_views.get_city_information, name="get-city-information"),
 
     # Weather APIs
     path('get-city-weather/<int:city_id>', weather_views.get_city_weather, name='get-city-weather'),
@@ -95,4 +96,6 @@ urlpatterns = [
     path('get-all-restaurants/<str:latitude>/<str:longitude>', food_views.get_all_restaurants,
          name="get-all-restaurants"),
 
+    # Hyperlocal API
+    path('get-places/<str:latitude>/<str:longitude>/<str:places_query>', places_views.get_places, name='get-places')
 ]

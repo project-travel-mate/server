@@ -1,13 +1,17 @@
 from email.utils import parseaddr
+from smtplib import SMTPException
 
 from django.contrib.auth.models import User
+from django.core.mail import send_mail
 from rest_framework import status
 from rest_framework.decorators import permission_classes, api_view
 from rest_framework.permissions import AllowAny
 from rest_framework.response import Response
 
+from api.modules.email.templates import WELCOME_MAIL_SUBJECT, WELCOME_MAIL_CONTENT
 from api.modules.users.serializers import UserSerializer
 from api.modules.users.validators import validate_password, validate_email
+from nomad.settings import DEFAULT_EMAIL_SENDER
 
 
 @api_view(['POST'])
@@ -49,6 +53,15 @@ def sign_up(request):
         user.is_superuser = False
         user.is_staff = False
         user.save()
+        try:
+            to_list = [user.username]
+            fullname = "{} {}".format(firstname, lastname)
+            mail_subject = WELCOME_MAIL_SUBJECT.format(firstname)
+            mail_content = WELCOME_MAIL_CONTENT.format(fullname)
+            send_mail(mail_subject, mail_content, DEFAULT_EMAIL_SENDER, to_list, fail_silently=False)
+        except SMTPException as e:
+            error_message = "Registration successful. Unable to send a welcome email to user"
+            return Response(error_message, status=status.HTTP_400_BAD_REQUEST)
     except Exception as e:
         error_message = str(e)
         return Response(error_message, status=status.HTTP_400_BAD_REQUEST)
@@ -213,6 +226,7 @@ def remove_user_status(request):
     """
     Remove user status of a user
     :param request:
+    :return: 400 if profile does not exist
     :return: 200 successful
     """
     try:
