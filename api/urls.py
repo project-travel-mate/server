@@ -95,6 +95,7 @@ urlpatterns = [
     # Zomato API
     path('get-all-restaurants/<str:latitude>/<str:longitude>', food_views.get_all_restaurants,
          name="get-all-restaurants"),
+    path('get-restaurant/<int:restaurant_id>', food_views.get_restaurant, name="get-restaurant"),
 
     # Hyperlocal API
     path('get-places/<str:latitude>/<str:longitude>/<str:places_query>', places_views.get_places, name='get-places')
