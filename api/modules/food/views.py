@@ -5,7 +5,7 @@ from datetime import timedelta
 from rest_framework import status
 from rest_framework.response import Response
 from api.modules.food.zomato_response import ZomatoResponse, ZomatoResponseDetailed
-from api.modules.food.constants import BASE_URL, ZOMATO_API_KEY, USER_AGENT, ACCEPT, BASE_URL_ID
+from api.modules.food.constants import BASE_URL, ZOMATO_API_KEY, USER_AGENT, ACCEPT, LIST, RESTAURANT
 
 hour_difference = timedelta(days=1)
 requests_cache.install_cache(expire_after=hour_difference)
@@ -24,7 +24,8 @@ def get_all_restaurants(request, latitude, longitude):
     response = []
     try:
         header = {"User-agent": USER_AGENT, "Accept": ACCEPT, "user_key": ZOMATO_API_KEY}
-        api_response = requests.get(BASE_URL.format(latitude, longitude), headers=header)
+        URL = BASE_URL+LIST
+        api_response = requests.get(URL.format(latitude, longitude), headers=header)
         api_response_json = api_response.json()
         if not api_response.ok:
             error_message = api_response_json['message']
@@ -62,7 +63,8 @@ def get_restaurant(request, restaurant_id):
     """
     try:
         header = {"User-agent": USER_AGENT, "Accept": ACCEPT, "user_key": ZOMATO_API_KEY}
-        api_response = requests.get(BASE_URL_ID.format(restaurant_id), headers=header)
+        URL = BASE_URL+RESTAURANT
+        api_response = requests.get(URL.format(restaurant_id), headers=header)
         api_response_json = api_response.json()
         if not api_response.ok:
             error_message = api_response_json['message']
