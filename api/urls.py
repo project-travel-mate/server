@@ -30,6 +30,7 @@ urlpatterns = [
     path('update-password', user_views.update_password, name='update-password'),
     path('remove-profile-image', user_views.remove_profile_image, name='remove-profile-image'),
     path('remove-user-status', user_views.remove_user_status, name='remove-user-status'),
+    path('delete-profile', user_views.delete_profile, name='delete-profile'),
 
     # City APIs
     path('get-all-cities', city_views.get_all_cities, name='get-all-cities'),

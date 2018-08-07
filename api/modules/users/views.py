@@ -2,6 +2,7 @@ from email.utils import parseaddr
 from smtplib import SMTPException
 
 from django.contrib.auth.models import User
+from api.models import Trip
 from django.core.mail import send_mail
 from rest_framework import status
 from rest_framework.decorators import permission_classes, api_view
@@ -239,6 +240,29 @@ def remove_user_status(request):
     return Response(status=status.HTTP_200_OK)
 
 
+@api_view(['GET'])
+def delete_profile(request):
+    """
+    Remove user profile
+    :param request:
+    :return: 404 if profile does not exist
+    :return: 200 successful
+    """
+    try:
+        user_profile = request.user.profile
+        if user_profile:
+            user_profile.delete()
+        for trip in Trip.objects.all():
+            if request.user in trip.users.all():
+                if trip.users.count() == 1:
+                    trip.delete()
+                else:
+                    trip.users.remove(request.user)
+        User.objects.get(id=request.user.id).delete()
+    except Exception as e:
+        return Response(str(e), status=status.HTTP_400_BAD_REQUEST)
+    return Response(status=status.HTTP_200_OK)
+=======
 @api_view(['POST'])
 def update_password(request):
     """
