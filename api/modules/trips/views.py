@@ -5,6 +5,7 @@ from rest_framework.response import Response
 
 from api.models import Trip, City, NotificationTypeChoice
 from api.modules.trips.serializers import TripSerializer, TripCondensedSerializer
+from api.modules.city.serializers import AllCitiesSerializer
 from api.modules.notification.views import add_notification
 
 
@@ -237,3 +238,26 @@ def remove_user_from_trip(request, trip_id):
         return Response(str(e), status=status.HTTP_400_BAD_REQUEST)
 
     return Response(status=status.HTTP_200_OK)
+
+
+@api_view(['GET'])
+def get_trip_cities(request, user_id):
+    """
+    all the unique cities user has in his list of trips.
+    :param request:
+    :param user_id:
+    :return: 404 if user does not exist
+    :return: 200 successful
+    """
+    # if user with user_id does not exist
+    if not User.objects.filter(id=user_id).exists():
+        error_message = "User does not exists."
+        return Response(error_message, status=status.HTTP_404_NOT_FOUND)
+
+    cities = []
+    trips = Trip.objects.filter(users=user_id)
+    for trip in trips:
+        cities.append(trip.city)
+
+    serializer = AllCitiesSerializer(cities, many=True)
+    return Response(serializer.data, status=status.HTTP_200_OK)
