@@ -27,6 +27,7 @@ urlpatterns = [
     path('update-user-details', user_views.update_user_details, name='update-user-details'),
     path('update-profile-image', user_views.update_profile_image, name='update-profile-image'),
     path('update-user-status', user_views.update_user_status, name='update-user-status'),
+    path('update-password', user_views.update_password, name='update-password'),
     path('remove-profile-image', user_views.remove_profile_image, name='remove-profile-image'),
     path('remove-user-status', user_views.remove_user_status, name='remove-user-status'),
 

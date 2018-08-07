@@ -237,3 +237,32 @@ def remove_user_status(request):
         return Response(str(e), status=status.HTTP_400_BAD_REQUEST)
 
     return Response(status=status.HTTP_200_OK)
+
+
+@api_view(['POST'])
+def update_password(request):
+    """
+    update password
+    :param request:
+    :return: 400 if incorrect parameters are sent
+    :return: 200 successful
+    """
+    old_password = request.POST.get('old_password', None)
+    new_password = request.POST.get('new_password', None)
+
+    if not old_password or not new_password:
+        error_message = "Missing parameters in request. Send old_password, new_password"
+        return Response(error_message, status=status.HTTP_400_BAD_REQUEST)
+    try:
+        if request.user.check_password(old_password):
+            if validate_password(new_password):
+                request.user.set_password(new_password)
+                request.user.save()
+            else:
+                return Response("Invalid new password", status=status.HTTP_400_BAD_REQUEST)
+        else:
+            return Response("Incorrect old password", status=status.HTTP_400_BAD_REQUEST)
+    except Exception as e:
+        return Response(str(e), status=status.HTTP_400_BAD_REQUEST)
+
+    return Response("Password updated succesfully", status=status.HTTP_200_OK)
