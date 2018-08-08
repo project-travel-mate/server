@@ -14,3 +14,12 @@ Welcome {0},
 Thank you for registering with us.
 
 """ + EMAIL_SIGNATURE
+
+# Forgot password mails
+FORGOT_PASSWORD_MAIL_SUBJECT = "Travel Mate - Password reset request"
+FORGOT_PASSWORD_MAIL_CONTENT = """
+Dear {0},
+
+You have requested a password reset for your travel mate account. Use code {1} to reset your password.
+If you didn't make this request, ignore this email.
+""" + EMAIL_SIGNATURE
