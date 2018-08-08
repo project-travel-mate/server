@@ -8,9 +8,13 @@ from rest_framework.decorators import permission_classes, api_view
 from rest_framework.permissions import AllowAny
 from rest_framework.response import Response
 
-from api.modules.email.templates import WELCOME_MAIL_SUBJECT, WELCOME_MAIL_CONTENT
+from api.models import PasswordVerification
+from api.modules.email.templates import (
+    WELCOME_MAIL_SUBJECT, WELCOME_MAIL_CONTENT,
+    FORGOT_PASSWORD_MAIL_SUBJECT, FORGOT_PASSWORD_MAIL_CONTENT)
 from api.modules.users.serializers import UserSerializer
 from api.modules.users.validators import validate_password, validate_email
+from api.modules.users.utils import generate_random_code
 from nomad.settings import DEFAULT_EMAIL_SENDER
 
 
@@ -262,6 +266,74 @@ def update_password(request):
                 return Response("Invalid new password", status=status.HTTP_400_BAD_REQUEST)
         else:
             return Response("Incorrect old password", status=status.HTTP_400_BAD_REQUEST)
+    except Exception as e:
+        return Response(str(e), status=status.HTTP_400_BAD_REQUEST)
+
+    return Response("Password updated succesfully", status=status.HTTP_200_OK)
+
+
+@api_view(['GET'])
+def forgot_password_email_code(request):
+    """
+    create and send email containing code for forgot password
+    :param request:
+    :return: 400 if code generation or email sending fails
+    :return: 200 successful
+    """
+    # generating/retrieving code
+    try:
+        # if code already exists
+        pass_ver = PasswordVerification.objects.get(user=request.user)
+        code = pass_ver.code
+
+    except PasswordVerification.DoesNotExist:
+        # generate and save new code
+        code = generate_random_code()
+        pass_ver = PasswordVerification(user=request.user, code=code)
+        pass_ver.save()
+
+    except Exception as e:
+        return Response(str(e), status=status.HTTP_400_BAD_REQUEST)
+
+    # sending code via email
+    try:
+        to_list = [request.user.username]
+        fullname = "{} {}".format(request.user.first_name, request.user.last_name)
+        mail_subject = FORGOT_PASSWORD_MAIL_SUBJECT
+        mail_content = FORGOT_PASSWORD_MAIL_CONTENT.format(fullname, code)
+        send_mail(mail_subject, mail_content, DEFAULT_EMAIL_SENDER, to_list, fail_silently=False)
+    except SMTPException as e:
+        error_message = "Unable to send a forgot password email to user"
+        return Response(error_message, status=status.HTTP_400_BAD_REQUEST)
+
+    return Response("Email sent", status=status.HTTP_200_OK)
+
+
+@api_view(['GET'])
+def forgot_password_verify_code(request, code, new_password):
+    """
+    Updates password after verfication of code and new password
+    :param request:
+    :param code: 6 digit code recieved over mail
+    :param new_password:
+    :return: 400 if code generation fails
+    :return: 200 successful
+    """
+    try:
+        pass_ver = PasswordVerification.objects.get(user=request.user)
+        if code == pass_ver.code:
+            if validate_password(new_password):
+                request.user.set_password(new_password)
+                request.user.save()
+                pass_ver.delete()
+            else:
+                return Response("Invalid new password", status=status.HTTP_400_BAD_REQUEST)
+        else:
+            return Response("Code mismatch", status=status.HTTP_400_BAD_REQUEST)
+
+    except PasswordVerification.DoesNotExist:
+        return Response("Forgot password code not yet generated", status=status.HTTP_400_BAD_REQUEST)
+
     except Exception as e:
         return Response(str(e), status=status.HTTP_400_BAD_REQUEST)
 

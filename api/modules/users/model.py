@@ -24,3 +24,9 @@ def update_user_profile(sender, instance, **kwargs):
     else:
         # for users already created
         Profile.objects.create(user=instance)
+
+
+class PasswordVerification(models.Model):
+    user = models.OneToOneField(User, on_delete=models.CASCADE)
+    code = models.CharField(max_length=6)
+    created = models.DateTimeField(auto_now_add=True)
