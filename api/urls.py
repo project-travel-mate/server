@@ -2,6 +2,7 @@ from django.conf.urls import url
 from django.urls import path
 from rest_framework.authtoken import views as auth_views
 
+from api.modules.analytics import views as analytics_views
 from api.modules.city import views as city_views
 from api.modules.currency import views as currency_views
 from api.modules.feedback import views as feedback_views
@@ -100,5 +101,8 @@ urlpatterns = [
     path('get-restaurant/<int:restaurant_id>', food_views.get_restaurant, name="get-restaurant"),
 
     # Hyperlocal API
-    path('get-places/<str:latitude>/<str:longitude>/<str:places_query>', places_views.get_places, name='get-places')
+    path('get-places/<str:latitude>/<str:longitude>/<str:places_query>', places_views.get_places, name='get-places'),
+
+    # Analytics API
+    path('get-total-users', analytics_views.get_total_users, name="get-total-users")
 ]
