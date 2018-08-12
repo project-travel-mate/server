@@ -23,10 +23,11 @@ class AllCitiesSerializer(serializers.ModelSerializer):
 class CitySerializer(serializers.ModelSerializer):
     images = serializers.SerializerMethodField()
     facts_count = serializers.SerializerMethodField()
+    has_visited = serializers.SerializerMethodField()
 
     class Meta:
         model = City
-        fields = ('id', 'city_name', 'description', 'latitude', 'longitude', 'facts_count', 'images')
+        fields = ('id', 'city_name', 'description', 'latitude', 'longitude', 'facts_count', 'images', 'has_visited')
 
     def get_images(self, obj):
         if obj.images.count() == 0:
@@ -35,6 +36,9 @@ class CitySerializer(serializers.ModelSerializer):
 
     def get_facts_count(self, obj):
         return obj.facts.count()
+
+    def get_has_visited(self, obj):
+        return obj.has_visited
 
 
 class CityImageSerializer(serializers.ModelSerializer):
