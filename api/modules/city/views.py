@@ -7,7 +7,7 @@ from rest_framework import status
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
 
-from api.models import City, CityFact, CityImage, CityVisitLog
+from api.models import City, CityFact, CityImage, CityVisitLog, Trip
 from api.modules.city.utils import extract_as_dict, clean_wiki_extract
 from api.modules.city.serializers import AllCitiesSerializer, CitySerializer, CityImageSerializer, CityFactSerializer, \
     CityVisitSerializer
@@ -40,6 +40,8 @@ def get_city(request, city_id):
     """
     try:
         city = City.objects.get(pk=city_id)
+        city.has_visited = Trip.objects.filter(city=city, users=request.user).exists()
+
     except City.DoesNotExist:
         return Response(status=status.HTTP_404_NOT_FOUND)
 
