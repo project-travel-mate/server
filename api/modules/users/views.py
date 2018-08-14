@@ -171,7 +171,7 @@ def trip_friends_all(request):
     :return: 200 successful
     """
     try:
-        all_trips = User.objects.filter(trip__users=request.user).distinct()
+        all_trips = User.objects.filter(trip__users=request.user).distinct().exclude(username=request.user)
 
     except User.DoesNotExist:
         error_message = "Trip does not exist"
