@@ -5,7 +5,7 @@ from rest_framework.response import Response
 
 from api.models import Trip, City, NotificationTypeChoice
 from api.modules.trips.serializers import TripSerializer, TripCondensedSerializer
-from api.modules.city.serializers import AllCitiesSerializer
+from api.modules.city.serializers import CityCondensedSerializer
 from api.modules.notification.views import add_notification
 
 
@@ -259,5 +259,5 @@ def get_trip_cities(request, user_id):
     for trip in trips:
         cities.append(trip.city)
 
-    serializer = AllCitiesSerializer(cities, many=True)
+    serializer = CityCondensedSerializer(cities, many=True)
     return Response(serializer.data, status=status.HTTP_200_OK)

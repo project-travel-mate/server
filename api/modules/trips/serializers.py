@@ -1,12 +1,12 @@
 from rest_framework import serializers
 
 from api.models import Trip
-from api.modules.city.serializers import CitySerializer
+from api.modules.city.serializers import CityCondensedSerializer
 from api.modules.users.serializers import UserSerializer
 
 
 class TripSerializer(serializers.ModelSerializer):
-    city = CitySerializer(many=False, read_only=True)
+    city = CityCondensedSerializer(many=False, read_only=True)
     users = UserSerializer(many=True, read_only=True)
 
     class Meta:
@@ -15,7 +15,7 @@ class TripSerializer(serializers.ModelSerializer):
 
 
 class TripCondensedSerializer(serializers.ModelSerializer):
-    city = CitySerializer(many=False, read_only=True)
+    city = CityCondensedSerializer(many=False, read_only=True)
     users_count = serializers.SerializerMethodField()
 
     class Meta:

@@ -1,16 +1,16 @@
-import requests
-import requests_cache
 from datetime import timedelta
 
+import requests
+import requests_cache
 from django.db.models import Count
 from rest_framework import status
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
 
 from api.models import City, CityFact, CityImage, CityVisitLog, Trip
+from api.modules.city.serializers import CityCondensedSerializer, CitySerializer, CityImageSerializer, \
+    CityFactSerializer, CityVisitSerializer
 from api.modules.city.utils import extract_as_dict, clean_wiki_extract
-from api.modules.city.serializers import AllCitiesSerializer, CitySerializer, CityImageSerializer, CityFactSerializer, \
-    CityVisitSerializer
 
 seven_day_difference = timedelta(days=7)
 requests_cache.install_cache(expire_after=seven_day_difference)
@@ -25,7 +25,7 @@ def get_all_cities(request, no_of_cities=8):
     :return: 200 successful
     """
     cities = City.objects.annotate(visit_count=Count('logs')).order_by('-visit_count')[:no_of_cities]
-    serializer = AllCitiesSerializer(cities, many=True)
+    serializer = CityCondensedSerializer(cities, many=True)
     return Response(serializer.data)
 
 
@@ -65,7 +65,7 @@ def get_city_by_name(request, city_prefix):
     :return: 200 successful
     """
     cities = City.objects.filter(city_name__istartswith=city_prefix)[:5]
-    serializer = AllCitiesSerializer(cities, many=True)
+    serializer = CityCondensedSerializer(cities, many=True)
     return Response(serializer.data)
 
 
@@ -134,10 +134,10 @@ def get_city_information(request, city_id):
     """
     try:
         city = City.objects.get(id=city_id)
-        wiki_api_url = "https://en.wikipedia.org/w/api.php" +\
-            "?action=query&prop=extracts&explaintext&titles=" + \
-            city.city_name + \
-            "&format=json"
+        wiki_api_url = "https://en.wikipedia.org/w/api.php" + \
+                       "?action=query&prop=extracts&explaintext&titles=" + \
+                       city.city_name + \
+                       "&format=json"
         api_response = requests.get(wiki_api_url)
         data = api_response.json()
         # fetching unique number associated with every city as a key in response
