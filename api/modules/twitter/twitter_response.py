@@ -10,6 +10,7 @@ class SearchTweetResponse(object):
         self.user_profile_image = kwargs.get('user_profile_image', None)
         self.retweet_count = kwargs.get('retweet_count', None)
         self.favorite_count = kwargs.get('favorite_count', None)
+        self.tweet_url = kwargs.get('tweet_url', None)
 
     def to_json(self):
         """

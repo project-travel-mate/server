@@ -81,6 +81,7 @@ def get_search_tweets(request, query):
                 user_profile_image=tweet['user']['profile_image_url'],
                 retweet_count=tweet['retweet_count'],
                 favorite_count=tweet['favorite_count'],
+                tweet_url="https://www.twitter.com/" + tweet['user']['screen_name'] + "/status/" + tweet['id_str'],
             )
             result_as_json = result.to_json()
             response.append(result_as_json)
