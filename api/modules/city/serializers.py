@@ -2,7 +2,7 @@ from rest_framework import serializers
 from api.models import City, CityImage, CityFact, CityVisitLog
 
 
-class AllCitiesSerializer(serializers.ModelSerializer):
+class CityCondensedSerializer(serializers.ModelSerializer):
     image = serializers.SerializerMethodField()
     facts_count = serializers.SerializerMethodField()
     visit_count = serializers.IntegerField(read_only=True)
@@ -59,7 +59,7 @@ class CityFactSerializer(serializers.ModelSerializer):
 
 class CityVisitSerializer(serializers.ModelSerializer):
     visit_count = serializers.IntegerField(read_only=True)
-    city = AllCitiesSerializer(read_only=True, many=False)
+    city = CityCondensedSerializer(read_only=True, many=False)
 
     class Meta:
         model = CityVisitLog

@@ -9,7 +9,7 @@ from rest_framework.response import Response
 
 from api.models import City, CityFact, CityImage, CityVisitLog, Trip
 from api.modules.city.utils import extract_as_dict, clean_wiki_extract
-from api.modules.city.serializers import AllCitiesSerializer, CitySerializer, CityImageSerializer, CityFactSerializer, \
+from api.modules.city.serializers import CityCondensedSerializer, CitySerializer, CityImageSerializer, CityFactSerializer, \
     CityVisitSerializer
 
 seven_day_difference = timedelta(days=7)
@@ -25,7 +25,7 @@ def get_all_cities(request, no_of_cities=8):
     :return: 200 successful
     """
     cities = City.objects.annotate(visit_count=Count('logs')).order_by('-visit_count')[:no_of_cities]
-    serializer = AllCitiesSerializer(cities, many=True)
+    serializer = CityCondensedSerializer(cities, many=True)
     return Response(serializer.data)
 
 
@@ -65,7 +65,7 @@ def get_city_by_name(request, city_prefix):
     :return: 200 successful
     """
     cities = City.objects.filter(city_name__istartswith=city_prefix)[:5]
-    serializer = AllCitiesSerializer(cities, many=True)
+    serializer = CityCondensedSerializer(cities, many=True)
     return Response(serializer.data)
 
 
