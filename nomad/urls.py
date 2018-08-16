@@ -13,15 +13,18 @@ Including another URLconf
     1. Import the include() function: from django.conf.urls import url, include
     2. Add a URL to urlpatterns:  url(r'^blog/', include('blog.urls'))
 """
+from django.conf.urls import url, include
 from django.contrib import admin
 
-from django.conf.urls import url, include
 import api.views as views
+from nomad.settings import DEBUG
 
 urlpatterns = [
     url(r'^admin/', admin.site.urls),
     url(r'^api/', include('api.urls')),
-    url(r'^api-auth/', include('rest_framework.urls', namespace='rest_framework')),
-    url(r'^$', views.view_home, name='redirectWebsite'),
-    url(r'^.*/$', views.view_404, name='redirect404')
+    url(r'^api-auth/', include('rest_framework.urls', namespace='rest_framework'))
 ]
+
+if not DEBUG:
+    urlpatterns.append(url(r'^$', views.view_home, name='redirectWebsite'))
+    urlpatterns.append(url(r'^.*/$', views.view_404, name='redirect404'))
