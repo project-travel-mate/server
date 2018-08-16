@@ -4,9 +4,8 @@ from rest_framework.decorators import api_view
 from rest_framework.response import Response
 
 from api.models import Trip, City, NotificationTypeChoice
-from api.modules.trips.serializers import TripSerializer, TripCondensedSerializer
-from api.modules.city.serializers import CityCondensedSerializer
 from api.modules.notification.views import add_notification
+from api.modules.trips.serializers import TripSerializer, TripCondensedSerializer
 
 
 @api_view(['POST'])
@@ -200,8 +199,8 @@ def get_common_trips(request, user_id):
         error_message = "Requested user and logged in user are same."
         return Response(error_message, status=status.HTTP_400_BAD_REQUEST)
 
-    common_trips = Trip.objects\
-        .filter(users=request.user)\
+    common_trips = Trip.objects \
+        .filter(users=request.user) \
         .filter(users=user_id)
     serializer = TripSerializer(common_trips, many=True)
 
@@ -238,26 +237,3 @@ def remove_user_from_trip(request, trip_id):
         return Response(str(e), status=status.HTTP_400_BAD_REQUEST)
 
     return Response(status=status.HTTP_200_OK)
-
-
-@api_view(['GET'])
-def get_trip_cities(request, user_id):
-    """
-    all the unique cities user has in his list of trips.
-    :param request:
-    :param user_id:
-    :return: 404 if user does not exist
-    :return: 200 successful
-    """
-    # if user with user_id does not exist
-    if not User.objects.filter(id=user_id).exists():
-        error_message = "User does not exists."
-        return Response(error_message, status=status.HTTP_404_NOT_FOUND)
-
-    cities = []
-    trips = Trip.objects.filter(users=user_id)
-    for trip in trips:
-        cities.append(trip.city)
-
-    serializer = CityCondensedSerializer(cities, many=True)
-    return Response(serializer.data, status=status.HTTP_200_OK)

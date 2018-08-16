@@ -2,6 +2,7 @@ from datetime import timedelta
 
 import requests
 import requests_cache
+from django.contrib.auth.models import User
 from django.db.models import Count
 from rest_framework import status
 from rest_framework.decorators import api_view
@@ -9,7 +10,7 @@ from rest_framework.response import Response
 
 from api.models import City, CityFact, CityImage, CityVisitLog, Trip
 from api.modules.city.serializers import CityCondensedSerializer, CitySerializer, CityImageSerializer, \
-    CityFactSerializer, CityVisitSerializer
+    CityFactSerializer
 from api.modules.city.utils import extract_as_dict, clean_wiki_extract
 
 seven_day_difference = timedelta(days=7)
@@ -106,23 +107,6 @@ def get_all_city_facts(request, city_id):
 
 
 @api_view(['GET'])
-def get_city_visits(request):
-    """
-    Returns a list of cities visited by a user
-    :param request:
-    :return: 404 if invalid user not authenticated
-    :return: 200 successful
-    """
-    city_visits = CityVisitLog.objects.filter(user=request.user).values('city_id').annotate(
-        visit_count=Count('city')).order_by('-visit_count')
-    for visit in city_visits:
-        visit['city'] = City.objects.get(pk=visit['city_id'])
-
-    serializer = CityVisitSerializer(city_visits, many=True)
-    return Response(serializer.data)
-
-
-@api_view(['GET'])
 def get_city_information(request, city_id):
     """
     Return detail of city extracted using wikipedia api
@@ -152,3 +136,29 @@ def get_city_information(request, city_id):
         return Response(str(e), status=status.HTTP_503_SERVICE_UNAVAILABLE)
 
     return Response(city_detail, status=status.HTTP_200_OK)
+
+
+@api_view(['GET'])
+def get_visited_city(request, user_id=None):
+    """
+    all the unique cities user has in his list of trips.
+    :param request:
+    :param user_id:
+    :return: 404 if user does not exist
+    :return: 200 successful
+    """
+    # if user with user_id does not exist
+    if not user_id:
+        user_id = request.user.id
+
+    if not User.objects.filter(id=user_id).exists():
+        error_message = "User does not exists."
+        return Response(error_message, status=status.HTTP_404_NOT_FOUND)
+
+    cities = set()
+    trips = Trip.objects.filter(users=user_id)
+    for trip in trips:
+        cities.add(trip.city)
+
+    serializer = CityCondensedSerializer(cities, many=True)
+    return Response(serializer.data, status=status.HTTP_200_OK)

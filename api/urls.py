@@ -41,8 +41,9 @@ urlpatterns = [
     path('get-city-by-name/<str:city_prefix>', city_views.get_city_by_name, name='get-city-by-name'),
     path('get-city-images/<int:city_id>', city_views.get_all_city_images, name='get-city-images'),
     path('get-city-facts/<int:city_id>', city_views.get_all_city_facts, name='get-city-facts'),
-    path('get-city-visits', city_views.get_city_visits, name='get-city-visits'),
     path('get-city-information/<int:city_id>', city_views.get_city_information, name="get-city-information"),
+    path('get-visited-city', city_views.get_visited_city, name='get-visited-city'),
+    path('get-visited-city/<int:user_id>', city_views.get_visited_city, name='get-visited-city'),
 
     # Weather APIs
     path('get-city-weather/<int:city_id>', weather_views.get_city_weather, name='get-city-weather'),
@@ -64,7 +65,6 @@ urlpatterns = [
     path('trip-friends-all', user_views.trip_friends_all, name="trip-friends-all"),
     path('get-common-trips/<int:user_id>', trip_views.get_common_trips, name="get-common-trips"),
     path('remove-user-from-trip/<int:trip_id>', trip_views.remove_user_from_trip, name="remove-user-from-trip"),
-    path('get-trip-cities/<int:user_id>', trip_views.get_trip_cities, name="get-trip-cities"),
 
     # Notification
     path('get-notifications', notification_views.get_notifications, name="get-notifications"),

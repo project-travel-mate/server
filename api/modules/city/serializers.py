@@ -1,5 +1,6 @@
 from rest_framework import serializers
-from api.models import City, CityImage, CityFact, CityVisitLog
+
+from api.models import City, CityImage, CityFact
 
 
 class CityCondensedSerializer(serializers.ModelSerializer):
@@ -55,12 +56,3 @@ class CityFactSerializer(serializers.ModelSerializer):
     class Meta:
         model = CityFact
         fields = ('id', 'city_id', 'fact', 'source_text', 'source_url')
-
-
-class CityVisitSerializer(serializers.ModelSerializer):
-    visit_count = serializers.IntegerField(read_only=True)
-    city = CityCondensedSerializer(read_only=True, many=False)
-
-    class Meta:
-        model = CityVisitLog
-        fields = ['city', 'visit_count']
