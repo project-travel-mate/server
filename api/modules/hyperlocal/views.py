@@ -42,8 +42,8 @@ def get_places(request, latitude, longitude, places_query):
     response = []
     suggestions = api_response_json['results']['items']
     if len(suggestions) == 0:
-        error_message = 'Enter a valid Place keyword'
-        return Response(error_message, status=status.HTTP_400_BAD_REQUEST)
+        # no related place found
+        return Response({}, status=status.HTTP_400_BAD_REQUEST)
 
     for place in suggestions:
         result = HyperLocalResponse(
