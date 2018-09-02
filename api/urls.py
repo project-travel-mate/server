@@ -11,6 +11,7 @@ from api.modules.github import views as github_views
 from api.modules.hyperlocal import views as places_views
 from api.modules.notification import views as notification_views
 from api.modules.shopping import views as shopping_views
+from api.modules.static import views as static_views
 from api.modules.trips import views as trip_views
 from api.modules.twitter import views as twitter_views
 from api.modules.users import views as user_views
@@ -107,5 +108,9 @@ urlpatterns = [
     path('get-places/<str:latitude>/<str:longitude>/<str:places_query>', places_views.get_places, name='get-places'),
 
     # Analytics API
-    path('get-total-users', analytics_views.get_total_users, name="get-total-users")
+    path('get-total-users', analytics_views.get_total_users, name="get-total-users"),
+
+    # Static API
+    path('about-us', static_views.get_about_us, name="get-about-us"),
+    path('help', static_views.get_help, name="get-help")
 ]
