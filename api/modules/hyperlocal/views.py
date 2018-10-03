@@ -34,7 +34,7 @@ def get_places(request, latitude, longitude, places_query):
             error_message = "Service Unavailable"
             return Response(error_message, status=status.HTTP_503_SERVICE_UNAVAILABLE)
         if api_response.status_code == 401:
-            error_message = 'API Authentication failed'
+            error_message = 'Places API error - Invalid authentication'
             return Response(error_message, status=status.HTTP_400_BAD_REQUEST)
     except Exception as e:
         return Response(str(e), status=status.HTTP_503_SERVICE_UNAVAILABLE)
