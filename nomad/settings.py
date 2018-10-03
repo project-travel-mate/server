@@ -35,6 +35,10 @@ DEBUG = (os.environ.get('RUNNING_PROD') is None)
 
 ALLOWED_HOSTS = ['localhost', '.herokuapp.com']
 
+# GITHUB credentails for raising issues
+GITHUB_USERNAME = 'CHANGEME'
+GITHUB_PASSWORD = 'CHANGEME'
+
 # Application definition
 
 INSTALLED_APPS = [
