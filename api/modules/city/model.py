@@ -6,6 +6,7 @@ from django.db import models
 class City(models.Model):
     city_name = models.CharField(max_length=30)
     description = models.TextField(null=True, blank=True)
+    nickname = models.TextField(null=True, blank=True)
     latitude = models.DecimalField(max_digits=9, decimal_places=6)
     longitude = models.DecimalField(max_digits=9, decimal_places=6)
     total_trips = models.IntegerField(default=0)

@@ -10,7 +10,7 @@ class CityCondensedSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = City
-        fields = ('id', 'city_name', 'facts_count', 'image', 'visit_count')
+        fields = ('id', 'city_name', 'nickname', 'facts_count', 'image', 'visit_count')
 
     def get_image(self, obj):
         if obj.images.count() == 0:
@@ -28,7 +28,10 @@ class CitySerializer(serializers.ModelSerializer):
 
     class Meta:
         model = City
-        fields = ('id', 'city_name', 'description', 'latitude', 'longitude', 'facts_count', 'images', 'has_visited')
+        fields = (
+            'id', 'city_name', 'description', 'nickname',
+            'latitude', 'longitude', 'facts_count', 'images', 'has_visited'
+        )
 
     def get_images(self, obj):
         if obj.images.count() == 0:
