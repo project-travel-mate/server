@@ -6,9 +6,10 @@ from rest_framework import status
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
 
+from api.modules.github.utils import make_github_issue
 from api.modules.hyperlocal.constants import PLACES_SEARCH_API_URL
 from api.modules.hyperlocal.hyperlocal_response import HyperLocalResponse
-from api.modules.hyperlocal.utils import make_github_issue
+
 hour_difference = timedelta(days=1)
 requests_cache.install_cache(expire_after=hour_difference)
 
@@ -38,8 +39,10 @@ def get_places(request, latitude, longitude, places_query):
             return Response(error_message, status=status.HTTP_400_BAD_REQUEST)
         if api_response.status_code == 403:
             error_message = 'Places API error - Incorrect app_code or app_id'
-            # todo create issue
+
+            # create GitHub issue to get developers' attention
             make_github_issue(error_message)
+
             return Response(error_message, status=status.HTTP_400_BAD_REQUEST)
     except Exception as e:
         return Response(str(e), status=status.HTTP_503_SERVICE_UNAVAILABLE)
