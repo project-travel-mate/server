@@ -7,6 +7,7 @@ from rest_framework import status
 from rest_framework.decorators import permission_classes, api_view
 from rest_framework.permissions import AllowAny
 from rest_framework.response import Response
+from rest_framework.pagination import PageNumberPagination
 
 from api.models import PasswordVerification
 from api.modules.email.templates import (
@@ -183,8 +184,11 @@ def trip_friends_all(request):
     except Exception as e:
         return Response(str(e), status=status.HTTP_400_BAD_REQUEST)
 
-    serializer = UserSerializer(all_trips, many=True)
-    return Response(serializer.data)
+    paginator = PageNumberPagination()
+    paginator.page_size = 10
+    all_trips_paginated = paginator.paginate_queryset(all_trips, request)
+    serializer = UserSerializer(all_trips_paginated, many=True)
+    return paginator.get_paginated_response(serializer.data)
 
 
 @api_view(['POST'])

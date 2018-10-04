@@ -1,6 +1,7 @@
 from rest_framework import status
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
+from rest_framework.pagination import PageNumberPagination
 
 from api.models import Feedback
 from api.modules.feedback.serializers import FeedbackSerializer, FeedbackCondensedSerializer
@@ -63,5 +64,8 @@ def get_all_user_feedback(request):
     :return: 200 successful
     """
     feedbacks = Feedback.objects.filter(user=request.user).order_by('-created')
-    serializer = FeedbackSerializer(feedbacks, many=True)
-    return Response(serializer.data)
+    paginator = PageNumberPagination()
+    paginator.page_size = 10
+    feedbacks_paginated = paginator.paginate_queryset(feedbacks, request)
+    serializer = FeedbackSerializer(feedbacks_paginated, many=True)
+    return paginator.get_paginated_response(serializer.data)

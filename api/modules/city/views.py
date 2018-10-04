@@ -7,6 +7,7 @@ from django.db.models import Count
 from rest_framework import status
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
+from rest_framework.pagination import PageNumberPagination
 
 from api.models import City, CityFact, CityImage, CityVisitLog, Trip
 from api.modules.city.serializers import CityCondensedSerializer, CitySerializer, CityImageSerializer, \
@@ -18,16 +19,18 @@ requests_cache.install_cache(expire_after=seven_day_difference)
 
 
 @api_view(['GET'])
-def get_all_cities(request, no_of_cities=8):
+def get_all_cities(request):
     """
     Returns a list of cities with maximum number of logs (visits)
     :param request:
-    :param no_of_cities: (default count: 8)
     :return: 200 successful
     """
-    cities = City.objects.annotate(visit_count=Count('logs')).order_by('-visit_count')[:no_of_cities]
-    serializer = CityCondensedSerializer(cities, many=True)
-    return Response(serializer.data)
+    cities = City.objects.annotate(visit_count=Count('logs')).order_by('-visit_count')
+    paginator = PageNumberPagination()
+    paginator.page_size = 10
+    cities_paginated = paginator.paginate_queryset(cities, request)
+    serializer = CityCondensedSerializer(cities_paginated, many=True)
+    return paginator.get_paginated_response(serializer.data)
 
 
 @api_view(['GET'])
@@ -84,8 +87,11 @@ def get_all_city_images(request, city_id):
     except CityImage.DoesNotExist:
         return Response(status=status.HTTP_404_NOT_FOUND)
 
-    serializer = CityImageSerializer(city_images, many=True)
-    return Response(serializer.data)
+    paginator = PageNumberPagination()
+    paginator.page_size = 10
+    city_images_paginated = paginator.paginate_queryset(city_images, request)
+    serializer = CityImageSerializer(city_images_paginated, many=True)
+    return paginator.get_paginated_response(serializer.data)
 
 
 @api_view(['GET'])
@@ -102,8 +108,11 @@ def get_all_city_facts(request, city_id):
     except CityFact.DoesNotExist:
         return Response(status=status.HTTP_404_NOT_FOUND)
 
-    serializer = CityFactSerializer(city_facts, many=True)
-    return Response(serializer.data)
+    paginator = PageNumberPagination()
+    paginator.page_size = 10
+    city_facts_paginated = paginator.paginate_queryset(city_facts, request)
+    serializer = CityFactSerializer(city_facts_paginated, many=True)
+    return paginator.get_paginated_response(serializer.data)
 
 
 @api_view(['GET'])
@@ -159,6 +168,5 @@ def get_visited_city(request, user_id=None):
     trips = Trip.objects.filter(users=user_id)
     for trip in trips:
         cities.add(trip.city)
-
     serializer = CityCondensedSerializer(cities, many=True)
     return Response(serializer.data, status=status.HTTP_200_OK)

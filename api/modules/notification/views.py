@@ -1,6 +1,7 @@
 from rest_framework import status
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
+from rest_framework.pagination import PageNumberPagination
 
 from api.models import Notification, NotificationTypeChoice
 from api.modules.notification.serializers import NotificationSerializer
@@ -42,8 +43,11 @@ def get_notifications(request):
     :return: 200 successful
     """
     notifications = Notification.objects.filter(destined_user=request.user).order_by('-created_at')
-    serializer = NotificationSerializer(notifications, many=True)
-    return Response(serializer.data)
+    paginator = PageNumberPagination()
+    paginator.page_size = 10
+    notifications_paginated = paginator.paginate_queryset(notifications, request)
+    serializer = NotificationSerializer(notifications_paginated, many=True)
+    return paginator.get_paginated_response(serializer.data)
 
 
 @api_view(['GET'])
