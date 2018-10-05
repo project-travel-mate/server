@@ -8,7 +8,7 @@ from rest_framework.decorators import permission_classes, api_view
 from rest_framework.permissions import AllowAny
 from rest_framework.response import Response
 
-from api.models import PasswordVerification
+from api.models import PasswordVerification, Trip
 from api.modules.email.templates import (
     WELCOME_MAIL_SUBJECT, WELCOME_MAIL_CONTENT,
     FORGOT_PASSWORD_MAIL_SUBJECT, FORGOT_PASSWORD_MAIL_CONTENT)
@@ -338,3 +338,33 @@ def forgot_password_verify_code(request, code, new_password):
         return Response(str(e), status=status.HTTP_400_BAD_REQUEST)
 
     return Response("Password updated succesfully", status=status.HTTP_200_OK)
+
+
+@api_view(['GET'])
+def delete_profile(request):
+    """
+    Remove user profile
+    :param request:
+    :return: 400 if deleting profile fails
+    :return: 200 successful
+    """
+    try:
+        # removing profile
+        user_profile = request.user.profile
+        if user_profile:
+            user_profile.delete()
+
+        # removing trip
+        for trip in Trip.objects.filter(users__id=request.user.id):
+            if request.user in trip.users.all():
+                if trip.users.count() == 1:
+                    trip.delete()
+                else:
+                    trip.users.remove(request.user)
+        # removing user
+        request.user.delete()
+    except Exception as e:
+        return Response(str(e), status=status.HTTP_400_BAD_REQUEST)
+
+    message = "user profile succesfully deleted"
+    return Response(message, status=status.HTTP_200_OK)
