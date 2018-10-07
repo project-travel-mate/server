@@ -320,8 +320,6 @@ def forgot_password_email_code(request, username):
         return Response(error_message, status=status.HTTP_404_NOT_FOUND)
 
 
-
-
 @api_view(['GET'])
 @permission_classes((AllowAny,))
 def forgot_password_verify_code(request, username, code, new_password):
@@ -336,6 +334,7 @@ def forgot_password_verify_code(request, username, code, new_password):
     :return: 200 successful
     """
     try:
+        # check if user with given username exists
         user = User.objects.get(username=username)
         try:
             pass_ver = PasswordVerification.objects.get(user=user)
@@ -360,7 +359,6 @@ def forgot_password_verify_code(request, username, code, new_password):
     except User.DoesNotExist:
         error_message = "Invalid username"
         return Response(error_message, status=status.HTTP_404_NOT_FOUND)
-
 
 
 @api_view(['GET'])
