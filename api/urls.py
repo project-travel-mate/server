@@ -32,9 +32,10 @@ urlpatterns = [
     path('update-password', user_views.update_password, name='update-password'),
     path('remove-profile-image', user_views.remove_profile_image, name='remove-profile-image'),
     path('remove-user-status', user_views.remove_user_status, name='remove-user-status'),
-    path('forgot-password-email-code', user_views.forgot_password_email_code, name='forgot-password-email-code'),
-    path('forgot-password-verify-code/<str:code>/<str:new_password>', user_views.forgot_password_verify_code,
-         name='forgot-password-verify-code-code'),
+    path('forgot-password-email-code/<str:username>', user_views.forgot_password_email_code,
+         name='forgot-password-email-code'),
+    path('forgot-password-verify-code/<str:username>/<str:code>/<str:new_password>',
+         user_views.forgot_password_verify_code, name='forgot-password-verify-code-code'),
     path('delete-profile', user_views.delete_profile, name='delete-profile'),
 
     # City APIs
