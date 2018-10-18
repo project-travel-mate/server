@@ -8,6 +8,7 @@ from api.modules.currency import views as currency_views
 from api.modules.feedback import views as feedback_views
 from api.modules.food import views as food_views
 from api.modules.github import views as github_views
+from api.modules.holidays import views as holidays_views
 from api.modules.hyperlocal import views as places_views
 from api.modules.notification import views as notification_views
 from api.modules.shopping import views as shopping_views
@@ -115,5 +116,8 @@ urlpatterns = [
 
     # Static API
     path('about-us', static_views.get_about_us, name="get-about-us"),
-    path('help', static_views.get_help, name="get-help")
+    path('help', static_views.get_help, name="get-help"),
+
+    # Holidays
+    path('get-upcoming-holidays/<int:year>', holidays_views.get_upcoming_holidays, name="get-upcoming-holidays"),
 ]
