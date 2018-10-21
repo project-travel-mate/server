@@ -38,6 +38,7 @@ urlpatterns = [
     path('forgot-password-verify-code/<str:username>/<str:code>/<str:new_password>',
          user_views.forgot_password_verify_code, name='forgot-password-verify-code-code'),
     path('delete-profile', user_views.delete_profile, name='delete-profile'),
+    path('generate-verification-code', user_views.generate_verification_code, name='generate-verification-code'),
 
     # City APIs
     path('get-all-cities', city_views.get_all_cities, name='get-all-cities'),
