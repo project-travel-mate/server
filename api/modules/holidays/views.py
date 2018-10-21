@@ -46,7 +46,10 @@ def get_upcoming_holidays(request, year):
                     date_string[1] = HINDI_MONTH_STRING_MAP[date_string[1]][:3]
                     day_string = HINDI_DAY_STRING_MAP[day_string]
 
-                dt = datetime.datetime.strptime(" ".join(date_string), '%d %b')
+                try:
+                    dt = datetime.datetime.strptime(" ".join(date_string), '%d %b')
+                except ValueError:
+                    dt = datetime.datetime.strptime(" ".join(date_string), '%b %d')
 
                 holiday_obj = {
                     'month': dt.strftime('%B'),
