@@ -10,6 +10,7 @@ class Profile(models.Model):
     profile_image = models.TextField(validators=[URLValidator()], default=None, null=True)
     status = models.TextField(null=True, default=None)
     last_active = models.DateTimeField(null=True)
+    is_verified = models.BooleanField(default=False)
 
 
 @receiver(post_save, sender=User)
