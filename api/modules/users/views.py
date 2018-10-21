@@ -3,6 +3,7 @@ from smtplib import SMTPException
 
 from django.contrib.auth.models import User
 from django.core.mail import send_mail
+from django.utils import timezone
 from rest_framework import status
 from rest_framework.decorators import permission_classes, api_view
 from rest_framework.permissions import AllowAny
@@ -401,7 +402,9 @@ def generate_verification_code(request):
     :return: 200 successful
     """
     code = generate_random_code(6)
-    # Update model to save the generated code
+    created_at = timezone.now()
+    pass_ver, _ = PasswordVerification.objects.update_or_create(
+        user=request.user, defaults={"code": code, "created": created_at})
     try:
         to_list = [request.user.username]
         fullname = "{} {}".format(request.user.first_name, request.user.last_name).title()
@@ -411,4 +414,4 @@ def generate_verification_code(request):
     except SMTPException as e:
         error_message = "Unable to send verification code email to user"
         return Response(error_message, status=status.HTTP_400_BAD_REQUEST)
-    return Response(code, status=status.HTTP_200_OK)
+    return Response("Verification code sent", status=status.HTTP_200_OK)
