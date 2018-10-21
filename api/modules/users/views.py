@@ -3,6 +3,7 @@ from smtplib import SMTPException
 
 from django.contrib.auth.models import User
 from django.core.mail import send_mail
+from django.utils import timezone
 from rest_framework import status
 from rest_framework.decorators import permission_classes, api_view
 from rest_framework.permissions import AllowAny
@@ -11,7 +12,8 @@ from rest_framework.response import Response
 from api.models import PasswordVerification, Trip
 from api.modules.email.templates import (
     WELCOME_MAIL_SUBJECT, WELCOME_MAIL_CONTENT,
-    FORGOT_PASSWORD_MAIL_SUBJECT, FORGOT_PASSWORD_MAIL_CONTENT)
+    FORGOT_PASSWORD_MAIL_SUBJECT, FORGOT_PASSWORD_MAIL_CONTENT, VERIFICATION_CODE_MAIL_SUBJECT,
+    VERIFICATION_CODE_MAIL_CONTENT)
 from api.modules.users.serializers import UserSerializer
 from api.modules.users.validators import validate_password, validate_email
 from api.modules.users.utils import generate_random_code
@@ -389,3 +391,27 @@ def delete_profile(request):
 
     message = "user profile succesfully deleted"
     return Response(message, status=status.HTTP_200_OK)
+
+
+@api_view(['GET'])
+def generate_verification_code(request):
+    """
+    generate and send verification code to user
+    :param request:
+    :return: 400 if email sending fails
+    :return: 200 successful
+    """
+    code = generate_random_code(6)
+    created_at = timezone.now()
+    pass_ver, _ = PasswordVerification.objects.update_or_create(
+        user=request.user, defaults={"code": code, "created": created_at})
+    try:
+        to_list = [request.user.username]
+        fullname = "{} {}".format(request.user.first_name, request.user.last_name).title()
+        mail_subject = VERIFICATION_CODE_MAIL_SUBJECT
+        mail_content = VERIFICATION_CODE_MAIL_CONTENT.format(fullname, code)
+        send_mail(mail_subject, mail_content, DEFAULT_EMAIL_SENDER, to_list, fail_silently=False)
+    except SMTPException as e:
+        error_message = "Unable to send verification code email to user"
+        return Response(error_message, status=status.HTTP_400_BAD_REQUEST)
+    return Response("Verification code sent", status=status.HTTP_200_OK)

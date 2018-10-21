@@ -23,3 +23,11 @@ Dear {0},
 You have requested a password reset for your travel mate account. Use code {1} to reset your password.
 If you didn't make this request, ignore this email.
 """ + EMAIL_SIGNATURE
+
+# Verification code mails
+VERIFICATION_CODE_MAIL_SUBJECT = "Travel Mate - Your Verification Code"
+VERIFICATION_CODE_MAIL_CONTENT = """
+Dear {0},
+
+Your verification code: {1}
+""" + EMAIL_SIGNATURE
