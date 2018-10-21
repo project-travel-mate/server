@@ -23,6 +23,8 @@ class TestVerificationCode(APITestCase):
             created=timezone.now()
         )
 
+        self.client.force_authenticate(user=user)
+
         url_invalid = reverse('confirm-verification-code',
                               kwargs={'verification_code': "invalid-code"})
         response = self.client.get(url_invalid)

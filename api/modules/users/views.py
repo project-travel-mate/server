@@ -418,7 +418,6 @@ def generate_verification_code(request):
 
 
 @api_view(['GET'])
-@permission_classes((AllowAny,))
 def confirm_verification_code(request, verification_code):
     """
     confirm verification code sent in the request
@@ -427,7 +426,8 @@ def confirm_verification_code(request, verification_code):
     :return: 200 successful
     """
     try:
-        pass_ver = PasswordVerification.objects.get(code=verification_code)
+        pass_ver = PasswordVerification.objects.get(user=request.user,
+                                                    code=verification_code)
 
     except PasswordVerification.DoesNotExist:
         error_message = "Unable to confirm verification code"
