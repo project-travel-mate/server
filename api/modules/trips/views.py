@@ -237,3 +237,55 @@ def remove_user_from_trip(request, trip_id):
         return Response(str(e), status=status.HTTP_400_BAD_REQUEST)
 
     return Response(status=status.HTTP_200_OK)
+
+
+@api_view(['GET'])
+def update_trip_public(request, trip_id):
+    """
+    Makes given trip public
+    :param request:
+    :param trip_id:
+    :return: 400 if user not present in the trip
+    :return: 404 if trip or user does not exist
+    :return: 200 successful
+    """
+    try:
+        trip = Trip.objects.get(pk=trip_id)
+
+        # if signed-in user not associated with requested trip
+        if request.user not in trip.users.all():
+            error_message = "User not a part of trip"
+            return Response(error_message, status=status.HTTP_401_UNAUTHORIZED)
+        trip.is_public = True
+        trip.save()
+    except Trip.DoesNotExist:
+        error_message = "Trip does not exist"
+        return Response(error_message, status=status.HTTP_404_NOT_FOUND)
+
+    return Response(status=status.HTTP_200_OK)
+
+
+@api_view(['GET'])
+def update_trip_private(request, trip_id):
+    """
+    Makes given trip private
+    :param request:
+    :param trip_id:
+    :return: 400 if user not present in the trip
+    :return: 404 if trip or user does not exist
+    :return: 200 successful
+    """
+    try:
+        trip = Trip.objects.get(pk=trip_id)
+
+        # if signed-in user not associated with requested trip
+        if request.user not in trip.users.all():
+            error_message = "User not a part of trip"
+            return Response(error_message, status=status.HTTP_401_UNAUTHORIZED)
+        trip.is_public = False
+        trip.save()
+    except Trip.DoesNotExist:
+        error_message = "Trip does not exist"
+        return Response(error_message, status=status.HTTP_404_NOT_FOUND)
+
+    return Response(status=status.HTTP_200_OK)

@@ -11,7 +11,7 @@ class TripSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Trip
-        fields = ('id', 'trip_name', 'city', 'users', 'start_date_tx')
+        fields = ('id', 'trip_name', 'city', 'users', 'start_date_tx', 'is_public')
 
 
 class TripCondensedSerializer(serializers.ModelSerializer):
@@ -20,7 +20,7 @@ class TripCondensedSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Trip
-        fields = ('id', 'trip_name', 'city', 'users_count', 'start_date_tx')
+        fields = ('id', 'trip_name', 'city', 'users_count', 'start_date_tx', 'is_public')
 
     def get_users_count(self, obj):
         return obj.users.count()
