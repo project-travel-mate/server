@@ -415,3 +415,25 @@ def generate_verification_code(request):
         error_message = "Unable to send verification code email to user"
         return Response(error_message, status=status.HTTP_400_BAD_REQUEST)
     return Response("Verification code sent", status=status.HTTP_200_OK)
+
+
+@api_view(['GET'])
+def confirm_verification_code(request, verification_code):
+    """
+    confirm verification code sent in the request
+    :param request:
+    :return: 404 if invalid verification code
+    :return: 200 successful
+    """
+    try:
+        pass_ver = PasswordVerification.objects.get(user=request.user,
+                                                    code=verification_code)
+
+    except PasswordVerification.DoesNotExist:
+        error_message = "Unable to confirm verification code"
+        return Response(error_message, status=status.HTTP_404_NOT_FOUND)
+
+    user = pass_ver.user
+    user.profile.is_verified = True
+    user.save()
+    return Response("Verification code confirmed", status=status.HTTP_200_OK)
