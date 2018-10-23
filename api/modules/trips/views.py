@@ -44,13 +44,13 @@ def get_trip(request, trip_id):
     Returns a trip using 'trip_id'
     :param request:
     :param trip_id:
-    :return: 401 if user is not a member of this specific trip
+    :return: 401 if user is not a member of this specific trip and trip is private
     :return: 404 if invalid trip id is sent
     :return: 200 successful
     """
     try:
         trip = Trip.objects.get(pk=trip_id)
-        if request.user not in trip.users.all():
+        if request.user not in trip.users.all() and not trip.is_public:
             return Response(status=status.HTTP_401_UNAUTHORIZED)
     except Trip.DoesNotExist:
         return Response(status=status.HTTP_404_NOT_FOUND)
