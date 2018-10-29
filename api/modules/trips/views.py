@@ -56,11 +56,6 @@ def get_trip(request, trip_id):
         return Response(status=status.HTTP_404_NOT_FOUND)
 
     serializer = TripSerializer(trip)
-    # remove current user from the list of users
-    for user in serializer.data['users']:
-        if user['id'] == request.user.id:
-            serializer.data['users'].remove(user)
-            break
     return Response(serializer.data)
 
 
