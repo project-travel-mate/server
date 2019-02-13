@@ -17,6 +17,7 @@ from api.modules.trips import views as trip_views
 from api.modules.twitter import views as twitter_views
 from api.modules.users import views as user_views
 from api.modules.weather import views as weather_views
+from api.modules.checklist import views as checklist_views
 
 urlpatterns = [
     # Authentication
@@ -125,4 +126,8 @@ urlpatterns = [
 
     # Holidays
     path('get-upcoming-holidays/<int:year>', holidays_views.get_upcoming_holidays, name="get-upcoming-holidays"),
+
+     # Checklist API
+     path('add-to-checklist', checklist_views.add_to_checklist, name="add-to-checklist"),
+     path('get-checklist', checklist_views.get_checklist, name="get-checklist"),
 ]
