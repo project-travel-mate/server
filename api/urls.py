@@ -127,7 +127,7 @@ urlpatterns = [
     # Holidays
     path('get-upcoming-holidays/<int:year>', holidays_views.get_upcoming_holidays, name="get-upcoming-holidays"),
 
-     # Checklist API
-     path('add-to-checklist', checklist_views.add_to_checklist, name="add-to-checklist"),
-     path('get-checklist', checklist_views.get_checklist, name="get-checklist"),
+    # Checklist API
+    path('add-to-checklist', checklist_views.add_to_checklist, name="add-to-checklist"),
+    path('get-checklist', checklist_views.get_checklist, name="get-checklist"),
 ]
