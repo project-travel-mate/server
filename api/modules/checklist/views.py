@@ -18,6 +18,7 @@ def add_to_checklist(request):
         checklist = Checklist.objects.get(user=request.user)
     else:
         checklist = Checklist(user=request.user)
+        checklist.save()
     for item in item_list:
         if ChecklistItem.objects.get(item=item).exists():
             checklist_item = ChecklistItem.objects.get(item=item)
