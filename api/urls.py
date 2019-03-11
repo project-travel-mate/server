@@ -17,6 +17,7 @@ from api.modules.trips import views as trip_views
 from api.modules.twitter import views as twitter_views
 from api.modules.users import views as user_views
 from api.modules.weather import views as weather_views
+from api.modules.ways import views as ways_views
 
 urlpatterns = [
     # Authentication
@@ -125,4 +126,11 @@ urlpatterns = [
 
     # Holidays
     path('get-upcoming-holidays/<int:year>', holidays_views.get_upcoming_holidays, name="get-upcoming-holidays"),
+
+    # Ways to reach API
+    path('get-ways-to-reach/train/<str:origin>/<str:destination>', ways_views.get_ways_train, name="get-ways-train"),
+    path('get-ways-to-reach/flight/<str:origin>/<str:destination>', ways_views.get_ways_flight, name="get-ways-flight"),
+    path('get-ways-to-reach/road/<str:origin>/<str:destination>/<str:mode>', ways_views.get_ways_road,
+         name="get-ways-road"),
+
 ]
