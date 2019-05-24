@@ -3,7 +3,7 @@ certifi==2018.4.16
 chardet==3.0.4
 dj-config-url==0.1.1
 Django==2.2
-djangorestframework==3.8.2
+djangorestframework==3.9.4
 flake8==3.5.0
 gunicorn==19.8.1
 idna==2.6
