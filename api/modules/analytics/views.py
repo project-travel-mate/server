@@ -21,7 +21,8 @@ def get_total_users(request):
     end_date = datetime.now(tz=TIME_ZONE_SUBCLASS)
     start_date = end_date - timedelta(days=NUMBER_OF_DAYS_FOR_ACTIVE_STATUS)
     number_of_active_users = User.objects.filter(profile__last_active__range=[start_date, end_date]).count()
-    number_of_active_verified_users = User.objects.filter(profile__last_active__range=[start_date, end_date], profile__is_verified=True).count()
+    number_of_active_verified_users = User.objects.filter(
+            profile__last_active__range=[start_date, end_date], profile__is_verified=True).count()
 
     res = {
         'total_users': number_of_users,
