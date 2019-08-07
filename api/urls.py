@@ -117,7 +117,7 @@ urlpatterns = [
     path('get-places/<str:latitude>/<str:longitude>/<str:places_query>', places_views.get_places, name='get-places'),
 
     # Analytics API
-    path('get-total-users', analytics_views.get_total_users, name="get-total-users"),
+    path('user-analytics', analytics_views.user_analytics, name="user-analytics"),
 
     # Static API
     path('about-us', static_views.get_about_us, name="get-about-us"),

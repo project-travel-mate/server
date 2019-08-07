@@ -1,4 +1,5 @@
 from datetime import datetime, timedelta
+import requests_cache
 
 from django.contrib.auth.models import User
 from rest_framework import status
@@ -8,9 +9,12 @@ from rest_framework.response import Response
 from api.modules.analytics.constants import NUMBER_OF_DAYS_FOR_ACTIVE_STATUS
 from nomad.settings import TIME_ZONE_SUBCLASS
 
+time_difference = timedelta(days=1)
+requests_cache.install_cache(expire_after=time_difference)
+
 
 @api_view(['GET'])
-def get_total_users(request):
+def user_analytics(request):
     """
     Returns number of users
     :param request:
@@ -25,9 +29,9 @@ def get_total_users(request):
             profile__last_active__range=[start_date, end_date], profile__is_verified=True).count()
 
     res = {
-        'total_users': number_of_users,
-        'active_users': number_of_active_users,
-        'verified_users': number_of_verified_users,
-        'active_verified_users': number_of_active_verified_users
+        'total': number_of_users,
+        'active': number_of_active_users,
+        'verified': number_of_verified_users,
+        'active_verified': number_of_active_verified_users
     }
     return Response(res, status=status.HTTP_200_OK)
