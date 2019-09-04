@@ -8,6 +8,7 @@ from rest_framework import status
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
 
+from api.commonresponses import DOWNSTREAM_ERROR_RESPONSE
 from api.models import City, CityFact, CityImage, CityVisitLog, Trip
 from api.modules.city.serializers import CityCondensedSerializer, CitySerializer, CityImageSerializer, \
     CityFactSerializer
@@ -132,8 +133,8 @@ def get_city_information(request, city_id):
     except City.DoesNotExist:
         error_message = "City does not exist"
         return Response(error_message, status=status.HTTP_404_NOT_FOUND)
-    except Exception as e:
-        return Response(str(e), status=status.HTTP_503_SERVICE_UNAVAILABLE)
+    except Exception:
+        return DOWNSTREAM_ERROR_RESPONSE
 
     return Response(city_detail, status=status.HTTP_200_OK)
 
@@ -184,11 +185,9 @@ def add_city_nickname(request):
         city = City.objects.get(pk=city_id)
         city.nickname = nickname
         city.save()
-
     except City.DoesNotExist:
         error_message = "City does not exist",
         return Response(error_message, status=status.HTTP_404_NOT_FOUND)
-
     except Exception as e:
         error_message = str(e)
         return Response(error_message, status=status.HTTP_400_BAD_REQUEST)

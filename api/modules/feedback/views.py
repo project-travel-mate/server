@@ -47,7 +47,6 @@ def get_feedback(request, feedback_id):
         user_feedback = Feedback.objects.get(pk=feedback_id)
         if request.user is not user_feedback.user:
             return Response(status=status.HTTP_401_UNAUTHORIZED)
-
     except Feedback.DoesNotExist:
         return Response(status=status.HTTP_404_NOT_FOUND)
 

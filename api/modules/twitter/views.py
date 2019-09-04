@@ -1,12 +1,13 @@
-import requests
-import requests_cache
 from datetime import timedelta
 
+import requests
+import requests_cache
 from requests_oauthlib import OAuth1
 from rest_framework import status
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
 
+from api.commonresponses import DOWNSTREAM_ERROR_RESPONSE
 from api.models import City
 from api.modules.twitter.constants import TWITTER_CONSUMER_KEY, TWITTER_OAUTH_TOKEN_SECRET, TWITTER_OAUTH_TOKEN, \
     TWITTER_CONSUMER_SECRET, TWITTER_TRENDS_URL, TWITTER_SEARCH_URL
@@ -49,8 +50,8 @@ def get_city_trends(request, city_id):
         url = TWITTER_TRENDS_URL + "place.json?id={0}".format(city.woeid)
         api_response = requests.get(url, auth=twitter_auth)
         response = api_response.json()[0]['trends']
-    except Exception as e:
-        return Response(str(e), status=status.HTTP_503_SERVICE_UNAVAILABLE)
+    except Exception:
+        return DOWNSTREAM_ERROR_RESPONSE
 
     return Response(response)
 
@@ -86,7 +87,7 @@ def get_search_tweets(request, query):
             result_as_json = result.to_json()
             response.append(result_as_json)
 
-    except Exception as e:
-        return Response(str(e), status=status.HTTP_503_SERVICE_UNAVAILABLE)
+    except Exception:
+        return DOWNSTREAM_ERROR_RESPONSE
 
     return Response(response)

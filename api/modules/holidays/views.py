@@ -7,10 +7,11 @@ from rest_framework import status
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
 
+from api.commonresponses import DOWNSTREAM_ERROR_RESPONSE
 from api.modules.holidays.constants import HOLIDAYS_PAGE_URL, HINDI_DAY_STRING_MAP, HINDI_MONTH_STRING_MAP
 from api.modules.holidays.utils import load_url_content
 
-week_difference = datetime.timedelta(days=7)
+week_difference = datetime.timedelta(days=30)
 requests_cache.install_cache(expire_after=week_difference)
 
 
@@ -61,8 +62,8 @@ def get_upcoming_holidays(request, year):
 
                 holiday_data.append(holiday_obj)
         else:
-            return Response(holiday_data, status=status.HTTP_400_BAD_REQUEST)
-    except Exception as e:
-        return Response(str(e), status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+            return Response([], status=status.HTTP_400_BAD_REQUEST)
+    except Exception:
+        return DOWNSTREAM_ERROR_RESPONSE
 
     return Response(holiday_data, status=status.HTTP_200_OK)

@@ -5,6 +5,7 @@ from rest_framework import status
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
 
+from api.commonresponses import DOWNSTREAM_ERROR_RESPONSE
 from api.models import City
 from api.modules.weather.constants import OPEN_WEATHER_API_URL, OPEN_FORECAST_API_URL
 from api.modules.weather.utils import to_celsius, icon_to_url
@@ -46,8 +47,8 @@ def get_city_weather(request, city_id):
                                    icon=icon_to_url(api_response_json['weather'][0]['icon']),
                                    humidity=api_response_json['main']['humidity'],
                                    pressure=api_response_json['main']['pressure'])
-    except Exception as e:
-        return Response(str(e), status=status.HTTP_503_SERVICE_UNAVAILABLE)
+    except Exception:
+        return DOWNSTREAM_ERROR_RESPONSE
 
     return Response(response.to_json())
 
@@ -84,7 +85,7 @@ def get_multiple_days_weather(request, num_of_days, city_name):
                                             icon=icon_to_url(result['weather'][0]['icon']),
                                             humidity=result['humidity'],
                                             pressure=result['pressure']).to_json())
-    except Exception as e:
-        return Response(str(e), status=status.HTTP_503_SERVICE_UNAVAILABLE)
+    except Exception:
+        return DOWNSTREAM_ERROR_RESPONSE
 
     return Response(response)

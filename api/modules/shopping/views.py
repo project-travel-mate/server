@@ -1,10 +1,12 @@
+from datetime import timedelta
+
 import requests
 import requests_cache
-from datetime import timedelta
 from rest_framework import status
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
 
+from api.commonresponses import DOWNSTREAM_ERROR_RESPONSE
 from api.modules.shopping.constants import EBAY_API_URL
 from api.modules.shopping.shopping_item import ShoppingItem
 
@@ -42,7 +44,7 @@ def get_shopping_info(request, query):
                 currency=item['sellingStatus'][0]['currentPrice'][0]['@currencyId'],
             ).to_json())
 
-    except Exception as e:
-        return Response(str(e), status=status.HTTP_503_SERVICE_UNAVAILABLE)
+    except Exception:
+        return DOWNSTREAM_ERROR_RESPONSE
 
     return Response(response)

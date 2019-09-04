@@ -1,13 +1,14 @@
-import requests
-import requests_cache
 from datetime import timedelta
 
+import requests
+import requests_cache
 from rest_framework import status
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
 
-from api.modules.github.github_response import ContributorResponse, IssueResponse
+from api.commonresponses import DOWNSTREAM_ERROR_RESPONSE
 from api.modules.github.constants import GITHUB_API_GET_CONTRIBUTORS_URL, GITHUB_API_GET_ISSUES_URL
+from api.modules.github.github_response import ContributorResponse, IssueResponse
 
 hour_difference = timedelta(days=1)
 requests_cache.install_cache(expire_after=hour_difference)
@@ -41,8 +42,8 @@ def get_contributors(request, project):
             )
             result_as_json = result.to_json()
             response.append(result_as_json)
-    except Exception as e:
-        return Response(str(e), status=status.HTTP_503_SERVICE_UNAVAILABLE)
+    except Exception:
+        return DOWNSTREAM_ERROR_RESPONSE
 
     return Response(response)
 
@@ -87,7 +88,7 @@ def get_issues(request, project):
             result_as_json = result.to_json()
             response.append(result_as_json)
 
-    except Exception as e:
-        return Response(str(e), status=status.HTTP_503_SERVICE_UNAVAILABLE)
+    except Exception:
+        return DOWNSTREAM_ERROR_RESPONSE
 
     return Response(response)

@@ -6,6 +6,7 @@ from rest_framework import status
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
 
+from api.commonresponses import DOWNSTREAM_ERROR_RESPONSE
 from api.modules.currency.constants import CURRENCY_CONVERTER_API_URL, CURRENCY_VALUE_DATE_API_URL
 from api.modules.currency.currency_item import CurrencyItem
 
@@ -25,8 +26,7 @@ def get_currency_exchange_rate(request, source_currency_code, target_currency_co
         api_response = requests.get(CURRENCY_CONVERTER_API_URL.format(query))
         api_response_json = api_response.json()
         if not api_response.ok:
-            error_message = "Missing parameters in the api response"
-            return Response(error_message, status=status.HTTP_503_SERVICE_UNAVAILABLE)
+            return DOWNSTREAM_ERROR_RESPONSE
 
         response = CurrencyItem(source=source_currency_code,
                                 target=target_currency_code,
@@ -83,7 +83,7 @@ def get_all_currency_exchange_rate(request, start_date, end_date, source_currenc
 
             currency_list.append(float(current_value))
 
-    except Exception as e:
-        return Response(str(e), status=status.HTTP_503_SERVICE_UNAVAILABLE)
+    except Exception:
+        return DOWNSTREAM_ERROR_RESPONSE
 
     return Response(currency_list)
