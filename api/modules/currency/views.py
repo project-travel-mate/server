@@ -1,11 +1,13 @@
+import datetime
+from datetime import timedelta
+
 import requests
 from rest_framework import status
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
+
 from api.modules.currency.constants import CURRENCY_CONVERTER_API_URL, CURRENCY_VALUE_DATE_API_URL
 from api.modules.currency.currency_item import CurrencyItem
-import datetime
-from datetime import timedelta
 
 
 @api_view(['GET'])
@@ -26,9 +28,9 @@ def get_currency_exchange_rate(request, source_currency_code, target_currency_co
             error_message = "Missing parameters in the api response"
             return Response(error_message, status=status.HTTP_503_SERVICE_UNAVAILABLE)
 
-        response = CurrencyItem(source=api_response_json["results"][query]["fr"],
-                                target=api_response_json["results"][query]["to"],
-                                result=api_response_json["results"][query]["val"])
+        response = CurrencyItem(source=source_currency_code,
+                                target=target_currency_code,
+                                result=api_response_json[query])
 
     except Exception as e:
         exception_message = "Incorrect currency codes {}".format(query)
@@ -41,6 +43,8 @@ def get_currency_exchange_rate(request, source_currency_code, target_currency_co
 def get_all_currency_exchange_rate(request, start_date, end_date, source_currency_code, target_currency_code):
     """
     Return currency exchange rates list between 2 dates
+    :param end_date:
+    :param start_date:
     :param request:
     :param start date:
     :param end date:
@@ -69,7 +73,7 @@ def get_all_currency_exchange_rate(request, start_date, end_date, source_currenc
         currency_list.append(float(current_value))
         currency_dates = currency_dates[1:]
 
-        for i in range((end-start).days):
+        for i in range((end - start).days):
             current_date = current_date + timedelta(days=1)
             next_date = datetime.datetime.strptime(currency_dates[0][0], '%Y-%m-%d').date()
             if current_date == next_date:
