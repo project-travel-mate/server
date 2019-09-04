@@ -6,6 +6,7 @@ from rest_framework import status
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
 
+from api.commonresponses import DOWNSTREAM_ERROR_RESPONSE
 from api.modules.food.constants import FOOD_API_REQUEST_HEADERS, GET_ALL_RESTAURANTS_API_URL, GET_RESTAURANT_API_URL
 from api.modules.food.food_response import FoodResponse, FoodDetailedResponse
 
@@ -46,8 +47,8 @@ def get_all_restaurants(request, latitude, longitude):
                                         votes=restaurant_obj['user_rating']['votes'],
                                         address=restaurant_obj['location']['address'])
             response.append(response_obj.to_json())
-    except Exception as e:
-        return Response(str(e), status=status.HTTP_503_SERVICE_UNAVAILABLE)
+    except Exception:
+        return DOWNSTREAM_ERROR_RESPONSE
 
     return Response(response)
 
@@ -85,7 +86,7 @@ def get_restaurant(request, restaurant_id):
             booking=api_response_json['has_table_booking'],
             cuisines=api_response_json['cuisines']
         ).to_json()
-    except Exception as e:
-        return Response(str(e), status=status.HTTP_503_SERVICE_UNAVAILABLE)
+    except Exception:
+        return DOWNSTREAM_ERROR_RESPONSE
 
     return Response(response)

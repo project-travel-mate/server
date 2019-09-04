@@ -15,8 +15,8 @@ from api.modules.email.templates import (
     FORGOT_PASSWORD_MAIL_SUBJECT, FORGOT_PASSWORD_MAIL_CONTENT, VERIFICATION_CODE_MAIL_SUBJECT,
     VERIFICATION_CODE_MAIL_CONTENT)
 from api.modules.users.serializers import UserSerializer
-from api.modules.users.validators import validate_password, validate_email
 from api.modules.users.utils import generate_random_code
+from api.modules.users.validators import validate_password, validate_email
 from nomad.settings import DEFAULT_EMAIL_SENDER
 
 
@@ -225,7 +225,7 @@ def remove_profile_image(request):
         user.save()  # to handle RelatedObjectDoenNotExist exception on existing users
     user.profile.profile_image = None
     user.save()
-    return Response("Profile image succesfully removed.", status=status.HTTP_200_OK)
+    return Response("Profile image successfully removed.", status=status.HTTP_200_OK)
 
 
 @api_view(['GET'])
@@ -272,7 +272,7 @@ def update_password(request):
     except Exception as e:
         return Response(str(e), status=status.HTTP_400_BAD_REQUEST)
 
-    return Response("Password updated succesfully", status=status.HTTP_200_OK)
+    return Response("Password updated successfully", status=status.HTTP_200_OK)
 
 
 @api_view(['GET'])
@@ -356,7 +356,7 @@ def forgot_password_verify_code(request, username, code, new_password):
         except Exception as e:
             return Response(str(e), status=status.HTTP_400_BAD_REQUEST)
 
-        return Response("Password updated succesfully", status=status.HTTP_200_OK)
+        return Response("Password updated successfully", status=status.HTTP_200_OK)
 
     except User.DoesNotExist:
         error_message = "Invalid username"
