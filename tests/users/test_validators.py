@@ -6,8 +6,8 @@ class TestValidators(TestCase):
     def test_validate_password(self):
         data_provider = [
             {"password": "abcde", "result": False},
-            {"password": "12345678", "result": False},
-            {"password": "1a2b3c4e", "result": False},
+            {"password": "1234567", "result": False},
+            {"password": "1a2b3c4e", "result": True},
             {"password": '1a2b3c4!', "result": True},
         ]
         for data in data_provider:
