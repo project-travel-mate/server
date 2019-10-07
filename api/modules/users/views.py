@@ -275,6 +275,22 @@ def update_password(request):
     return Response("Password updated successfully", status=status.HTTP_200_OK)
 
 
+def check_valid_code(pass_ver):
+    """
+    :param pass_ver:
+    :return: True if the code was generated within 24 hours
+    :return: False is the code was expired
+    """
+    created_at = pass_ver.created
+    current_time = timezone.now()
+    delta = current_time - created_at
+    hours = delta.total_seconds()/(60*60)
+    if hours < 24:
+        return True
+    else:
+        return False
+
+
 @api_view(['GET'])
 @permission_classes((AllowAny,))
 def forgot_password_email_code(request, username):
@@ -293,8 +309,12 @@ def forgot_password_email_code(request, username):
         try:
             # if code already exists
             pass_ver = PasswordVerification.objects.get(user=user)
-            code = pass_ver.code
-
+            if check_valid_code(pass_ver):
+                code = pass_ver.code
+            else:
+                code = generate_random_code()
+                pass_ver = PasswordVerification(user=user, code=code)
+                pass_ver.save()
         except PasswordVerification.DoesNotExist:
             # generate and save new code
             code = generate_random_code()
