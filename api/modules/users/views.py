@@ -15,7 +15,7 @@ from api.modules.email.templates import (
     FORGOT_PASSWORD_MAIL_SUBJECT, FORGOT_PASSWORD_MAIL_CONTENT, VERIFICATION_CODE_MAIL_SUBJECT,
     VERIFICATION_CODE_MAIL_CONTENT)
 from api.modules.users.serializers import UserSerializer
-from api.modules.users.utils import generate_random_code
+from api.modules.users.utils import generate_random_code, is_password_verification_code_valid
 from api.modules.users.validators import validate_password, validate_email
 from nomad.settings import DEFAULT_EMAIL_SENDER
 
@@ -293,10 +293,14 @@ def forgot_password_email_code(request, username):
         try:
             # if code already exists
             pass_ver = PasswordVerification.objects.get(user=user)
-            code = pass_ver.code
-
+            if pass_ver is not None and is_password_verification_code_valid(pass_ver):
+                code = pass_ver.code
+            else:
+                # generate and save new code
+                code = generate_random_code()
+                pass_ver.code = code
+                pass_ver.save()
         except PasswordVerification.DoesNotExist:
-            # generate and save new code
             code = generate_random_code()
             pass_ver = PasswordVerification(user=user, code=code)
             pass_ver.save()
