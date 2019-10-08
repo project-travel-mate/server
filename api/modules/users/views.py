@@ -15,7 +15,7 @@ from api.modules.email.templates import (
     FORGOT_PASSWORD_MAIL_SUBJECT, FORGOT_PASSWORD_MAIL_CONTENT, VERIFICATION_CODE_MAIL_SUBJECT,
     VERIFICATION_CODE_MAIL_CONTENT)
 from api.modules.users.serializers import UserSerializer
-from api.modules.users.utils import generate_random_code
+from api.modules.users.utils import generate_random_code, is_password_verification_code_valid
 from api.modules.users.validators import validate_password, validate_email
 from nomad.settings import DEFAULT_EMAIL_SENDER
 
@@ -275,22 +275,6 @@ def update_password(request):
     return Response("Password updated successfully", status=status.HTTP_200_OK)
 
 
-def check_valid_code(pass_ver):
-    """
-    :param pass_ver:
-    :return: True if the code was generated within 24 hours
-    :return: False is the code was expired
-    """
-    created_at = pass_ver.created
-    current_time = timezone.now()
-    delta = current_time - created_at
-    hours = delta.total_seconds()/(60*60)
-    if hours < 24:
-        return True
-    else:
-        return False
-
-
 @api_view(['GET'])
 @permission_classes((AllowAny,))
 def forgot_password_email_code(request, username):
@@ -309,16 +293,16 @@ def forgot_password_email_code(request, username):
         try:
             # if code already exists
             pass_ver = PasswordVerification.objects.get(user=user)
-            if check_valid_code(pass_ver):
+            if pass_ver is not None and is_password_verification_code_valid(pass_ver):
                 code = pass_ver.code
             else:
+                # generate and save new code
                 code = generate_random_code()
-                pass_ver = PasswordVerification(user=user, code=code)
+                pass_ver.code = code
                 pass_ver.save()
         except PasswordVerification.DoesNotExist:
-            # generate and save new code
             code = generate_random_code()
-            pass_ver = PasswordVerification(user=user, code=code)
+            pass_ver.code = PasswordVerification(user=user, code=code)
             pass_ver.save()
 
         except Exception as e:
