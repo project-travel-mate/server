@@ -302,7 +302,7 @@ def forgot_password_email_code(request, username):
                 pass_ver.save()
         except PasswordVerification.DoesNotExist:
             code = generate_random_code()
-            pass_ver.code = PasswordVerification(user=user, code=code)
+            pass_ver = PasswordVerification(user=user, code=code)
             pass_ver.save()
 
         except Exception as e:
