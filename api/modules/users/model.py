@@ -1,8 +1,10 @@
-from django.db import models
 from django.contrib.auth.models import User
+from django.core.validators import URLValidator
+from django.db import models
 from django.db.models.signals import post_save
 from django.dispatch import receiver
-from django.core.validators import URLValidator
+
+from api.modules.users.enums import PasswordVerificationModeChoice
 
 
 class Profile(models.Model):
@@ -29,6 +31,9 @@ def update_user_profile(sender, instance, **kwargs):
 
 
 class PasswordVerification(models.Model):
-    user = models.OneToOneField(User, on_delete=models.CASCADE)
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
     code = models.CharField(max_length=6)
+    mode = models.TextField(max_length=30,
+                            default=PasswordVerificationModeChoice.FORGET_PASSWORD,
+                            choices=[(tag, tag.value) for tag in PasswordVerificationModeChoice])
     created = models.DateTimeField(auto_now=True)

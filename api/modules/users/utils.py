@@ -1,4 +1,5 @@
 from random import randint
+
 from django.utils import timezone
 
 LENGTH_OF_FORGET_PASSWORD_CODE = 4
@@ -16,10 +17,11 @@ def generate_random_code(n=LENGTH_OF_FORGET_PASSWORD_CODE):
 
 def is_password_verification_code_valid(code):
     """
-        :param code:
-        :return: True if the code was generated within 24 hours
-        :return: False is the code was expired
-        """
+    Verify if the password verification code is expired or not
+    :param code:
+    :return: True if the code was generated within 24 hours
+    :return: False is the code was expired
+    """
     created_at = code.created
     current_time = timezone.now()
     delta = current_time - created_at
