@@ -3,7 +3,6 @@ from smtplib import SMTPException
 
 from django.contrib.auth.models import User
 from django.core.mail import send_mail
-from django.utils import timezone
 from rest_framework import status
 from rest_framework.decorators import permission_classes, api_view
 from rest_framework.permissions import AllowAny
@@ -14,6 +13,7 @@ from api.modules.email.templates import (
     WELCOME_MAIL_SUBJECT, WELCOME_MAIL_CONTENT,
     FORGOT_PASSWORD_MAIL_SUBJECT, FORGOT_PASSWORD_MAIL_CONTENT, VERIFICATION_CODE_MAIL_SUBJECT,
     VERIFICATION_CODE_MAIL_CONTENT)
+from api.modules.users.enums import PasswordVerificationModeChoice
 from api.modules.users.serializers import UserSerializer
 from api.modules.users.utils import generate_random_code, is_password_verification_code_valid
 from api.modules.users.validators import validate_password, validate_email
@@ -290,40 +290,42 @@ def forgot_password_email_code(request, username):
     try:
         # check if user with given username exists
         user = User.objects.get(username=username)
-        try:
-            # if code already exists
-            pass_ver = PasswordVerification.objects.get(user=user)
-            if pass_ver is not None and is_password_verification_code_valid(pass_ver):
-                code = pass_ver.code
-            else:
-                # generate and save new code
-                code = generate_random_code()
-                pass_ver.code = code
-                pass_ver.save()
-        except PasswordVerification.DoesNotExist:
-            code = generate_random_code()
-            pass_ver = PasswordVerification(user=user, code=code)
-            pass_ver.save()
-
-        except Exception as e:
-            return Response(str(e), status=status.HTTP_400_BAD_REQUEST)
-
-        # sending code via email
-        try:
-            to_list = [user.username]
-            fullname = "{} {}".format(user.first_name, user.last_name)
-            mail_subject = FORGOT_PASSWORD_MAIL_SUBJECT
-            mail_content = FORGOT_PASSWORD_MAIL_CONTENT.format(fullname, code)
-            send_mail(mail_subject, mail_content, DEFAULT_EMAIL_SENDER, to_list, fail_silently=False)
-        except SMTPException as e:
-            error_message = "Unable to send a forgot password email to user"
-            return Response(error_message, status=status.HTTP_400_BAD_REQUEST)
-
-        return Response("Email sent", status=status.HTTP_200_OK)
-
     except User.DoesNotExist:
         error_message = "Invalid username"
         return Response(error_message, status=status.HTTP_404_NOT_FOUND)
+
+    code = None
+    pass_verify_obj = None
+    try:
+        # if code already exists
+        pass_verify_obj = PasswordVerification.objects.get(user=user,
+                                                           mode=PasswordVerificationModeChoice.FORGET_PASSWORD)
+        if is_password_verification_code_valid(pass_verify_obj):
+            code = pass_verify_obj.code
+    except PasswordVerification.DoesNotExist:
+        pass
+
+    if not code:
+        code = generate_random_code()
+    if not pass_verify_obj:
+        pass_verify_obj = PasswordVerification(user=user,
+                                               mode=PasswordVerificationModeChoice.FORGET_PASSWORD,
+                                               code=code)
+    pass_verify_obj.code = code
+    pass_verify_obj.save()
+
+    # sending code via email
+    try:
+        to_list = [user.username]
+        fullname = "{} {}".format(user.first_name, user.last_name)
+        mail_subject = FORGOT_PASSWORD_MAIL_SUBJECT
+        mail_content = FORGOT_PASSWORD_MAIL_CONTENT.format(fullname, code)
+        send_mail(mail_subject, mail_content, DEFAULT_EMAIL_SENDER, to_list, fail_silently=False)
+    except SMTPException:
+        error_message = "Unable to send a forgot password email to user"
+        return Response(error_message, status=status.HTTP_400_BAD_REQUEST)
+
+    return Response("Email sent", status=status.HTTP_200_OK)
 
 
 @api_view(['GET'])
@@ -342,29 +344,29 @@ def forgot_password_verify_code(request, username, code, new_password):
     try:
         # check if user with given username exists
         user = User.objects.get(username=username)
-        try:
-            pass_ver = PasswordVerification.objects.get(user=user)
-            if code == pass_ver.code:
-                if validate_password(new_password):
-                    user.set_password(new_password)
-                    user.save()
-                    pass_ver.delete()
-                else:
-                    return Response("Invalid new password", status=status.HTTP_400_BAD_REQUEST)
-            else:
-                return Response("Code mismatch", status=status.HTTP_400_BAD_REQUEST)
-
-        except PasswordVerification.DoesNotExist:
-            return Response("Forgot password code not yet generated", status=status.HTTP_400_BAD_REQUEST)
-
-        except Exception as e:
-            return Response(str(e), status=status.HTTP_400_BAD_REQUEST)
-
-        return Response("Password updated successfully", status=status.HTTP_200_OK)
-
     except User.DoesNotExist:
         error_message = "Invalid username"
         return Response(error_message, status=status.HTTP_404_NOT_FOUND)
+    try:
+        pass_ver = PasswordVerification.objects.get(user=user,
+                                                    mode=PasswordVerificationModeChoice.FORGET_PASSWORD,
+                                                    code=code)
+        if is_password_verification_code_valid(pass_ver):
+            if validate_password(new_password):
+                user.set_password(new_password)
+                user.save()
+                pass_ver.delete()
+            else:
+                return Response("Invalid new password", status=status.HTTP_400_BAD_REQUEST)
+        else:
+            return Response("Code expired, please request a new code.", status=status.HTTP_400_BAD_REQUEST)
+    except PasswordVerification.DoesNotExist:
+        return Response("Invalid code.", status=status.HTTP_400_BAD_REQUEST)
+
+    except Exception as e:
+        return Response(str(e), status=status.HTTP_400_BAD_REQUEST)
+
+    return Response("Password updated successfully", status=status.HTTP_200_OK)
 
 
 @api_view(['GET'])
@@ -400,22 +402,40 @@ def delete_profile(request):
 @api_view(['GET'])
 def generate_verification_code(request):
     """
-    generate and send verification code to user
+    Generate and send Email verification code to user
     :param request:
     :return: 400 if email sending fails
     :return: 200 successful
     """
-    code = generate_random_code(6)
-    created_at = timezone.now()
-    pass_ver, _ = PasswordVerification.objects.update_or_create(
-        user=request.user, defaults={"code": code, "created": created_at})
+
+    code = None
+    pass_verify_obj = None
+    try:
+        # if code already exists
+        pass_verify_obj = PasswordVerification.objects.get(user=request.user,
+                                                           mode=PasswordVerificationModeChoice.EMAIL_VERIFY)
+        if is_password_verification_code_valid(pass_verify_obj):
+            code = pass_verify_obj.code
+    except PasswordVerification.DoesNotExist:
+        pass
+
+    if not code:
+        code = generate_random_code()
+    if not pass_verify_obj:
+        pass_verify_obj = PasswordVerification(user=request.user,
+                                               mode=PasswordVerificationModeChoice.EMAIL_VERIFY,
+                                               code=code)
+    pass_verify_obj.code = code
+    pass_verify_obj.save()
+
+    # sending code via email
     try:
         to_list = [request.user.username]
-        fullname = "{} {}".format(request.user.first_name, request.user.last_name).title()
+        fullname = "{} {}".format(request.user.first_name, request.user.last_name)
         mail_subject = VERIFICATION_CODE_MAIL_SUBJECT
         mail_content = VERIFICATION_CODE_MAIL_CONTENT.format(fullname, code)
         send_mail(mail_subject, mail_content, DEFAULT_EMAIL_SENDER, to_list, fail_silently=False)
-    except SMTPException as e:
+    except SMTPException:
         error_message = "Unable to send verification code email to user"
         return Response(error_message, status=status.HTTP_400_BAD_REQUEST)
     return Response("Verification code sent", status=status.HTTP_200_OK)
@@ -424,20 +444,27 @@ def generate_verification_code(request):
 @api_view(['GET'])
 def confirm_verification_code(request, verification_code):
     """
-    confirm verification code sent in the request
+    Confirm Email verification code sent in the request
     :param request:
+    :param verification_code:
     :return: 404 if invalid verification code
     :return: 200 successful
     """
+    user = request.user
     try:
-        pass_ver = PasswordVerification.objects.get(user=request.user,
+        pass_ver = PasswordVerification.objects.get(user=user,
+                                                    mode=PasswordVerificationModeChoice.EMAIL_VERIFY,
                                                     code=verification_code)
-
+        if is_password_verification_code_valid(pass_ver):
+            user.profile.is_verified = True
+            user.save()
+            pass_ver.delete()
+        else:
+            return Response("Code expired, please request a new code.", status=status.HTTP_400_BAD_REQUEST)
     except PasswordVerification.DoesNotExist:
-        error_message = "Unable to confirm verification code"
-        return Response(error_message, status=status.HTTP_404_NOT_FOUND)
+        return Response("Invalid code.", status=status.HTTP_400_BAD_REQUEST)
 
-    user = pass_ver.user
-    user.profile.is_verified = True
-    user.save()
+    except Exception as e:
+        return Response(str(e), status=status.HTTP_400_BAD_REQUEST)
+
     return Response("Verification code confirmed", status=status.HTTP_200_OK)
