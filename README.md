@@ -63,6 +63,29 @@ python manage.py runserver
 
 Open [localhost:8000](http://localhost:8000)
 
++ To access Django Admin
+```
+python manage.py createsuperuser
+```
+
+When prompted, type your username (lowercase, no spaces), email address, and password.
+For example, the output should look like this:
+
+```
+Username: nomadadmin
+Email address: nomadadmin@nomad.com
+Password:
+Password (again):
+Superuser created successfully.
+```
+
++ Re-run the server
+```
+python manage.py runserver
+```
+
+Open [localhost:8000/admin](http://localhost:8000/admin)
+
 ## Working with authenticated APIs
 
 > You would need to have a registered user, with which you can generate a authentication token. Follow the following steps to generate a token *(You can download [Postman client](https://www.getpostman.com/) to make the following POST calls)*
