@@ -5,7 +5,7 @@ When you face any issue, first look up that in [Troubleshooting](https://github.
 
 **Jump Quickly to-**
 + [Database connection failing](#database-connection-failing)
-+ [How to create a new City](#create-new-city)
++ [How to create a new City](#how-to-create-a-new-city)
 
 ## Database connection failing
 ```
