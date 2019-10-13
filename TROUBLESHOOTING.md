@@ -36,6 +36,6 @@ pg_ctl -D "C:\Program Files\PostgreSQL\9.6\data" restart
 ## How to create a new City
 
 Follow the instructions in the README to create a superuser.
-Follow this link [localhost:8000/admin](http://localhost:8000/admin) to access to admin.
+Follow this link [localhost:8000/admin](http://localhost:8000/admin) to access Django admin.
 
-Under API, find **Citys** and click + Add` to add a new city.
+Under API, find **Citys** and click `+ Add` to add a new city.
