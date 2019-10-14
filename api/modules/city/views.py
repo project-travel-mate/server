@@ -51,7 +51,7 @@ def get_city(request, city_id):
     try:
         city_visit_log = CityVisitLog(city=city, user=request.user)
         city_visit_log.save()
-    except Exception as e:
+    except Exception:
         pass
 
     serializer = CitySerializer(city)
