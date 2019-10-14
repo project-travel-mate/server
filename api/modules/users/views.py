@@ -1,8 +1,6 @@
 from email.utils import parseaddr
-from smtplib import SMTPException
 
 from django.contrib.auth.models import User
-from django.core.mail import send_mail
 from rest_framework import status
 from rest_framework.decorators import permission_classes, api_view
 from rest_framework.permissions import AllowAny
@@ -13,11 +11,11 @@ from api.modules.email.templates import (
     WELCOME_MAIL_SUBJECT, WELCOME_MAIL_CONTENT,
     FORGOT_PASSWORD_MAIL_SUBJECT, FORGOT_PASSWORD_MAIL_CONTENT, VERIFICATION_CODE_MAIL_SUBJECT,
     VERIFICATION_CODE_MAIL_CONTENT)
+from api.modules.email.utils import is_send_email
 from api.modules.users.enums import PasswordVerificationModeChoice
 from api.modules.users.serializers import UserSerializer
 from api.modules.users.utils import generate_random_code, is_password_verification_code_valid
 from api.modules.users.validators import validate_password, validate_email
-from nomad.settings import DEFAULT_EMAIL_SENDER
 
 
 @api_view(['POST'])
@@ -54,21 +52,22 @@ def sign_up(request):
         error_message = "Email Id already exists"
         return Response(error_message, status=status.HTTP_400_BAD_REQUEST)
     except User.DoesNotExist:
+        success_message = "Successfully registered."
         user = User.objects.create_user(username, password=password)
         user.first_name = firstname
         user.last_name = lastname
         user.is_superuser = False
         user.is_staff = False
         user.save()
-        try:
-            to_list = [user.username]
-            fullname = "{} {}".format(firstname, lastname)
-            mail_subject = WELCOME_MAIL_SUBJECT.format(firstname)
-            mail_content = WELCOME_MAIL_CONTENT.format(fullname)
-            send_mail(mail_subject, mail_content, DEFAULT_EMAIL_SENDER, to_list, fail_silently=False)
-        except SMTPException as e:
-            error_message = "Registration successful. Unable to send a welcome email to user"
-            return Response(error_message, status=status.HTTP_400_BAD_REQUEST)
+
+        # Attempt sending email
+        to_list = [user.username]
+        fullname = "{} {}".format(firstname, lastname)
+        mail_subject = WELCOME_MAIL_SUBJECT.format(firstname)
+        mail_content = WELCOME_MAIL_CONTENT.format(fullname)
+
+        if not is_send_email(to_list, mail_subject, mail_content):
+            success_message += " Unable to send a welcome email to user"
     except Exception as e:
         error_message = str(e)
         return Response(error_message, status=status.HTTP_400_BAD_REQUEST)
@@ -314,18 +313,18 @@ def forgot_password_email_code(request, username):
     pass_verify_obj.code = code
     pass_verify_obj.save()
 
-    # sending code via email
-    try:
-        to_list = [user.username]
-        fullname = "{} {}".format(user.first_name, user.last_name)
-        mail_subject = FORGOT_PASSWORD_MAIL_SUBJECT
-        mail_content = FORGOT_PASSWORD_MAIL_CONTENT.format(fullname, code)
-        send_mail(mail_subject, mail_content, DEFAULT_EMAIL_SENDER, to_list, fail_silently=False)
-    except SMTPException:
-        error_message = "Unable to send a forgot password email to user"
-        return Response(error_message, status=status.HTTP_400_BAD_REQUEST)
+    # Attempt sending email
+    to_list = [user.username]
+    fullname = "{} {}".format(user.first_name, user.last_name)
+    mail_subject = FORGOT_PASSWORD_MAIL_SUBJECT
+    mail_content = FORGOT_PASSWORD_MAIL_CONTENT.format(fullname, code)
 
-    return Response("Email sent", status=status.HTTP_200_OK)
+    if is_send_email(to_list, mail_subject, mail_content):
+        message = "Email sent."
+        return Response(message, status=status.HTTP_200_OK)
+    else:
+        message = "Unable to send email to registered email address"
+        return Response(message, status=status.HTTP_400_BAD_REQUEST)
 
 
 @api_view(['GET'])
@@ -428,17 +427,18 @@ def generate_verification_code(request):
     pass_verify_obj.code = code
     pass_verify_obj.save()
 
-    # sending code via email
-    try:
-        to_list = [request.user.username]
-        fullname = "{} {}".format(request.user.first_name, request.user.last_name)
-        mail_subject = VERIFICATION_CODE_MAIL_SUBJECT
-        mail_content = VERIFICATION_CODE_MAIL_CONTENT.format(fullname, code)
-        send_mail(mail_subject, mail_content, DEFAULT_EMAIL_SENDER, to_list, fail_silently=False)
-    except SMTPException:
-        error_message = "Unable to send verification code email to user"
-        return Response(error_message, status=status.HTTP_400_BAD_REQUEST)
-    return Response("Verification code sent", status=status.HTTP_200_OK)
+    # Attempt sending email
+    to_list = [request.user.username]
+    fullname = "{} {}".format(request.user.first_name, request.user.last_name)
+    mail_subject = VERIFICATION_CODE_MAIL_SUBJECT
+    mail_content = VERIFICATION_CODE_MAIL_CONTENT.format(fullname, code)
+
+    if is_send_email(to_list, mail_subject, mail_content):
+        message = "Email sent."
+        return Response(message, status=status.HTTP_200_OK)
+    else:
+        message = "Unable to send email to registered email address"
+        return Response(message, status=status.HTTP_400_BAD_REQUEST)
 
 
 @api_view(['GET'])
