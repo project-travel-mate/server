@@ -66,7 +66,7 @@ def sign_up(request):
             mail_subject = WELCOME_MAIL_SUBJECT.format(firstname)
             mail_content = WELCOME_MAIL_CONTENT.format(fullname)
             send_mail(mail_subject, mail_content, DEFAULT_EMAIL_SENDER, to_list, fail_silently=False)
-        except SMTPException as e:
+        except SMTPException:
             error_message = "Registration successful. Unable to send a welcome email to user"
             return Response(error_message, status=status.HTTP_400_BAD_REQUEST)
     except Exception as e:
