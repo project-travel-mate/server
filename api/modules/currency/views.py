@@ -32,7 +32,7 @@ def get_currency_exchange_rate(request, source_currency_code, target_currency_co
                                 target=target_currency_code,
                                 result=api_response_json[query])
 
-    except Exception as e:
+    except Exception:
         exception_message = "Incorrect currency codes {}".format(query)
         return Response(exception_message, status=status.HTTP_503_SERVICE_UNAVAILABLE)
 
