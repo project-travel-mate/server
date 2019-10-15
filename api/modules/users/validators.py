@@ -53,6 +53,9 @@ def validate_email(email, tests=None):
     """
     if not tests:
         tests = [_has_at]
+        
+    if not tests:
+        tests = [_is_email]
 
     for test in tests:
         if not test(email):
