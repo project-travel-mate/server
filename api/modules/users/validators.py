@@ -1,3 +1,6 @@
+from email.utils import parseaddr
+
+
 def _long_enough(pw):
     """
     Password must be at least length 8
@@ -13,7 +16,16 @@ def _has_at(email):
     :param email:
     :return: boolean
     """
-    return "@" in email
+    return '@' in email
+
+
+def _is_email(email):
+    """
+    Email must contain '@'
+    :param email:
+    :return: boolean
+    """
+    return '@' in parseaddr(email)[1]
 
 
 def validate_password(password, tests=None):
