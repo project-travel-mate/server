@@ -52,10 +52,7 @@ def validate_email(email, tests=None):
     :return: boolean
     """
     if not tests:
-        tests = [_has_at]
-        
-    if not tests:
-        tests = [_is_email]
+        tests = [_has_at, _is_email]
 
     for test in tests:
         if not test(email):
