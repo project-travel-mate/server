@@ -18,7 +18,10 @@ class TestValidators(TestCase):
         data_provider = [
             {"email": "1a2b3c4e", "result": False},
             {"email": 'test@test.com', "result": True},
+            {"email": '', "result": False}
         ]
         for data in data_provider:
             result = validate_email(data['email'])
             self.assertEqual(result, data['result'])
+
+
