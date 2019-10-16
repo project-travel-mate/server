@@ -19,13 +19,13 @@ def _has_at(email):
     return '@' in email
 
 
-def _is_email(email):
+def _is_empty(email):
     """
     Email must contain '@'
     :param email:
     :return: boolean
     """
-    return '@' in parseaddr(email)[1]
+    return parseaddr(email)[1] != ''
 
 
 def validate_password(password, tests=None):
@@ -52,7 +52,7 @@ def validate_email(email, tests=None):
     :return: boolean
     """
     if not tests:
-        tests = [_has_at, _is_email]
+        tests = [_has_at, _is_empty]
 
     for test in tests:
         if not test(email):
