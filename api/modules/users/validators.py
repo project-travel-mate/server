@@ -21,7 +21,7 @@ def _has_at(email):
 
 def _is_empty(email):
     """
-    Email must contain '@'
+    Email must not be empty
     :param email:
     :return: boolean
     """
