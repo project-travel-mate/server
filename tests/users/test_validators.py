@@ -23,5 +23,3 @@ class TestValidators(TestCase):
         for data in data_provider:
             result = validate_email(data['email'])
             self.assertEqual(result, data['result'])
-
-
