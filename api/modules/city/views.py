@@ -163,34 +163,3 @@ def get_visited_city(request, user_id=None):
 
     serializer = CityCondensedSerializer(cities, many=True)
     return Response(serializer.data, status=status.HTTP_200_OK)
-
-
-@api_view(['POST'])
-def add_city_nickname(request):
-    """
-    add/update nickname of given city
-    :param request:
-    :return: 400 if incorrect parameters are sent
-    :return: 201 successful
-    """
-    city_id = request.POST.get('city_id', None)
-    nickname = request.POST.get('nickname', None)
-
-    if not city_id or not nickname:
-        # incorrect request received
-        error_message = "Missing parameters in request. Send city_id, nickname"
-        return Response(error_message, status=status.HTTP_400_BAD_REQUEST)
-
-    try:
-        city = City.objects.get(pk=city_id)
-        city.nickname = nickname
-        city.save()
-    except City.DoesNotExist:
-        error_message = "City does not exist",
-        return Response(error_message, status=status.HTTP_404_NOT_FOUND)
-    except Exception as e:
-        error_message = str(e)
-        return Response(error_message, status=status.HTTP_400_BAD_REQUEST)
-
-    success_message = "Successfully added nickname."
-    return Response(success_message, status=status.HTTP_201_CREATED)
