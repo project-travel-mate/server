@@ -52,7 +52,6 @@ urlpatterns = [
     path('get-city-information/<int:city_id>', city_views.get_city_information, name="get-city-information"),
     path('get-visited-city', city_views.get_visited_city, name='get-visited-city'),
     path('get-visited-city/<int:user_id>', city_views.get_visited_city, name='get-visited-city'),
-    path('add-city-nickname', city_views.add_city_nickname, name="add-city-nickname"),
 
     # Weather APIs
     path('get-city-weather/<int:city_id>', weather_views.get_city_weather, name='get-city-weather'),
