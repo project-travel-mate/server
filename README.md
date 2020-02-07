@@ -17,6 +17,10 @@ pip install virtualenv
 virtualenv venv --python=python3.6
 source venv/bin/activate
 ```
+For Windows, use the following instead of the `source` command:
+```bat
+venv\bin\activate
+```
 + Install all dependencies
 ```shell
 pip install -r requirements.txt
