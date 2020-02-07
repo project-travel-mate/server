@@ -15,7 +15,14 @@ git clone https://github.com/project-travel-mate/server && cd server
 ```shell
 pip install virtualenv
 virtualenv venv --python=python3.6
-source venv/bin/activate
+```
+Now activate the environment shell with:
+```shell
+source venv/bin/activate  # On Linux
+```
+or
+```bat
+venv\Scripts\activate  & :: On Windows
 ```
 + Install all dependencies
 ```shell
