@@ -22,7 +22,8 @@ source venv/bin/activate  # On Linux
 ```
 or
 ```bat
-venv\Scripts\activate  # On Windows
+:: On Windows
+venv\Scripts\activate
 ```
 + Install all dependencies
 ```shell
