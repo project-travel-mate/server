@@ -142,7 +142,7 @@ def update_profile_image(request):
 
     user = request.user
     if not hasattr(user, 'profile'):
-        user.save()  # to handle RelatedObjectDoenNotExist exception on existing users
+        user.save()  # to handle RelatedObjectDoesNotExist exception on existing users
     user.profile.profile_image = profile_image_url
     user.save()
     return Response(None, status=status.HTTP_200_OK)
@@ -180,7 +180,7 @@ def trip_friends_all(request):
         all_trips = User.objects.filter(trip__users=request.user).distinct().exclude(username=request.user)
 
     except User.DoesNotExist:
-        error_message = "Trip does not exist"
+        error_message = "Trip does not exist."
         return Response(error_message, status=status.HTTP_404_NOT_FOUND)
     except Exception as e:
         return Response(str(e), status=status.HTTP_400_BAD_REQUEST)
@@ -200,7 +200,7 @@ def update_user_status(request):
     updated_status = request.POST.get('status', None)
 
     if not updated_status:
-        error_message = "Missing parameters in request. Send user status"
+        error_message = "Missing parameters in request. Send user status."
         return Response(error_message, status=status.HTTP_400_BAD_REQUEST)
     try:
         user = request.user.profile
@@ -221,7 +221,7 @@ def remove_profile_image(request):
     """
     user = request.user
     if not hasattr(user, 'profile'):
-        user.save()  # to handle RelatedObjectDoenNotExist exception on existing users
+        user.save()  # to handle RelatedObjectDoesNotExist exception on existing users
     user.profile.profile_image = None
     user.save()
     return Response("Profile image successfully removed.", status=status.HTTP_200_OK)
@@ -265,13 +265,13 @@ def update_password(request):
                 request.user.set_password(new_password)
                 request.user.save()
             else:
-                return Response("Invalid new password", status=status.HTTP_400_BAD_REQUEST)
+                return Response("Invalid new password.", status=status.HTTP_400_BAD_REQUEST)
         else:
-            return Response("Incorrect old password", status=status.HTTP_400_BAD_REQUEST)
+            return Response("Incorrect old password.", status=status.HTTP_400_BAD_REQUEST)
     except Exception as e:
         return Response(str(e), status=status.HTTP_400_BAD_REQUEST)
 
-    return Response("Password updated successfully", status=status.HTTP_200_OK)
+    return Response("Password updated successfully.", status=status.HTTP_200_OK)
 
 
 @api_view(['GET'])
@@ -323,7 +323,7 @@ def forgot_password_email_code(request, username):
         message = "Email sent."
         return Response(message, status=status.HTTP_200_OK)
     else:
-        message = "Unable to send email to registered email address"
+        message = "Unable to send email to registered email address."
         return Response(message, status=status.HTTP_400_BAD_REQUEST)
 
 
@@ -394,7 +394,7 @@ def delete_profile(request):
     except Exception as e:
         return Response(str(e), status=status.HTTP_400_BAD_REQUEST)
 
-    message = "user profile succesfully deleted"
+    message = "User profile successfully deleted."
     return Response(message, status=status.HTTP_200_OK)
 
 
