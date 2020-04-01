@@ -2,6 +2,7 @@ from django.conf.urls import url
 from django.urls import path
 from rest_framework.authtoken import views as auth_views
 
+from api.modules.admin import views as admin_views
 from api.modules.analytics import views as analytics_views
 from api.modules.city import views as city_views
 from api.modules.currency import views as currency_views
@@ -22,6 +23,11 @@ urlpatterns = [
     # Authentication
     url(r'^sign-up', user_views.sign_up, name='sign-up'),
     url(r'^sign-in', auth_views.obtain_auth_token, name='sign-in'),
+
+    # Admin APIs
+    # City Image APIs
+    path('add-city-image', admin_views.add_city_image),
+    path('remove-city-image/<int:image_id>', admin_views.remove_city_image),
 
     # Users
     path('get-user', user_views.get_user_profile, name='get-user'),
