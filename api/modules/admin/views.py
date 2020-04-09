@@ -1,3 +1,4 @@
+from django.core.exceptions import ValidationError
 from django.core.validators import URLValidator
 from rest_framework import status
 from rest_framework.decorators import api_view, permission_classes
@@ -31,6 +32,10 @@ def add_city_image(request):
         city = City.objects.get(pk=city_id)
         city_image = CityImage(city=city, image_url=image_url)
         city_image.save()
+    except ValidationError as e:
+        # e is a list of error messages
+        error_message = "\n".join(e)
+        return Response(error_message, status=status.HTTP_400_BAD_REQUEST)
     except Exception as e:
         error_message = str(e)
         return Response(error_message, status=status.HTTP_400_BAD_REQUEST)
