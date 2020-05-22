@@ -107,6 +107,7 @@ urlpatterns = [
 
     # Github API
     path('get-contributors/<str:project>', github_views.get_contributors, name="get-contributors"),
+    path('get-all-contributors', github_views.get_all_contributors, name="get-all-contributors"),
     path('get-issues/<str:project>', github_views.get_issues, name="get-issues"),
 
     # Twitter API
