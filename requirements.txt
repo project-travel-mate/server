@@ -18,5 +18,5 @@ requests==2.31.0
 requests-cache==0.4.13
 requests-oauthlib==1.0.0
 sqlparse==0.4.4
-urllib3==1.26.5
+urllib3==1.26.18
 whitenoise==3.3.1
