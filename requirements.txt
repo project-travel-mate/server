@@ -2,7 +2,7 @@ beautifulsoup4==4.6.3
 certifi==2023.7.22
 chardet==3.0.4
 dj-config-url==0.1.1
-Django==3.2.24
+Django==3.2.25
 djangorestframework==3.11.2
 entrypoints==0.3
 flake8==3.7.9
