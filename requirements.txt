@@ -6,7 +6,7 @@ Django==3.2.25
 djangorestframework==3.11.2
 entrypoints==0.3
 flake8==3.7.9
-gunicorn==19.8.1
+gunicorn==22.0.0
 idna==3.7
 mccabe==0.6.1
 oauthlib==2.1.0
