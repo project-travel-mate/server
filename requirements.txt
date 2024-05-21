@@ -14,7 +14,7 @@ psycopg2-binary==2.7.7
 pycodestyle==2.5.0
 pyflakes==2.1.1
 pytz==2018.4
-requests==2.31.0
+requests==2.32.0
 requests-cache==0.4.13
 requests-oauthlib==1.0.0
 sqlparse==0.5.0
